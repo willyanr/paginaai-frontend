@@ -1,12 +1,39 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import Badge from '../ui/badge/Badge';
 import Button from '../ui/button/Button';
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import VideosExample from '../ui/video/VideosExample';
 import YouTubeEmbed from '../ui/video/YouTubeEmbed';
+import ModalCreateDomain from './ModalCreateDomain';
+import { useProjectsDomains } from '@/context/DomainsContext';
+import { useModalContext } from '@/context/ModalContext';
+
+
+
+
+
+
 
 const DomainsManager: React.FC = () => {
+    const { domainsData, fetchProjectsDomains } = useProjectsDomains();
+    const { openModal } = useModalContext();
+
+    useEffect(() => {
+        fetchProjectsDomains();
+    }, []);
+
+
+    if(!domainsData){
+        return(
+            <div>
+                <h1>tesssssssssssssssssssssssssss</h1>
+            </div>
+        )
+    }
+
+
     return (
         <div className='flex gap-4'>
             <div className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 mb-10 w-1/2">
@@ -60,18 +87,18 @@ const DomainsManager: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-4 pt-4">
                         <div className="flex-1 border border-gray-300 dark:border-gray-800 rounded-lg p-4">
                             <p className="text-sm text-gray-500">Propagação</p>
-                            <Badge 
-                            children="Aguardando..."
-                            color='warning'
+                            <Badge
+                                children="Aguardando..."
+                                color='warning'
 
                             />
                         </div>
                         <div className="flex-1 border border-gray-300 dark:border-gray-800  rounded-lg p-4">
                             <p className="text-sm text-gray-500">SSL</p>
-                            <Badge 
-                            children="Não instalado"	
-                            color='error'
-                            startIcon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1.5-11a1.5 1.5 0 00-3 0v2.586l-.793.793a1.5 1.5 0 102.121 2.121l1.293-1.293A1.5 1.5 0 0011.5 7z" clipRule="evenodd" /></svg>}
+                            <Badge
+                                children="Não instalado"
+                                color='error'
+                                startIcon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1.5-11a1.5 1.5 0 00-3 0v2.586l-.793.793a1.5 1.5 0 102.121 2.121l1.293-1.293A1.5 1.5 0 0011.5 7z" clipRule="evenodd" /></svg>}
                             />
                         </div>
                     </div>
@@ -94,25 +121,50 @@ const DomainsManager: React.FC = () => {
                             variant='outline'
                             size='sm'
                             children="Adicionar Domínio +"
+                            onClick={openModal}
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-1 gap-6 dark:text-white">
-                        <div className="border rounded-2xl p-6 shadow-sm dark:border-gray-800">
-                            <div className="flex justify-between items-center mb-2">
-                                <h2 className="text-lg font-medium">meudominio.com</h2>
-                                <Badge
-                                    children="Verificado"
-                                    variant='light'
-                                    color='success'
-                                />
-                            </div>
-                            <p className="text-sm text-gray-500 mb-4">Domínio principal da landing page</p>
-                            <div className="flex gap-2">
+                    <ul className="grid grid-cols-1 md:grid-cols-1 gap-6 dark:text-white">
+                        {domainsData?.map((item, index) => (
+                            <li
+                                key={index}
+                                className="border rounded-2xl p-6 shadow-sm dark:border-gray-800"
+                            >
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex flex-col">
+                                        <h2 className="text-xl font-medium mb-2">
+                                            {item?.domain}
+                                        </h2>
+                                        <span className="text-xs font-normal text-gray-600 dark:text-gray-300">
+                                            Cadastrado em: {item?.created_at}
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Badge
+                                            children={item?.verified ? 'Verificado' : 'Não verificado'}
+                                            variant="light"
+                                            color={item?.verified ? 'success' : 'error'}
+                                        />
+                                        <Badge 
+                                        children="SSL"
+                                        color={item?.ssl_enabled ? 'success' : 'error'}
+                                        variant='light'
+                                        />
+                                     
+                                    </div>
+                                </div>
+                                <div>
+                                    <Badge 
+                                    children={item.project_name}
+                                    
+                                    />
+                                </div>
+                                <div className="flex gap-2 mt-5">
                                 <Button
                                     variant='primary'
                                     size='sm'
-                                    children="Verificar"
+                                    children="Trocar Lading Page"
                                 />
                                 <Button
                                     variant='outline'
@@ -120,39 +172,21 @@ const DomainsManager: React.FC = () => {
                                     children="Remover"
                                 />
                             </div>
-                        </div>
+                            </li>
+                        ))}
+                    </ul>
 
-                        <div className="border rounded-2xl p-6 shadow-sm dark:border-gray-800">
-                            <div className="flex justify-between items-center mb-2">
-                                <h2 className="text-lg font-medium">outrodominio.com</h2>
-                                <Badge
-                                    children="Não verificado"
-                                    variant='light'
-                                    color='warning'
-                                />
-                            </div>
-                            <p className="text-sm text-gray-500 mb-4">Verifique seu DNS para ativar</p>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant='primary'
-                                    size='sm'
-                                    children="Verificar"
-                                />
-                                <Button
-                                    variant='outline'
-                                    size='sm'
-                                    children="Remover"
-                                />
-                            </div>
-                        </div>
-                        <div className=''>
-                           <YouTubeEmbed />
-                        </div>
+                    <div className=''>
+                        <YouTubeEmbed />
                     </div>
                 </div>
 
             </div>
+            <div>
+                <ModalCreateDomain />
+            </div>
         </div>
+
     );
 };
 
