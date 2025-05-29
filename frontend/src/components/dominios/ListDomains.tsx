@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Badge from '../ui/badge/Badge';
 import Button from '../ui/button/Button';
 import { useProjectsDomains } from '@/context/DomainsContext';
-import { Modal } from '../ui/modal';
-import { useModal } from '@/hooks/useModal';
 import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import ModalEditDomain from './ModalEditDomain';
@@ -11,9 +9,9 @@ import DeleteModal from '../ui/alert/DeleteModal';
 
 const ListDomains: React.FC = () => {
     const { domainsData, fetchProjectsDomains, deleteProjectsDomains, verifyProjectsDomains } = useProjectsDomains();
-    const [isLoadingButton, setIsLoadingButton] = useState({});
-    const { openModal, isOpen, closeModal } = useModalContext();
-    const { userProjects, fetchProjects } = useProjects();
+    const [isLoadingButton, setIsLoadingButton] = useState<{ [key: string]: boolean }>({});
+    const { openModal, closeModal } = useModalContext();
+    const { fetchProjects } = useProjects();
     const [domainSelectedEdit, setDomainSelectedEdit] = useState<string>('');
     const [domainSelectedEditID, setDomainSelectedEditID] = useState<string>('');
     const [ deleteDomainID, setDomainDelete ] = useState<string>();
@@ -23,15 +21,7 @@ const ListDomains: React.FC = () => {
     useEffect(() => {
         fetchProjects();
 
-    }, []);
-
-    if (!userProjects) {
-        return (
-            <div>eroooooooooooooooooooooooo</div>
-        )
-    }
-
-
+    }, [fetchProjects]);
 
 
 
@@ -50,7 +40,7 @@ const ListDomains: React.FC = () => {
         }
     };
 
-    const verifyDomain = async (domain: string, id?: string) => {
+    const verifyDomain = async (domain: string) => {
         if (!domain) return;
         setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [domain]: true }));
         try {
@@ -96,29 +86,29 @@ const ListDomains: React.FC = () => {
                             </div>
                             <div className="flex gap-2 items-center">
                                 <Badge
-                                    children={item?.verified ? 'Verificado' : 'Não verificado'}
                                     variant="light"
                                     color={item?.verified ? 'success' : 'error'}
-                                />
+                                >
+                                    {item?.verified ? 'Verificado' : 'Não verificado'}
+                                </Badge>
                                 <Badge
-                                    children="SSL"
                                     color={item?.ssl_enabled ? 'success' : 'error'}
                                     variant="light"
-                                />
+                                >
+                                    SSL
+                                </Badge>
                             </div>
                             <div onClick={() => editDomain(item.domain, item.id)}
                                 className="justify-end flex cursor-pointer">
-                                <Badge
-                                    children="Editar"
-                                    color="dark"
-
-                                />
+                                <Badge color="dark">
+                                    Editar
+                                </Badge>
                             </div>
                         </div>
                         <div className='mt-5'>
-                            <Badge
-                                children={item?.project_name}
-                            />
+                            <Badge>
+                                {item?.project_name}
+                            </Badge>
                         </div>
                         <div className="flex items-center gap-2 mt-5 justify-between">
                             <div>
