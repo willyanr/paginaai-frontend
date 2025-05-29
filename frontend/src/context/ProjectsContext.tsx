@@ -1,21 +1,32 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { getProjects as projectsService, updateProject as projectUpdate, deleteProject as projectServiceDelete, createProject } from '../services/projects';
+import {
+    getProjects as projectsService,
+    updateProject as projectUpdate,
+    deleteProject as projectServiceDelete,
+    getAssets as ServiceGetAssets,
+    createProject
+} from '../services/projects';
 
 
 interface ProjectsContextType {
     projectGraper: any[] | null;
     userProjects: any[] | null;
-    projectSelected: any | null;
-    projectSelectedID: any | null;
+    projectSelected: unknown[];
+    projectSelectedID: string | null;
+    projectSelectedName: any | null;
     isNewProject: boolean;
     isSuccess: boolean;
     isError: boolean;
+    isLoading: boolean;
     fetchProjects: () => Promise<void>;
     updateProject: (body: any) => Promise<void>;
     createNewProject: (payload: any) => Promise<void>;
-    setProjectSelected: (project: any) => void;
+    setProjectSelected: (project: string) => void;
     setProjectSelectedID: (id: any) => void;
+    setProjectSelectedName: (name: any) => void;
     deleteProject: (id: any) => Promise<void>;
+    fetchProjectsAssets: () => Promise<void>;
+
     // addProject: (project: Omit<Project, 'id'>) => Promise<void>;
 }
 
@@ -23,10 +34,12 @@ const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined
 
 export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [userProjects, setUserProjects] = useState<any[]>([]);
-    
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [projectSelected, setProjectSelected] = useState(null);
     const [projectSelectedID, setProjectSelectedID] = useState(null);
-    
+    const [projectSelectedName, setProjectSelectedName] = useState(null);
+
+
     const [projectGraper, setProjects] = useState(null);
     const [isNewProject, setIsNewProject] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -34,29 +47,32 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const fetchProjects = async () => {
         try {
-          const response = await projectsService();
-          setUserProjects(response);
-          const raw = response[0].project_data;
-          setProjects(raw);
-          
+            const response = await projectsService();
+            setUserProjects(response);
+            const raw = response[0].project_data;
+            setProjects(raw);
+
         } catch (error) {
             console.error('Erro real:', error.response?.data || error.message);
-            throw new Error('Erro ao carregar projetos:'); 
+            throw new Error('Erro ao carregar projetos:');
         }
-      };
+    };
 
-      const updateProject = async (body:any) => {
-        try{
-            console.log('body', body)
-            await projectUpdate(body, projectSelectedID);
-          
-        } catch (error) {
-            throw new Error('Error update Project:');
+    const updateProject = async (body: any, id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await projectUpdate(body, id);
+            setProjectSelected(response.project_data);
+            fetchProjects();
+        } catch (error: any) {
+            throw new Error(error.message);
+        } finally {
+            setIsLoading(false);
         }
-      };
+    };
 
-      const createNewProject = async (payload:any) => {
-        try{
+    const createNewProject = async (payload: any) => {
+        try {
             await createProject(payload);
             await fetchProjects();
 
@@ -64,17 +80,25 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
         } catch (error) {
             throw new Error('Error update Project:');
         }
-      };
+    };
 
-      const deleteProject = async (id: string) => {
-        try{
+    const deleteProject = async (id: string) => {
+        try {
             await projectServiceDelete(id);
             await fetchProjects();
-            setIsSuccess(true);
         } catch (error) {
             throw new Error('Error update Project:');
         }
-      };
+    };
+    const fetchProjectsAssets = async () => {
+        try {
+            return await ServiceGetAssets();
+        } catch (error) {
+            throw new Error('Error update Project:');
+        }
+    };
+
+
 
     // const addProject = async (project: Omit<Project, 'id'>) => {
     //     try {
@@ -84,23 +108,28 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
     //     }
     // };
 
-  
+
 
     return (
-        <ProjectsContext.Provider value={{ 
-            projectGraper, 
+        <ProjectsContext.Provider value={{
+            projectGraper,
             userProjects,
             isSuccess,
             isError,
+            isLoading,
             projectSelected,
             projectSelectedID,
-            fetchProjects, 
-            updateProject, 
+            projectSelectedName,
+            fetchProjects,
+            updateProject,
             createNewProject,
-            setProjectSelected, 
+            setProjectSelected,
             setProjectSelectedID,
+            setProjectSelectedName,
             deleteProject,
-            isNewProject }}>
+            fetchProjectsAssets,
+            isNewProject
+        }}>
             {children}
         </ProjectsContext.Provider>
     );

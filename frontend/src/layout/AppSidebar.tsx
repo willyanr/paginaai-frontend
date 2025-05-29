@@ -15,7 +15,12 @@ import {
   PieChartIcon,
   PlugInIcon,
   TableIcon,
-  UserCircleIcon,
+  PencilIcon,
+  Marketing,
+  AB,
+  Domain,
+  Upsell,
+  Target,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
 
@@ -33,49 +38,46 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Análise", path: "/", pro: false }],
   },
   {
-    icon: <CalenderIcon />,
+    icon: <PencilIcon />,
     name: "Editor",
     path: "/editor",
   },
   {
-    icon: <UserCircleIcon />,
+    icon: <Marketing />,
     name: "Marketing",
     path: "/marketing",
   },
 
   {
     name: "Testes A/B",
-    icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+    icon: <AB />,
+    path: "/test-ab",
+   
   },
   {
-    name: "Integrações",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+    name: "Trackeamento",
+    icon: <Target />,
+    path: "/v",
   },
   {
     name: "Upsell",
-    icon: <TableIcon />,
+    icon: <Upsell />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
   },
   {
-    name: "Página de venda",
+    name: "Projetos",
     icon: <PageIcon />,
     subItems: [
-      { name: "Página", path: "/blank", pro: false },
-      { name: "Templates", path: "/error-404", pro: false },
+      { name: "Criar Projeto +", path: "/editor", pro: false },
+      { name: "Meus Projetos", path: "/projects", pro: false },
     ],
   },
   {
-    icon: <TableIcon />,
+    icon: <Domain />,
     name: "Domínios",
     path: "/domains",
   },
-  {
-    name: "Checkout",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  },
+  
 ];
 
 const othersItems: NavItem[] = [
@@ -105,7 +107,13 @@ const othersItems: NavItem[] = [
     subItems: [
       { name: "Sign In", path: "/signin", pro: false },
       { name: "Sign Up", path: "/signup", pro: false },
+      { name: "OTP", path: "/OTPVerify", pro: false },
     ],
+  },
+  {
+    name: "Checkout",
+    icon: <TableIcon />,
+    path: "/",
   },
 ];
 
@@ -134,7 +142,7 @@ const AppSidebar: React.FC = () => {
               }`}
             >
               <span
-                className={` ${
+                className={`text-black  ${
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? "menu-item-icon-active"
                     : "menu-item-icon-inactive"
@@ -165,7 +173,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 <span
-                  className={`${
+                  className={`text-black${
                     isActive(nav.path)
                       ? "menu-item-icon-active"
                       : "menu-item-icon-inactive"
@@ -323,7 +331,7 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link href="/">
+        {/* <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
@@ -349,7 +357,7 @@ const AppSidebar: React.FC = () => {
               height={32}
             />
           )}
-        </Link>
+        </Link> */}
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
@@ -380,7 +388,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
+                  "EM DESENVOLVIMENTO"
                 ) : (
                   <HorizontaLDots />
                 )}
@@ -389,7 +397,7 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
     </aside>
   );

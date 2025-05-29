@@ -5,9 +5,84 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { useFormattedDate } from "@/hooks/useFormattedDate";
+import Link from "next/link";
+import { useModalContext } from "@/context/ModalContext";
+import { useUser } from "@/context/UserContext";
 
-export default function UserInfoCard() {
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useAlertContext } from "@/context/AlertContext";
+import Alert from "../ui/alert/Alert";
+
+
+
+export default function UserInfoCard({ user }) {
   const { isOpen, openModal, closeModal } = useModal();
+  const { onAlert, typeAlert, messageAlert, isAlert } = useAlertContext();
+  const { formatDate } = useFormattedDate();
+  const { putUserApi, isLoading } = useUser();
+
+
+  const isValidCNPJ = (value: string | undefined): boolean => {
+    if (!value) return true; // Se vazio, está ok
+    const cleaned = value.replace(/\D/g, '');
+
+    if (cleaned.length !== 14) return false;
+
+    // Rejeita sequências repetidas
+    if (/^(\d)\1{13}$/.test(cleaned)) return false;
+
+    const t = cleaned.length - 2,
+      d = cleaned.substring(t),
+      d1 = parseInt(d.charAt(0)),
+      d2 = parseInt(d.charAt(1)),
+      calc = (x: number) => {
+        let n = 0, i = x - 7, j = 0;
+        for (let i = x; i >= 1; i--) {
+          n += parseInt(cleaned.charAt(j)) * i;
+          j++;
+          if (i === 2) i = 10;
+        }
+        return ((n % 11) < 2 ? 0 : 11 - (n % 11));
+      };
+
+    return calc(t) === d1 && calc(t + 1) === d2;
+  };
+
+  const validationSchema = yup.object().shape({
+    name: yup.string(),
+    whatsapp: yup.string(),
+    zip_code: yup.string(),
+    city: yup.string(),
+    state: yup.string(),
+    cnpj: yup
+      .string()
+      .test("valid-cnpj", "CNPJ inválido", (value) => isValidCNPJ(value)),
+  });
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+
+  const onSubmit = async (data) => {
+    try {
+      await putUserApi(data)
+      onAlert(true, 'success', 'Dados atualizados com sucesso!');
+      closeModal();
+    } catch (error) {
+      onAlert(true, 'error', error.message);
+    } finally {
+
+    }
+  }
+
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
@@ -18,59 +93,65 @@ export default function UserInfoCard() {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-            Personal Information
+            Informações pessoais
           </h4>
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                First Name
+                Nome
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Musharof
+                {user?.name}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Last Name
+                CPF
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Chowdhury
+                {user?.cpf}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Email address
+                E-mail
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                randomuser@pimjo.com
+                {user?.email}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Phone
+                Whatsapp
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                +09 363 398 46
+                {user?.whatsapp}
               </p>
             </div>
 
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                Bio
+                Usuário desde:
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Team Manager
+                {formatDate(user?.created_at)}
               </p>
             </div>
+
+          </div>
+          <div className="mt-4">
+            <Link href="/reset-password" className="text-brand-500">
+              Alterar senha
+            </Link>
           </div>
         </div>
 
         <button
-          onClick={openModal}
+          onClick={() => openModal('edit-profile')}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
         >
           <svg
@@ -88,102 +169,122 @@ export default function UserInfoCard() {
               fill=""
             />
           </svg>
-          Edit
+          Editar
         </button>
       </div>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+      <Modal isOpen={isOpen("edit-profile")} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Personal Information
+              Edite seus dados
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              Você pode editar sua informações e salvar.
             </p>
           </div>
-          <form className="flex flex-col">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
-                </h5>
-
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div>
-                    <Label>Facebook</Label>
+                    <Label>Nome</Label>
                     <Input
                       type="text"
-                      defaultValue="https://www.facebook.com/PimjoHQ"
+                      defaultValue={user?.name}
+                      {...register("name")}
                     />
                   </div>
 
                   <div>
-                    <Label>X.com</Label>
-                    <Input type="text" defaultValue="https://x.com/PimjoHQ" />
-                  </div>
-
-                  <div>
-                    <Label>Linkedin</Label>
+                    <Label>Whatsapp</Label>
                     <Input
                       type="text"
-                      defaultValue="https://www.linkedin.com/company/pimjo"
+                      defaultValue={user?.whatsapp}
+                      {...register("whatsapp")}
                     />
                   </div>
-
                   <div>
-                    <Label>Instagram</Label>
+                    <Label>CEP</Label>
                     <Input
                       type="text"
-                      defaultValue="https://instagram.com/PimjoHQ"
+                      defaultValue={user?.zip_code}
+                      placeholder="Digite seu CEP"
+                      {...register("zip_code")}
                     />
                   </div>
+                  <div>
+                    <Label>Cidade</Label>
+                    <Input
+                      type="text"
+                      defaultValue={user?.city}
+                      placeholder="Digite sua cidade"
+                      {...register("city")}
+                    />
+                  </div>
+                  <div>
+                    <Label>Estado</Label>
+                    <Input
+                      type="text"
+                      defaultValue={user?.state}
+                      placeholder="Digite seu Estado"
+                      {...register("state")}
+                    />
+                  </div>
+                  <div>
+                    <Label>CNPJ</Label>
+                    <Input
+                      type="text"
+                      defaultValue={user?.cnpj}
+                      placeholder="Digite seu CNPJ"
+                      {...register("cnpj")}
+                    />
+                    <p className="text-xs text-error-500 mt-1">
+                      {errors.cnpj?.message}
+                    </p>
+                  </div>
+
+
                 </div>
               </div>
-              <div className="mt-7">
-                <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Personal Information
-                </h5>
-
+              {/* <div className="mt-7">
+                
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" defaultValue="Musharof" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" defaultValue="Chowdhury" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" defaultValue="randomuser@pimjo.com" />
-                  </div>
-
-                  <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" defaultValue="+09 363 398 46" />
-                  </div>
-
                   <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" defaultValue="Team Manager" />
+                    <Label>E-mail</Label>
+                    <Input 
+                    type="text" 
+                    defaultValue={user?.email}
+                    
+                    />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                Fechar
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Save Changes
+              <Button 
+              isLoading={isLoading}
+              size="sm" type='submit'>
+                Salvar alterações
               </Button>
             </div>
           </form>
         </div>
       </Modal>
+      {isAlert &&
+        <div className="fixed top-24 right-4 z-50">
+          <Alert
+            message={messageAlert}
+            variant={typeAlert}
+            title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
+          />
+        </div>
+
+      }
+
     </div>
   );
 }

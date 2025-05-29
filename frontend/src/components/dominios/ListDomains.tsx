@@ -1,0 +1,165 @@
+import React, { useState, useEffect } from 'react';
+import Badge from '../ui/badge/Badge';
+import Button from '../ui/button/Button';
+import { useProjectsDomains } from '@/context/DomainsContext';
+import { Modal } from '../ui/modal';
+import { useModal } from '@/hooks/useModal';
+import { useModalContext } from '@/context/ModalContext';
+import { useProjects } from '@/context/ProjectsContext';
+import ModalEditDomain from './ModalEditDomain';
+import DeleteModal from '../ui/alert/DeleteModal';
+
+const ListDomains: React.FC = () => {
+    const { domainsData, fetchProjectsDomains, deleteProjectsDomains, verifyProjectsDomains } = useProjectsDomains();
+    const [isLoadingButton, setIsLoadingButton] = useState({});
+    const { openModal, isOpen, closeModal } = useModalContext();
+    const { userProjects, fetchProjects } = useProjects();
+    const [domainSelectedEdit, setDomainSelectedEdit] = useState<string>('');
+    const [domainSelectedEditID, setDomainSelectedEditID] = useState<string>('');
+    const [ deleteDomainID, setDomainDelete ] = useState<string>();
+    
+
+
+    useEffect(() => {
+        fetchProjects();
+
+    }, []);
+
+    if (!userProjects) {
+        return (
+            <div>eroooooooooooooooooooooooo</div>
+        )
+    }
+
+
+
+
+
+    const deleteDomain = async () => {
+        if (!deleteDomainID) return;
+        setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [deleteDomainID]: true }));
+        try {
+            await deleteProjectsDomains(deleteDomainID);
+            fetchProjectsDomains();
+            closeModal();
+        } catch (erro) {
+            console.error(erro);
+            throw new Error('Erro ao criar domínio');
+        } finally {
+            setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [deleteDomainID]: false }));
+        }
+    };
+
+    const verifyDomain = async (domain: string, id?: string) => {
+        if (!domain) return;
+        setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [domain]: true }));
+        try {
+            await verifyProjectsDomains(domain)
+        } catch (erro) {
+            console.error(erro);
+            throw new Error('Erro ao criar domínio');
+        } finally {
+            setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [domain]: false }));
+        }
+    };
+
+    const editDomain = async (domain: string, id: string) => {
+        if (!domain) return;
+        setDomainSelectedEdit(domain);
+        setDomainSelectedEditID(id);
+        openModal("2");
+    };
+
+
+
+
+
+
+
+    return (
+        <div>
+            <ul className="grid grid-cols-1 md:grid-cols-1 gap-6 dark:text-white">
+                {domainsData?.map((item, index) => (
+                    <li
+                        key={index}
+                        className="border rounded-2xl p-6 shadow-sm dark:border-gray-800"
+                    >
+                        <div className="flex justify-between items-center mb-2">
+                            <div className="flex flex-col">
+                                <h2 className="text-xl font-medium mb-2 text-gray-600 dark:text-gray-100">
+                                    {item?.domain}
+                                </h2>
+                                <span className="text-xs font-normal text-gray-600 dark:text-gray-300">
+                                    {item?.created_at && new Date(item.created_at).toLocaleDateString('pt-BR')}
+                                </span>
+
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <Badge
+                                    children={item?.verified ? 'Verificado' : 'Não verificado'}
+                                    variant="light"
+                                    color={item?.verified ? 'success' : 'error'}
+                                />
+                                <Badge
+                                    children="SSL"
+                                    color={item?.ssl_enabled ? 'success' : 'error'}
+                                    variant="light"
+                                />
+                            </div>
+                            <div onClick={() => editDomain(item.domain, item.id)}
+                                className="justify-end flex cursor-pointer">
+                                <Badge
+                                    children="Editar"
+                                    color="dark"
+
+                                />
+                            </div>
+                        </div>
+                        <div className='mt-5'>
+                            <Badge
+                                children={item?.project_name}
+                            />
+                        </div>
+                        <div className="flex items-center gap-2 mt-5 justify-between">
+                            <div>
+                                {!item.verified ? (
+                                    <Button
+                                        variant="primary"
+                                        size="sm"
+                                        onClick={() => verifyDomain(item?.domain)}
+                                        isLoading={isLoadingButton[item.domain] || false}
+                                    >
+                                        Verificar Domínio
+                                    </Button>
+                                ) : (
+                                    <div className="w-[140px] h-[32px]" />
+                                )}
+                            </div>
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                    setDomainDelete(item.id)    
+                                    openModal('delete-domain')
+                                }}
+                                isLoading={isLoadingButton[item.id] || false}
+                            >
+                                Remover
+                            </Button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+            <ModalEditDomain
+                domain={domainSelectedEdit}
+                id_domain={domainSelectedEditID}
+            />
+            <DeleteModal onDelete={deleteDomain} />
+
+        </div>
+    );
+};
+
+export default ListDomains;
+

@@ -8,67 +8,65 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useAuth } from '@/context/AuthContext';
 import Alert from "../ui/alert/Alert";
+import { useAlertContext } from "@/context/AlertContext";
+
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState('');
-  const [showError, setShowError] = useState(false);
-  const [showSucess, setShowSucess] = useState(false);
   const { login } = useAuth();
+  const { isAlert, messageAlert, typeAlert, onAlert } = useAlertContext();
 
-  const validateDataLogin = async () => {
-   if(!email && !password){
-    alert('Por favor, preenhca os campos');
-    return false
-   }
-   return;
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Digite um e-mail válido.")
+      .required("O e-mail é obrigatório."),
+    password: yup
+      .string()
+      .required("A senha é obrigatória.")
+      .min(6, "A senha deve ter pelo menos 6 caracteres.")
+      .matches(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula.")
+      .matches(/\d/, "A senha deve conter pelo menos um número.")
+      .matches(/[\W_]/, "A senha deve conter pelo menos um caractere especial."),
+
+  });
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+
+  type SignInFormData = {
+    email: string;
+    password: string;
   };
-  
 
-  const fetchLogin = async () => {
-    setShowError(false)
-    setShowSucess(false)
+  const onSubmit = async (data: SignInFormData) => {
     try {
-      validateDataLogin();
-      if (!validateDataLogin()) {
-        return;
+      const  payload = {
+        email: data.email,
+        password: data.password
       }
-      await login(email, password);
-      setShowSucess(true);
-    } catch {
-      setShowError(true);
+      await login(payload);
+      onAlert(true, 'success', 'Login realizado com sucesso!')
+    } catch (error: unknown) {
+      onAlert(true, 'error', error.message)
     }
   };
-  
- 
+
+
   return (
-    
+
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
-      <div className="p-4">
-      {showError && (
-        <Alert
-          variant="error"
-          title="Erro ao fazer login"
-          message="Usuário ou senha inválidos."
-          showLink
-          linkHref="/recuperar-senha"
-          linkText="Esqueceu a senha?"
-        />
-      )}
-      {showSucess && (
-        <Alert
-          variant="success"
-          title="Login feito com sucesso!"
-          message="Redirecionando você para sua Dashboard"
-          showLink
-          linkHref="/report-error"
-          linkText="Aconteceu algum erro?"
-        />
-      )}
-    </div>
-     
+
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -76,11 +74,11 @@ export default function SignInForm() {
               Login
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-             Digite seu dados para fazer seu login!
+              Digite seu dados para fazer seu login!
             </p>
           </div>
           <div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+            {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
                   width="20"
@@ -121,27 +119,35 @@ export default function SignInForm() {
                 </svg>
                 Fazer Login com Facebook
               </button>
-            </div>
+            </div> */}
             <div className="relative py-3 sm:py-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">
-                  Ou Então
+                  Login
                 </span>
               </div>
             </div>
-            <form  onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-6">
                 <div>
                   <Label>
                     E-mail <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="username" type="username"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  <Input
+                    placeholder="Digite seu e-mail"
+                    type="email"
+                    name="email"
+                    {...register("email")}
+
                   />
+                  {errors.email && (
+                    <p className="text-xs text-error-500 mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label>
@@ -151,22 +157,27 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Digite sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      name="password"
+                      {...register("password")}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
-                    
+
                     </span>
+                    {errors.password && (
+                      <p className="text-xs text-error-500 mt-1">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                     Lembrar meu Login
+                      Lembrar meu Login
                     </span>
                   </div>
                   <Link
@@ -177,9 +188,14 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm"   onClick={(fetchLogin)}>
-                   Login
+                  <Button
+                    className="w-full"
+                    size="sm"
+                    type='submit'
+                  >
+                    Login
                   </Button>
+
                 </div>
               </div>
             </form>
@@ -197,6 +213,18 @@ export default function SignInForm() {
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        {isAlert && (
+          <div className="fixed top-24 right-4 z-50">
+            <Alert
+              message={messageAlert}
+              variant={typeAlert}
+              title={typeAlert === "success" ? "Sucesso" : "Erro"}
+            />
+          </div>
+        )}
+
       </div>
     </div>
   );

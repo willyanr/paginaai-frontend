@@ -51,8 +51,15 @@ import HorizontaLDots from "./horizontal-dots.svg";
 import ChatIcon from "./chat.svg";
 import MoreDotIcon from "./more-dot.svg";
 import BellIcon from "./bell.svg";
+import Marketing from "./marketing.svg";
+import AB from  "./ab.svg";
+import Domain from  "./domain.svg";
+import Upsell from "./upsell.svg";
+import Target from "./taget.svg";
+
 
 export {
+  Upsell,
   DownloadIcon,
   BellIcon,
   MoreDotIcon,
@@ -106,4 +113,8 @@ export {
   HorizontaLDots,
   ChevronUpIcon,
   ChatIcon,
+  Marketing,
+  AB,
+  Domain,
+  Target,
 };

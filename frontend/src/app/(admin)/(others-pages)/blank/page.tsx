@@ -3,7 +3,6 @@
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import MyPage from "@/components/editor/MyPage";
 import { UserProvider } from "@/context/UserContext";
-import { Metadata } from "next";
 import React from "react";
 
 

@@ -2,8 +2,9 @@
 
 import { createContext, useContext } from "react";
 import { useModal } from "../hooks/useModal";
+import { ModalContextType } from "@/interfaces/modal.interface";
 
-const ModalContext = createContext(null);
+const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
 export const ModalProvider = ({ children }) => {
   const modal = useModal(); 

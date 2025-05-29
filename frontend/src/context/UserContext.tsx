@@ -1,21 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { getUser } from '../services/user';
-
-interface User {
-  id: number;  
-  name: string;
-  email?: string; 
-  domain: string;  
-  project_data: string;
-  html: string;
-  css: string;
-}
+import { 
+  getUser as ServiceGetUser,
+  putUser as ServicePutUser
+ } from '../services/user';
+import { UserContextType, User } from '@/interfaces/user.interface';
 
 
-interface UserContextType {
-  user: User | null; 
-  getUserApi: () => void;
-}
+
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -27,18 +18,30 @@ export const useUser = () => {
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const getUserApi = async () => {
     try {
-      const data = await getUser();
+      const data = await ServiceGetUser();
       setUser(data[0]);
     } catch (err) {
       alert('Erro ao obter dados do usuário');
     }
   };
+  
+  const putUserApi = async (payload: User) => {
+    setIsLoading(true);
+    try {
+      await ServicePutUser(payload);
+    } catch (err) {
+      throw new Error('Erro ao atualizar User:');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <UserContext.Provider value={{ user, getUserApi }}>
+    <UserContext.Provider value={{ user, getUserApi, putUserApi, isLoading }}>
       {children}
     </UserContext.Provider>
   );

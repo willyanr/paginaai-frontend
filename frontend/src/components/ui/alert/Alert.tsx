@@ -32,7 +32,7 @@ const Alert: React.FC<AlertProps> = ({
     },
     warning: {
       container:
-        "border-warning-500 bg-warning-50 dark:border-warning-500/30 dark:bg-warning-500/15",
+        "border-warning-500 bg-warning-50 dark:border-warning-500/30 dark:bg-warning-500/15 dark:text-white",
       icon: "text-warning-500",
     },
     info: {
@@ -114,24 +114,24 @@ const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
-      className={`rounded-xl border p-4 ${variantClasses[variant].container}`}
+      className={`rounded-xl border p-4 ${variantClasses[variant].container} min-w-96`}
     >
       <div className="flex items-start gap-3">
         <div className={`-mt-0.5 ${variantClasses[variant].icon}`}>
           {icons[variant]}
         </div>
 
-        <div>
-          <h4 className="mb-1 text-sm font-semibold text-gray-800 dark:text-white/90">
+        <div className="">
+          <h4 className="mb-1 text-sm font-semibold text-gray-800 dark:text-white">
             {title}
           </h4>
 
-          <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
+          <p className="text-sm text-gray-500 dark:text-white">{message}</p>
 
           {showLink && (
             <Link
               href={linkHref}
-              className="inline-block mt-3 text-sm font-medium text-gray-500 underline dark:text-gray-400"
+              className="inline-block mt-3 text-sm font-medium text-gray-500 underline dark:text-white"
             >
               {linkText}
             </Link>

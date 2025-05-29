@@ -1,42 +1,141 @@
+// api.ts
 import axios from 'axios';
+import { getAccessToken, isTokenExpired, refreshAccessToken, logout } from './auth';
 
+// Create a separate axios instance for the refresh token request
+// This instance has no interceptors to avoid the loop
+const refreshApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Main API instance with interceptors
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Flag to prevent multiple refresh attempts at the same time
+let isRefreshing = false;
+// Store pending requests that should be retried after token refresh
+let refreshSubscribers = [];
+
+// Function to add callbacks to the queue
+const subscribeTokenRefresh = (callback) => {
+  refreshSubscribers.push(callback);
+};
+
+// Function to resolve all pending requests
+const onRefreshed = (token) => {
+  refreshSubscribers.forEach(callback => callback(token));
+  refreshSubscribers = [];
+};
+
+// Handle token refresh failure
+const onRefreshError = (error) => {
+  refreshSubscribers = [];
+  // Logout and redirect
+  logout();
+  if (typeof window !== 'undefined') {
+    window.location.href = '/signin';
   }
-  return config;
-});
+  return Promise.reject(error);
+};
 
-api.interceptors.response.use(
-  response => response,
-  async error => {
-    const originalRequest = error.config;
-    if (
-      error.response?.status === 401 &&
-      error.response.data.code === 'token_not_valid' &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
-
-      const refresh = localStorage.getItem('refresh');
+// Request interceptor
+api.interceptors.request.use(
+  async (config) => {
+    let token = getAccessToken();
+    
+    if (token && isTokenExpired(token)) {
       try {
-        const res = await axios.post('http://localhost:8000/api/token/refresh/', { refresh });
-        localStorage.setItem('access', res.data.access);
-
-        originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
-        return api(originalRequest);
-      } catch (err) {
-        return Promise.reject(err);
+        token = await refreshTokenIfNeeded();
+      } catch (error) {
+        return onRefreshError(error);
       }
     }
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
     return Promise.reject(error);
   }
 );
 
+// Response interceptor
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // If unauthorized and not a retry attempt
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
+      try {
+        // Wait for token refresh if already in progress
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            subscribeTokenRefresh((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            });
+          });
+        }
+        
+        // Otherwise refresh the token
+        const token = await refreshTokenIfNeeded();
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        return onRefreshError(refreshError);
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
+// This function manages token refresh and prevents multiple simultaneous refresh attempts
+async function refreshTokenIfNeeded() {
+  const token = getAccessToken();
+  
+  // If token is valid, return it
+  if (token && !isTokenExpired(token)) {
+    return token;
+  }
+  
+  // Start refresh process if not already in progress
+  if (!isRefreshing) {
+    isRefreshing = true;
+    
+    try {
+      const newToken = await refreshAccessToken(refreshApi);
+      isRefreshing = false;
+      onRefreshed(newToken);
+      return newToken;
+    } catch (error) {
+      isRefreshing = false;
+      throw error;
+    }
+  }
+  
+  // If already refreshing, wait for it to complete
+  return new Promise((resolve, reject) => {
+    subscribeTokenRefresh((token) => {
+      resolve(token);
+    });
+  });
+}
+
 export default api;
+export { refreshApi };

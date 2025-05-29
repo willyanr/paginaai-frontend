@@ -25,8 +25,8 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Size Classes
   const sizeClasses = {
-    sm: "px-4 py-3 text-sm",
-    md: "px-5 py-3.5 text-sm",
+    sm: "px-5 py-3.5 text-sm",
+    md: "px-6 py-3.5 text-sm",
   };
 
   // Variant Classes
@@ -65,7 +65,7 @@ const Button: React.FC<ButtonProps> = ({
     <div>
       {!isLoading &&
         <button
-          className={`inline-flex items-center justify-center font-medium gap-2 rounded-lg transition ${className} ${sizeClasses[size]
+          className={`inline-flex items-center justify-center font-medium gap-2 rounded-full transition ${className} ${sizeClasses[size]
             } ${variantClasses[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""
             }`}
           onClick={onClick}
@@ -79,13 +79,13 @@ const Button: React.FC<ButtonProps> = ({
       }
       {isLoading &&
         <button
-          className={`inline-flex items-center justify-center font-medium gap-2 rounded-lg transition ${className} ${sizeClasses[size]
+          className={`dark:text-white inline-flex items-center justify-center font-medium gap-2 rounded-full transition ${className} ${sizeClasses[size]
             } "
             }`}
           onClick={onClick}
           disabled={true}
         >
-          <span className="flex items-center">{loadingIcon}</span>
+          <span className="flex items-center dark:text-white">{loadingIcon}</span>
           Carregando...
         </button>
       }

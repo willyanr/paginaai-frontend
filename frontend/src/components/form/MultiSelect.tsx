@@ -31,13 +31,19 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   };
 
   const handleSelect = (optionValue: string) => {
-    const newSelectedOptions = selectedOptions.includes(optionValue)
-      ? selectedOptions.filter((value) => value !== optionValue)
-      : [...selectedOptions, optionValue];
-
-    setSelectedOptions(newSelectedOptions);
-    if (onChange) onChange(newSelectedOptions);
+    let newSelectedOptions: string[];
+  
+    if (selectedOptions.includes(optionValue)) {
+      newSelectedOptions = selectedOptions.filter((val) => val !== optionValue);
+    } else {
+      newSelectedOptions = [...selectedOptions, optionValue]; 
+    }
+    setSelectedOptions(newSelectedOptions); 
+    if (onChange) {
+      onChange(newSelectedOptions);
+    }
   };
+  
 
   const removeOption = (index: number, value: string) => {
     const newSelectedOptions = selectedOptions.filter((opt) => opt !== value);
@@ -94,10 +100,10 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   ))
                 ) : (
                   <input
-                    placeholder="Select option"
+                    placeholder="Selecione um projeto"
                     className="w-full h-full p-1 pr-2 text-sm bg-transparent border-0 outline-hidden appearance-none placeholder:text-gray-800 focus:border-0 focus:outline-hidden focus:ring-0 dark:placeholder:text-white/90"
                     readOnly
-                    value="Select option"
+                    value="Selecione um projeto"
                   />
                 )}
               </div>

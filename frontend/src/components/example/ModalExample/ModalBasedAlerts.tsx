@@ -1,12 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 
 import { Modal } from "../../ui/modal";
 import { useModal } from "@/hooks/useModal";
 
 export default function ModalBasedAlerts() {
-  const successModal = useModal();
+  const successModal = useState();
   const infoModal = useModal();
   const warningModal = useModal();
   const errorModal = useModal();
