@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import {
     getProjects as projectsService,
     updateProject as projectUpdate,
@@ -45,7 +45,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    const fetchProjects = async () => {
+    const fetchProjects = useCallback(async () => {
         try {
             const response = await projectsService();
             setUserProjects(response);
@@ -56,7 +56,10 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
             console.error('Erro real:', error.response?.data || error.message);
             throw new Error('Erro ao carregar projetos:');
         }
-    };
+     }, []); 
+
+
+    
 
     const updateProject = async (body: any, id: string) => {
         setIsLoading(true);

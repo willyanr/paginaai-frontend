@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { DomainsContextType } from '@/interfaces/domains.interface';
 import {
     getProjectsDomains as ServiceGetProjectDomains,
@@ -18,15 +18,15 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
     const { fetchProjects } = useProjects();
     const { onAlert } = useAlertContext();
 
-    const fetchProjectsDomains = async () => {
-        fetchProjects();
+    const fetchProjectsDomains = useCallback(async () => {
         try {
             const response = await ServiceGetProjectDomains();
             setDomainsData(response);
         } catch (error) {
             throw new Error('Erro ao carregar os domínios:');
         }
-    };
+    }, []); 
+
 
     const createProjectsDomains = async (payload: any) => {
         setIsLoading(true);

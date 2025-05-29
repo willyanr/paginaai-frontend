@@ -117,13 +117,12 @@ export default function SignUpForm() {
     const storedUserPayload = localStorage.getItem('userPayload') 
     if (!storedUserPayload) return
     const userPayload =  JSON.parse(storedUserPayload);
-    console.log('aaaaaaaaa',userPayload)
     setValue('fname', userPayload?.profile?.name);
     setValue('tel', userPayload?.profile?.whatsapp);
     setValue('cpf', userPayload?.profile?.cpf);
     
 
-  }, []);
+  }, [setValue]);
 
   useEffect(() => {
     if (cpfValue) {
@@ -314,13 +313,13 @@ export default function SignUpForm() {
               )}
 
               <div>
-              <Button 
-              children='Cadastrar'
-              className="w-full"
-              type="submit"
-              isLoading={isLoading}
-              
-              />
+              <Button
+                className="w-full"
+                type="submit"
+                isLoading={isLoading}
+              >
+                Cadastrar
+              </Button>
               </div>
             </div>
           </form>
