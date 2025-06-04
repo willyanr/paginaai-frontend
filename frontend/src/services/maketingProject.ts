@@ -1,3 +1,4 @@
+import { UpdatePixelPayload } from '@/interfaces/marketing.interface';
 import api from './api';
 
 export async function getProjectsMarketing() {
@@ -7,7 +8,7 @@ export async function getProjectsMarketing() {
 }
 
 
-export async function putProjectsMarketing(payload: any) {
+export async function putProjectsMarketing(payload: UpdatePixelPayload) {
     try {
       const response = await api.post(`/pixels/`, payload, {
         headers: {
@@ -15,16 +16,20 @@ export async function putProjectsMarketing(payload: any) {
         },
       });
       return response.data;
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.detail ||
-        error.response?.data?.message ||
-        'Erro desconhecido ao aualizar domínio.';
-      throw new Error(errorMessage);
+    } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao atualizar marketing.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
     }
+    throw new Error(errorMessage);
+  }
   }
 
-  export async function deleteProjectsPixel(id: string) {
+  export async function deleteProjectsPixel(id: number) {
     try {
       const response = await api.delete(`/pixels/${id}/`, {
         headers: {
@@ -32,13 +37,17 @@ export async function putProjectsMarketing(payload: any) {
         },
       });
       return response.data;
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.detail ||
-        error.response?.data?.message ||
-        'Erro desconhecido ao aualizar domínio.';
-      throw new Error(errorMessage);
+    } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao deletar pixel.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
     }
+    throw new Error(errorMessage);
+  }
   }
 
 // export async function putProjectsMarketing(payload: any) {

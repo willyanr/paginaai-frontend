@@ -1,30 +1,63 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { login as loginService,
-    logout as logoutService,
-    getAccessToken,
-    registerUser as ServiceRegisterUser,
-    verifyCodeOtp as ServiceVerifyCodeOtp,
-    resetPassword as ServiceResetPassword,
-    resetPasswordFinal as ServiceResetPasswordFinal,
-    
-  
-  } from '../services/auth';
+import {
+  login as loginService,
+  logout as logoutService,
+  getAccessToken,
+  registerUser as ServiceRegisterUser,
+  verifyCodeOtp as ServiceVerifyCodeOtp,
+  resetPassword as ServiceResetPassword,
+  resetPasswordFinal as ServiceResetPasswordFinal,
+
+} from '../services/auth';
 import { useRouter } from 'next/navigation';
 import { useAlertContext } from './AlertContext';
+
+interface LoginType {
+  email: string;
+  password: string;
+}
+
+interface ResetUserPasswordType {
+  otp: string;
+  email: string;
+  password: string;
+}
+
+interface RegisterUserType {
+  email: string,
+  password: string,
+  profile: {
+    name: string,
+    whatsapp: string,
+    cpf: string,
+    how_did_you_hear_about_us: string,
+  }
+}
+
+interface VerifyCodeResetPasswordType {
+  otp: string;
+  email: string;
+}
+
+interface VerifyCodeType {
+  cpf: string;
+  otp: string;
+  email: string;
+}
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (payload: any) => Promise<void>;
+  login: (payload: LoginType) => Promise<void>;
   logout: () => void;
   checkAuth: () => boolean;
-  register: (payload: any) => Promise<void>;
-  verifyCode:  (payload: any) => Promise<void>;
-  userResetPassword: (payload: any) => Promise<void>;
-  verifyCodeResetPassword: (payload: any) => Promise<void>;
-  resetPasswordFinal: (payload: any) => Promise<void>;
+  register: (payload: RegisterUserType) => Promise<void>;
+  verifyCode: (payload: VerifyCodeType) => Promise<void>;
+  userResetPassword: (payload: ResetUserPasswordType) => Promise<void>;
+  verifyCodeResetPassword: (payload: VerifyCodeResetPasswordType) => Promise<void>;
+  resetPasswordFinal: (payload: ResetUserPasswordType) => Promise<void>;
 }
 
 
@@ -35,7 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { onAlert } = useAlertContext();
-  // Verifica o token ao carregar a página
+
+
   useEffect(() => {
     const checkAuthentication = () => {
       const token = getAccessToken();
@@ -43,15 +77,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAuthentication();
-    
+
     window.addEventListener('storage', checkAuthentication);
-    
+
     return () => {
       window.removeEventListener('storage', checkAuthentication);
     };
   }, []);
 
-  const login = async (payload: any) => {
+  const login = async (payload: LoginType) => {
     try {
       await loginService(payload);
       setIsAuthenticated(true);
@@ -68,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/signin');
   };
 
-  const register = async (payload: any) => {
+  const register = async (payload: RegisterUserType) => {
     setIsLoading(true);
     try {
       await ServiceRegisterUser(payload);
@@ -77,21 +111,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/otp')
     } catch (error) {
       onAlert(true, 'error', error.message)
-     
+
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
-  const verifyCode = async (payload: any) => {
+  const verifyCode = async (payload: VerifyCodeType) => {
     setIsLoading(true);
     try {
       await ServiceVerifyCodeOtp(payload);
       setTimeout(() => {
         router.push('/signin');
-      }, 2000);  
+      }, 2000);
     } catch (error) {
-      
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -110,27 +144,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   };
-  const verifyCodeResetPassword = async (payload: any) => {
+  const verifyCodeResetPassword = async (payload: VerifyCodeResetPasswordType) => {
     setIsLoading(true);
     try {
       await ServiceResetPassword(payload);
     } catch (error) {
-      
+
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const resetPasswordFinal = async (payload: any) => {
+  const resetPasswordFinal = async (payload: ResetUserPasswordType) => {
     setIsLoading(true);
     try {
       await ServiceResetPasswordFinal(payload);
       setTimeout(() => {
         router.push('/signin');
-      }, 2000);  
+      }, 2000);
     } catch (error) {
-      
+
       throw error;
     } finally {
       setIsLoading(false);
@@ -138,29 +172,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
 
-
-  
-  
-  
   const checkAuth = () => {
     const token = getAccessToken();
     return !!token;
   };
 
   return (
-    <AuthContext.Provider value={{ 
+    <AuthContext.Provider value={{
       isAuthenticated,
-       isLoading,
-        login,
-         logout,
-          checkAuth,
-           register,
-            verifyCode,
-             userResetPassword,
-             verifyCodeResetPassword,
-             resetPasswordFinal
-             
-             }}>
+      isLoading,
+      login,
+      logout,
+      checkAuth,
+      register,
+      verifyCode,
+      userResetPassword,
+      verifyCodeResetPassword,
+      resetPasswordFinal
+
+    }}>
       {children}
     </AuthContext.Provider>
   );

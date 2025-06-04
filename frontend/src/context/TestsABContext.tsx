@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { TestsABContextType } from '@/interfaces/testsab.interface';
+import { DataTestsAB, TestsABContextType } from '@/interfaces/testsab.interface';
 
 import {
     getTestsAB as ServiceGetTestAB
@@ -12,17 +12,20 @@ import {
 const TestsABContext = createContext<TestsABContextType | undefined>(undefined);
 
 export const TestsABProvider = ({ children }: { children: ReactNode }) => {
-     const [ testsAB, setTestsAB ] = useState();   
+     const [ testsAB, setTestsAB ] = useState< DataTestsAB | null >(null);   
 
-
-    const fetchTestsAB = async () => {
-        try{
-            const reponse = await ServiceGetTestAB();
-            setTestsAB(reponse);
-        } catch(error : any){
-            alert(error)
+    const fetchTestsAB = React.useCallback(async () => {
+        try {
+            const response = await ServiceGetTestAB();
+            setTestsAB(response);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            } else {
+                throw new Error('An unknown error occurred');
+            }
         }
-    }
+    }, []);
     
 
 

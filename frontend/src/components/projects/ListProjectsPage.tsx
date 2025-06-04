@@ -1,29 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Moon, Sun, Edit, Trash2, Globe, Copy, ExternalLink, AlertTriangle, Check, PlusIcon } from 'lucide-react';
+import { Search, Globe, Copy, AlertTriangle, Check } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import Button from '../ui/button/Button';
-import Buttons from '@/app/(admin)/(ui-elements)/buttons/page';
 import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import Badge from '../ui/badge/Badge';
 import { useAlertContext } from '@/context/AlertContext';
 import Alert from '../ui/alert/Alert';
 import DeleteModal from '../ui/alert/DeleteModal';
-import { useModal } from '@/hooks/useModal';
 import Input from '../form/input/InputField';
 import { PencilIcon } from '@/icons';
 
 export default function ListProjectPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
   const { openModal } = useModalContext();
   const { theme } = useTheme();
   const { userProjects, fetchProjects, deleteProject, updateProject } = useProjects();
   const { isAlert, typeAlert, messageAlert, onAlert } = useAlertContext();
   const [deleteDomainID, setDomainDelete] = useState<string>('');
-  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [inputProjectName, setInputProjectName] = useState<{ [key: string]: string }>({});
 
@@ -31,7 +26,7 @@ export default function ListProjectPage() {
   useEffect(() => {
     fetchProjects();
 
-  }, []);
+  }, [fetchProjects]);
 
   useEffect(() => {
     if (theme === 'light') {
@@ -58,11 +53,6 @@ export default function ListProjectPage() {
   };
 
 
-  const showNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 3000);
-  };
-
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -73,7 +63,7 @@ export default function ListProjectPage() {
     try {
       await deleteProject(deleteDomainID);
       onAlert(true, 'success', 'Projeto excluido com sucesso!');
-    } catch (error) {
+    } catch  {
 
     }
 
@@ -86,7 +76,7 @@ export default function ListProjectPage() {
         name: inputProjectName[id]
       }, id)
       onAlert(true, 'success', 'Nome atualizado com sucesso!');
-    } catch (error: any) {
+    } catch (error: unknown ) {
       onAlert(true, 'error', error.message || 'Erro desconhecido');
     } finally {
       setEditingProjectId(null); 
@@ -122,10 +112,9 @@ export default function ListProjectPage() {
               />
             </div> */}
             <div>
-              <Button
-                children='Novo Projeto'
-                onClick={() => openModal("project")}
-              />
+              <Button onClick={() => openModal("project")}>
+                Novo Projeto
+              </Button>
 
             </div>
           </div>
@@ -161,10 +150,9 @@ export default function ListProjectPage() {
             <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
               {searchTerm ? 'Tente ajustar sua busca.' : 'Comece criando seu primeiro projeto!'}
             </p>
-            <Button
-              children='Criar novo Projeto'
-              onClick={() => openModal("project")}
-            />
+            <Button onClick={() => openModal("project")}>
+              Criar novo Projeto
+            </Button>
           </div>
         )}
 
@@ -231,7 +219,7 @@ export default function ListProjectPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Pixels:</span>
-                      <Badge children={project.pixels.length} />
+                      <Badge>{project.pixels.length}</Badge>
                     </div>
                   </div>
 
@@ -251,23 +239,25 @@ export default function ListProjectPage() {
                   {/* Buttons for removing or updating */}
                   <div className="flex justify-between items-center">
                     <Button
-                      children="Remover"
                       variant="outline"
                       size="sm"
                       onClick={() => {
                         setDomainDelete(project.id);
                         openModal('delete-domain');
                       }}
-                    />
+                    >
+                      Remover
+                    </Button>
                     {editingProjectId === project.id && (
                       <Button
-                        children="Atualizar"
                         variant="primary"
                         size="sm"
                         onClick={() => {
-                          handleEditProject(project.id); // Função que lida com a atualização do projeto
+                          handleEditProject(project.id); 
                         }}
-                      />
+                      >
+                        Atualizar
+                      </Button>
                     )}
                   </div>
                 </div>

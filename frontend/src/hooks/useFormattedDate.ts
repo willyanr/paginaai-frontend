@@ -7,7 +7,7 @@ export function useFormattedDate() {
     try {
       const parsedDate = parseISO(dateString);
       return format(parsedDate, "dd/MM/yyyy"); // ajuste o formato como quiser
-    } catch (error) {
+    } catch {
       console.error("Invalid date format:", dateString);
       return dateString;
     }

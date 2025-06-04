@@ -2,9 +2,6 @@
 import React from "react";
 import { useProjects } from "../../context/ProjectsContext";
 import Badge from "../ui/badge/Badge";
-import { useModal } from "@/hooks/useModal";
-import Button from "../ui/button/Button";
-import DeleteModal from "../ui/alert/DeleteModal";
 
 
 
@@ -12,7 +9,7 @@ import DeleteModal from "../ui/alert/DeleteModal";
 
 
 export const ListProjects = ({closeModal}) => {
-    const { userProjects, setProjectSelected, fetchProjects, setProjectSelectedID, setProjectSelectedName, deleteProject } = useProjects();
+    const { userProjects, setProjectSelected, fetchProjects, setProjectSelectedID, setProjectSelectedName } = useProjects();
 
     return (
         
@@ -38,10 +35,11 @@ export const ListProjects = ({closeModal}) => {
               
             </div>
             <Badge
-                children={project?.domain?.domain || "Sem Domínio"}
                 size="sm"
                 color={project?.domain?.verified ? "success" : "error"}
-              />
+            >
+                {project?.domain?.domain || "Sem Domínio"}
+            </Badge>
           
       
             <div className="flex items-center justify-between mt-5">

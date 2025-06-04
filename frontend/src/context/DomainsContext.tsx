@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { DomainsContextType } from '@/interfaces/domains.interface';
+import { CreateDomainPayload, DomainsContextType, UpdateDomainPayload } from '@/interfaces/domains.interface';
 import {
     getProjectsDomains as ServiceGetProjectDomains,
     createProjectsDomains as ServiceCreateProjectDomains,
@@ -22,19 +22,20 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
         try {
             const response = await ServiceGetProjectDomains();
             setDomainsData(response);
-        } catch (error) {
+        } catch {
             throw new Error('Erro ao carregar os domínios:');
         }
     }, []); 
 
 
-    const createProjectsDomains = async (payload: any) => {
+    const createProjectsDomains = async (payload: CreateDomainPayload) => {
         setIsLoading(true);
         try {
-            const response = await ServiceCreateProjectDomains(payload);
+            await ServiceCreateProjectDomains(payload);
             fetchProjects();
-        } catch (error: any) {
-            onAlert(true, 'error', error.message)
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            onAlert(true, 'error', message);
             throw new Error('Erro ao carregar os domínios:');
         } finally {
             setIsLoading(false);
@@ -45,9 +46,11 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
     const deleteProjectsDomains = async (id: string) => {
         setIsLoading(true);
         try {
-            await ServiceDeleteProjectDomains(id);
+            if (id){
+                 await ServiceDeleteProjectDomains(id);
+            }
             fetchProjectsDomains();
-        } catch (error) {
+        } catch {
             throw new Error('Erro ao carregar os domínios:');
         } finally {
             setIsLoading(false);
@@ -61,21 +64,19 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
             await ServiceVerifyProjectsDomains(domain);
             fetchProjectsDomains();
 
-        } catch (error) {
-            onAlert(true, 'error', error.message)
+        }  catch {
             throw new Error('Erro ao carregar os domínios:');
         } finally {
             setIsLoading(false);
 
         }
     };
-    const updateProjectsDomains = async (payload: any) => {
+    const updateProjectsDomains = async (payload: UpdateDomainPayload) => {
         setIsLoading(true);
         try {
-            const response = await ServiceUpdateProjectDomains(payload);
+            await ServiceUpdateProjectDomains(payload);
             fetchProjectsDomains();
-        } catch (error: any) {
-            onAlert(true, 'error', error.message)
+        } catch {
             throw new Error('Erro ao carregar atualizar projeto:');
         } finally {
             setIsLoading(false);

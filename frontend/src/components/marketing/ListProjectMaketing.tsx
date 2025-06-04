@@ -10,7 +10,7 @@ import logoDarkMeta from '../../../public/images/pixel/meta-dark.png';
 import logoGoogleAdsDark from '../../../public/images/pixel/google-adwords-logo-dark.png';
 
 
-import { MarketingProvider, useProjectsMarketing } from "@/context/MarketingContext";
+import { useProjectsMarketing } from "@/context/MarketingContext";
 import { useTheme } from '@/context/ThemeContext';
 
 
@@ -22,14 +22,14 @@ const ListProjectMarketing: React.FC = () => {
 
     useEffect(() => {
         fetchProjects();
-    }, []);
+    }, [fetchProjects]);
 
 
     const removePixel = async (pixel: number) => {
 
         try {
             await deleteProjectsMarketing(pixel)
-        } catch (error) {
+        } catch  {
             alert('erro')
         }
 
@@ -50,10 +50,9 @@ const ListProjectMarketing: React.FC = () => {
                             <span className='font-semibold px-2 dark:text-white text-gray-700'>Projeto:</span>
                             <div className='flex justify-between'>
                                 <span className='font-bold px-2 dark:text-white text-xl'>{item.name}</span>
-                                <Badge
-                                    children='Ativo'
-                                    color='success'
-                                />
+                                <Badge color='success'>
+                                    Ativo
+                                </Badge>
                             </div>
                         </div>
                         <div className="flex flex-col gap-3">
@@ -100,8 +99,9 @@ const ListProjectMarketing: React.FC = () => {
                                             <Badge
                                                 color="dark"
                                                 size="sm"
-                                                children='Remover'
-                                            />
+                                            >
+                                                Remover
+                                            </Badge>
                                         </div>
 
                                     </div>

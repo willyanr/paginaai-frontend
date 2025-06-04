@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
     getProjects as projectsService,
     updateProject as projectUpdate,
@@ -6,97 +6,84 @@ import {
     getAssets as ServiceGetAssets,
     createProject
 } from '../services/projects';
+import { CreateProjectUserPayload, DataProjectUser, ProjectsContextType, UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 
-
-interface ProjectsContextType {
-    projectGraper: any[] | null;
-    userProjects: any[] | null;
-    projectSelected: unknown[];
-    projectSelectedID: string | null;
-    projectSelectedName: any | null;
-    isNewProject: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    isLoading: boolean;
-    fetchProjects: () => Promise<void>;
-    updateProject: (body: any) => Promise<void>;
-    createNewProject: (payload: any) => Promise<void>;
-    setProjectSelected: (project: string) => void;
-    setProjectSelectedID: (id: any) => void;
-    setProjectSelectedName: (name: any) => void;
-    deleteProject: (id: any) => Promise<void>;
-    fetchProjectsAssets: () => Promise<void>;
-
-    // addProject: (project: Omit<Project, 'id'>) => Promise<void>;
-}
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
 
 export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [userProjects, setUserProjects] = useState<any[]>([]);
+    const [userProjects, setUserProjects] = useState<DataProjectUser[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [projectSelected, setProjectSelected] = useState(null);
-    const [projectSelectedID, setProjectSelectedID] = useState(null);
-    const [projectSelectedName, setProjectSelectedName] = useState(null);
+    const [projectSelected, setProjectSelected] = useState<[]>([]);
+    const [projectSelectedID, setProjectSelectedID] = useState<number | null>(null);
+    const [projectSelectedName, setProjectSelectedName] = useState<string | null>(null);
 
 
     const [projectGraper, setProjects] = useState(null);
-    const [isNewProject, setIsNewProject] = useState(false);
+    const [isNewProject] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [isError] = useState(false);
 
-    const fetchProjects = useCallback(async () => {
+    const fetchProjects = React.useCallback(async () => {
         try {
             const response = await projectsService();
             setUserProjects(response);
             const raw = response[0].project_data;
             setProjects(raw);
 
-        } catch (error) {
-            console.error('Erro real:', error.response?.data || error.message);
+        } catch {
             throw new Error('Erro ao carregar projetos:');
         }
-     }, []); 
+    }, []);
 
 
-    
 
-    const updateProject = async (body: any, id: string) => {
+
+    const updateProject = async (body: UpdateProjectUserPayload, id: number) => {
         setIsLoading(true);
         try {
             const response = await projectUpdate(body, id);
             setProjectSelected(response.project_data);
             fetchProjects();
-        } catch (error: any) {
-            throw new Error(error.message);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            } else {
+                throw new Error('An unknown error occurred while updating the project.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
-    const createNewProject = async (payload: any) => {
+    const createNewProject = async (payload: CreateProjectUserPayload) => {
         try {
             await createProject(payload);
             await fetchProjects();
-
             setIsSuccess(true);
-        } catch (error) {
-            throw new Error('Error update Project:');
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                throw new Error(`Error updating project: ${error.message}`);
+            } else {
+                throw new Error('An unknown error occurred while updating the project.');
+            }
         }
     };
 
-    const deleteProject = async (id: string) => {
+
+    const deleteProject = async (id: number) => {
         try {
             await projectServiceDelete(id);
             await fetchProjects();
-        } catch (error) {
+        } catch {
             throw new Error('Error update Project:');
         }
     };
+
     const fetchProjectsAssets = async () => {
         try {
             return await ServiceGetAssets();
-        } catch (error) {
+        } catch {
             throw new Error('Error update Project:');
         }
     };

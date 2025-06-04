@@ -1,4 +1,4 @@
-import { UserContextType } from '@/interfaces/user.interface';
+import { DataUser } from '@/interfaces/user.interface';
 import api from './api';
 
 export async function getUser() {
@@ -6,7 +6,7 @@ export async function getUser() {
   return res.data
 }
 
-export async function putUser(payload: UserContextType) {
+export async function putUser(payload: DataUser) {
   try {
     const res = await api.put('/accounts/profile/', JSON.stringify(payload), {
       headers: {

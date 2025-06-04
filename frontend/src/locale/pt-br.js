@@ -7,7 +7,7 @@ exports.default = void 0;
 var traitInputAttr = {
   placeholder: 'ex: Insira o texto'
 };
-var _default = exports.default = {
+exports.default = {
   assetManager: {
     addButton: 'Adicionar imagem',
     inputPlh: 'http://caminho/para/a/imagem.jpg',

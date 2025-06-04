@@ -84,7 +84,6 @@ export default function ResetPassword() {
         email: userEmail,
         password: data.password,
       };
-  
       await resetPasswordFinal(payload);
       onAlert(true, "success", 'Senha alterada com sucesso!');
     } catch (error) {

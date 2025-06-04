@@ -4,13 +4,11 @@ import { useProjectsDomains } from '@/context/DomainsContext';
 import { useProjects } from '@/context/ProjectsContext';
 import { useModalContext } from '@/context/ModalContext';
 import Button from '../ui/button/Button';
+import { ModalEditDomainPropsType } from '@/interfaces/modalEdit.interface';
 
-interface ModalEditDomainProps {
-    domain: string;
-    id_domain: string;
-}
 
-const ModalEditDomain: React.FC<ModalEditDomainProps> = ({ domain, id_domain }) => {
+
+const ModalEditDomain: React.FC<ModalEditDomainPropsType> = ({ domain, id_domain }) => {
     const { isOpen, closeModal } = useModalContext();
     const [selected, setSelected] = useState<{ [key: string]: string }>({});
     const { userProjects } = useProjects();
@@ -52,7 +50,6 @@ const ModalEditDomain: React.FC<ModalEditDomainProps> = ({ domain, id_domain }) 
             throw new Error('Erro ao atualizar domínio');
         }
     };
-
 
     return (
         <div>

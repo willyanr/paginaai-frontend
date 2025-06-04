@@ -1,9 +1,7 @@
-// api.ts
 import axios from 'axios';
 import { getAccessToken, isTokenExpired, refreshAccessToken, logout } from './auth';
 
-// Create a separate axios instance for the refresh token request
-// This instance has no interceptors to avoid the loop
+
 const refreshApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   headers: {
@@ -11,7 +9,6 @@ const refreshApi = axios.create({
   },
 });
 
-// Main API instance with interceptors
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
   headers: {
@@ -19,26 +16,21 @@ const api = axios.create({
   },
 });
 
-// Flag to prevent multiple refresh attempts at the same time
-let isRefreshing = false;
-// Store pending requests that should be retried after token refresh
-let refreshSubscribers = [];
 
-// Function to add callbacks to the queue
-const subscribeTokenRefresh = (callback) => {
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+const subscribeTokenRefresh = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback);
 };
 
-// Function to resolve all pending requests
-const onRefreshed = (token) => {
+const onRefreshed = (token: string) => {
   refreshSubscribers.forEach(callback => callback(token));
   refreshSubscribers = [];
 };
 
-// Handle token refresh failure
-const onRefreshError = (error) => {
+const onRefreshError = (error: unknown) => {
   refreshSubscribers = [];
-  // Logout and redirect
   logout();
   if (typeof window !== 'undefined') {
     window.location.href = '/signin';
@@ -84,7 +76,7 @@ api.interceptors.response.use(
       try {
         // Wait for token refresh if already in progress
         if (isRefreshing) {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve) => {
             subscribeTokenRefresh((token) => {
               originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(api(originalRequest));
@@ -129,8 +121,7 @@ async function refreshTokenIfNeeded() {
     }
   }
   
-  // If already refreshing, wait for it to complete
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     subscribeTokenRefresh((token) => {
       resolve(token);
     });

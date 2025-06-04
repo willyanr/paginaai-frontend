@@ -1,6 +1,6 @@
 import { useProjects } from "@/context/ProjectsContext";
 import React, { useEffect, useState } from "react";
-import { BarChart3, Zap, CheckCircle, Circle, List } from 'lucide-react';
+import { BarChart3, Zap, CheckCircle, Circle } from 'lucide-react';
 
 import Label from '../form/Label';
 import Select from '../form/Select';
@@ -14,7 +14,7 @@ const ListProjects: React.FC = () => {
   const canStartTest = selectedProjects.length >= 2;
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [fetchProjects]);
 
 
   const handleProjectSelect = (project) => {
@@ -89,9 +89,9 @@ const ListProjects: React.FC = () => {
             </div>
           </div>
           <div className='py-5'>
-            <Label
-              children="Selecione o dominio para iniciar o teste A/B"
-            />
+            <Label>
+              Selecione o dominio para iniciar o teste A/B
+            </Label>
             <Select
               options={[
                 { value: 'domain1', label: 'dominio1.com' },
@@ -114,9 +114,10 @@ const ListProjects: React.FC = () => {
             <Button
             className="w-full"
               startIcon={<Zap className="w-4 h-4 mr-2" />}
-              children='Iniciar Teste A/B'
               disabled={!canStartTest}
-            />
+            >
+              Iniciar Teste A/B
+            </Button>
           }
           
         </div>

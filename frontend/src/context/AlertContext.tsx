@@ -1,6 +1,7 @@
+import { AlertContextType } from '@/interfaces/alert.interface';
 import React, { createContext, useState, useContext } from 'react';
 
-const AlertContext = createContext(undefined);
+const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 
 export const AlertProvider = ({ children }) => {
@@ -10,8 +11,7 @@ export const AlertProvider = ({ children }) => {
 
 
 
-    const onAlert = (isAlert: boolean, typeAlert: string, messageAlert: string) => {
-     
+    const onAlert = async (isAlert: boolean, typeAlert: string, messageAlert: string): Promise<void> => {
         setIsAlert(isAlert);
         setTypeAlert(typeAlert);
         setMessageAlert(messageAlert);
@@ -20,7 +20,6 @@ export const AlertProvider = ({ children }) => {
             setTypeAlert('');
             setMessageAlert('');
         }, 3000); 
-
     };
 
 

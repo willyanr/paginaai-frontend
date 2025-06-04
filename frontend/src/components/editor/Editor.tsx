@@ -94,7 +94,7 @@ export default function DefaultEditor() {
       const editor = editorRef.current;
       editor.DomComponents.clear();
       editor.CssComposer.clear();
-    } catch (error) {
+    } catch {
       onAlert(true, 'error', 'Erro ao limpar projeto!')
     }
 
@@ -103,7 +103,7 @@ export default function DefaultEditor() {
     const editor = editorRef.current;
     try {
       const res = await fetchProjectsAssets();
-      console.log('RESPOSTA', res); // Verificar estrutura do retorno
+      console.log('RESPOSTA', res); 
 
       if (!res || !res.data || res.data.length === 0) {
         console.warn('Nenhuma imagem encontrada');
@@ -111,7 +111,7 @@ export default function DefaultEditor() {
       }
 
       const am = editor.AssetManager;
-      am.add(res.data.map(img => ({ type: 'image', src: img.src, name: img.name }))); // Pegando o array dentro de `data`
+      am.add(res.data.map(img => ({ type: 'image', src: img.src, name: img.name }))); 
       am.render();
     } catch (error) {
       console.error('Erro ao obter imagens:', error);
@@ -145,35 +145,37 @@ export default function DefaultEditor() {
       <div className="flex justify-between gap-4 mb-3 items-center ">
         <div className='flex justify-start px-3 items-center gap-5'>
           <Button
-            children="Desfazer tudo"
             size="sm"
             startIcon={<TrashBinIcon />}
             onClick={() => {
               clearProject();
             }}
             isLoading={isLoading}
-
-          />
+          >
+            Desfazer tudo
+          </Button>
           <span className='text-white text-xl font-semibold'>Projeto: {projectSelectedName}</span>
         </div>
         <div className="flex justify-end gap-4">
           <Button
-            children="Trocar de projeto"
             size="sm"
             variant="outline"
             onClick={() => {
               openModal("project")
             }}
-          />
+          >
+            Trocar de projeto
+          </Button>
 
           <Button
             size="sm"
             onClick={() => {
               OnSave();
             }}
-            children="Publicar Projeto"
             isLoading={isLoading}
-          />
+          >
+            Publicar Projeto
+          </Button>
         </div>
       </div>
       <GjsEditor

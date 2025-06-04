@@ -12,7 +12,7 @@ const ListTestsAB: React.FC = () => {
 
     useEffect(() => {
         fetchTestsAB();
-    }, []);
+    }, [fetchTestsAB]);
 
     console.log(testsAB)
     return (
@@ -29,9 +29,10 @@ const ListTestsAB: React.FC = () => {
                                     <a href=""></a>
                                     <Badge
                                         startIcon={<AB className="w-4 h-4" />}
-                                        children="Testando"
                                         size='sm'
-                                    />
+                                    >
+                                        Testando
+                                    </Badge>
                                 </div>
                             </div>
                             <div className='mb-5'>
@@ -70,17 +71,17 @@ const ListTestsAB: React.FC = () => {
                             </div>
                             <div className='flex justify-center py-5'>
                                 {false &&
-                                    <Button
-                                        size='sm'
-                                        children='Ver Resultados'
-                                    />
+                                    <Button size='sm'>
+                                        Ver Resultados
+                                    </Button>
                                 }
                                 {true &&
                                   <Button
                                         size='sm'
                                         variant='outline'
-                                        children='Cancelar Teste A/B'
-                                    />
+                                    >
+                                        Cancelar Teste A/B
+                                    </Button>
                                 }
                             </div>
                         </div>

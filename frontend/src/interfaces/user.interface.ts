@@ -1,4 +1,4 @@
-export interface User {
+export interface DataUser {
   id: number;
   email: string;
   name: string;
@@ -15,8 +15,8 @@ export interface User {
 }
 
 export interface UserContextType {
-  user: User | null;
+  user: DataUser | null;
   isLoading: boolean;
   getUserApi: () => void;
-  putUserApi: (payload: User) => Promise<void>;
+  putUserApi: (payload: DataUser) => Promise<void>;
 }

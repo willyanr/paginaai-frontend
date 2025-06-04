@@ -1,10 +1,9 @@
 import React from 'react';
-import { TrendingUp, Users, Target, Award, BarChart3 } from 'lucide-react';
+import {Award, BarChart3 } from 'lucide-react';
 
 
 
 const ResultTestsAB: React.FC = () => {
-  // Dados de exemplo do teste A/B
   const testData = {
     testName: "Botão CTA - Landing Page",
     duration: "14 dias",

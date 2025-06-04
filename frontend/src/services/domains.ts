@@ -1,3 +1,4 @@
+import { CreateDomainPayload, UpdateDomainPayload } from '@/interfaces/domains.interface';
 import api from './api';
 
 export async function getProjectsDomains() {
@@ -5,12 +6,9 @@ export async function getProjectsDomains() {
   return res.data
 };
 
-interface DomainPayload {
-  name: string;
-  project: string;
-}
 
-export async function createProjectsDomains(payload: DomainPayload) {
+
+export async function createProjectsDomains(payload: CreateDomainPayload) {
   try {
     const response = await api.post(`/domains/`, payload, {
       headers: {
@@ -18,26 +16,34 @@ export async function createProjectsDomains(payload: DomainPayload) {
       },
     });
     return response.data;
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      'Erro desconhecido ao criar domínio.';
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao criar domínio.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
     throw new Error(errorMessage);
   }
 }
 
 
 
-export async function deleteProjectDomains(id: null) {
+export async function deleteProjectDomains(id: string) {
   try {
     await api.delete(`/domains/${id}/`); 
-  } catch (error) {
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      'Erro desconhecido ao criar domínio.';
-      throw new Error(errorMessage);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao deletar Dominio.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 
@@ -53,16 +59,20 @@ export async function verifyProjectsDomains(domain: string) {
       },
     });
     return response.data;
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      'Erro desconhecido ao criar domínio.';
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao verificar dominio.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
     throw new Error(errorMessage);
   }
 }
 
-export async function updateProjectsDomains(payload: any) {
+export async function updateProjectsDomains(payload: UpdateDomainPayload) {
   try {
     const domainID = payload.id
     const projectID = {
@@ -74,11 +84,15 @@ export async function updateProjectsDomains(payload: any) {
       },
     });
     return response.data;
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      'Erro desconhecido ao aualizar domínio.';
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao atualizar dominio.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
     throw new Error(errorMessage);
   }
 }

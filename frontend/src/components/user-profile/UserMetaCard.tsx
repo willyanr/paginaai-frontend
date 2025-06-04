@@ -5,12 +5,11 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import Image from "next/image";
 import Badge from "../ui/badge/Badge";
 
 
 export default function UserMetaCard({user}) {
-  const { isOpen, openModal, closeModal } = useModal();
+  const { closeModal } = useModal();
   const avatar = (
     <svg 
     className="text-brand-500"
@@ -19,7 +18,6 @@ export default function UserMetaCard({user}) {
 
 
   const handleSave = () => {
-    // Handle save logic here
     console.log("Saving changes...");
     closeModal();
 
@@ -48,9 +46,9 @@ export default function UserMetaCard({user}) {
                 {user?.email}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
-                <Badge 
-                children='Gratuito'
-                />
+                <Badge>
+                  Gratuito
+                </Badge>
               </div>
             </div>
             

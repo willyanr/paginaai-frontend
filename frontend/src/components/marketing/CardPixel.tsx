@@ -14,23 +14,19 @@ import logoGoogleAds from '../../../public/images/pixel/google-adwords-logo.png'
 import logoGoogleAdsDark from '../../../public/images/pixel/google-adwords-logo-dark.png';
 
 
-import { MarketingProvider } from "@/context/MarketingContext";
 import { useProjectsMarketing } from "@/context/MarketingContext";
 import Alert from "../ui/alert/Alert";
-import ListProjects from "../editor/ListProjects";
 import Button from "../ui/button/Button";
-import MultiSelect from "../form/MultiSelect";
 import { useProjects } from "@/context/ProjectsContext";
 import Select from "../form/Select";
 import ListProjectMarketing from "./ListProjectMaketing";
-import Badge from "../ui/badge/Badge";
 import YouTubeEmbed from "../ui/video/YouTubeEmbed";
 import { useTheme } from "@/context/ThemeContext";
 
 
 
 export default function CardPixel() {
-  const { marketingData, isLoading, fetchProjectsMarketing, updateProjectMarketing } = useProjectsMarketing();
+  const { marketingData, fetchProjectsMarketing, updateProjectMarketing } = useProjectsMarketing();
   const [isAlert, setIsAlert] = useState(false);
   const [isAlertError, setIsAlerttError] = useState(false);
   const { userProjects, fetchProjects } = useProjects();
@@ -46,7 +42,7 @@ export default function CardPixel() {
     fetchProjectsMarketing();
     fetchProjects();
 
-  }, []);
+  }, [fetchProjectsMarketing, fetchProjects]);
 
   const safeMarketingData = useMemo(() => {
     return marketingData || {};
@@ -117,7 +113,7 @@ export default function CardPixel() {
       setTimeout(() => {
         setIsAlert(false);
       }, 3000);
-    } catch (error) {
+    } catch {
       setIsAlerttError(true);
       setTimeout(() => {
         setIsAlerttError(false);
@@ -233,14 +229,14 @@ export default function CardPixel() {
 
                 <div className="flex justify-end py-2">
                   <Button
-                    children='+ Adicionar Pixel'
                     onClick={() => {
                       createPixelProject(platform.type);
                       setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [platform.type]: true }));
                     }}
                     isLoading={isLoadingButton[platform.type] || null}
-
-                  />
+                  >
+                    + Adicionar Pixel
+                  </Button>
                 </div>
               </li>
             ))}

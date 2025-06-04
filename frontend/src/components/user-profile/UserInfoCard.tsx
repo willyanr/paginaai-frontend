@@ -7,7 +7,6 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { useFormattedDate } from "@/hooks/useFormattedDate";
 import Link from "next/link";
-import { useModalContext } from "@/context/ModalContext";
 import { useUser } from "@/context/UserContext";
 
 import * as yup from "yup";
@@ -26,12 +25,11 @@ export default function UserInfoCard({ user }) {
 
 
   const isValidCNPJ = (value: string | undefined): boolean => {
-    if (!value) return true; // Se vazio, está ok
+    if (!value) return true; 
     const cleaned = value.replace(/\D/g, '');
 
     if (cleaned.length !== 14) return false;
 
-    // Rejeita sequências repetidas
     if (/^(\d)\1{13}$/.test(cleaned)) return false;
 
     const t = cleaned.length - 2,
@@ -39,7 +37,7 @@ export default function UserInfoCard({ user }) {
       d1 = parseInt(d.charAt(0)),
       d2 = parseInt(d.charAt(1)),
       calc = (x: number) => {
-        let n = 0, i = x - 7, j = 0;
+        let n = 0, j = 0;
         for (let i = x; i >= 1; i--) {
           n += parseInt(cleaned.charAt(j)) * i;
           j++;
@@ -83,11 +81,7 @@ export default function UserInfoCard({ user }) {
     }
   }
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
-  };
+ 
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">

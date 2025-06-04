@@ -5,28 +5,25 @@ import ListProjects from './ListProjects';
 import { useEffect, useState } from 'react';
 import { Modal } from '../ui/modal';
 
-import { useModal } from '@/hooks/useModal';
 import { useProjects } from '@/context/ProjectsContext';
 import { useModalContext } from '@/context/ModalContext';
-import DeleteModal from '../ui/alert/DeleteModal';
 
 
 
 
-export default function ModalEditor({ isListProject }) {
-  const { projects, isNewProject, fetchProjects, updateProject, createNewProject } = useProjects();
-  const { isOpen, closeModal, openModal } = useModalContext();
+export default function ModalEditor() {
+  const { fetchProjects, createNewProject } = useProjects();
+  const { isOpen, closeModal } = useModalContext();
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [errorInput, setErrorInput] = useState(false);
-  const [setSuccessInput] = useState(false);
   const [isDisabledButton, setIsDisabledButton] = useState(false);
 
 
   useEffect(() => {
     fetchProjects();
 
-  }, []);
+  }, [fetchProjects]);
 
 
   const startNewProject = async () => {
@@ -40,7 +37,7 @@ export default function ModalEditor({ isListProject }) {
       payload.append('name', projectName);
       payload.append('description', projectDescription);
       await createNewProject(payload);
-    } catch (error) {
+    } catch {
       return new Error('Error ao criar projeto');
     } finally {
       setIsDisabledButton(false);
@@ -57,10 +54,9 @@ export default function ModalEditor({ isListProject }) {
             <p className="text-lg text-gray-600 mb-2 dark:text-white">Bora começar seu projeto, e escalar muito suas vendas!</p>
             <div className="flex items-center gap-4 py-3">
               <div className='w-1/2'>
-                <Label
-                  children="Nome do projeto"
-                  className='dark:text-gray-200'
-                />
+                <Label className='dark:text-gray-200'>
+                  Nome do projeto
+                </Label>
                 <Input
                   error={errorInput}
                   type='text'
@@ -69,10 +65,9 @@ export default function ModalEditor({ isListProject }) {
                 />
               </div>
               <div className='w-1/2'>
-                <Label
-                  children="Descrição do projeto"
-                  className='dark:text-gray-200'
-                />
+                <Label className='dark:text-gray-200'>
+                  Descrição do projeto
+                </Label>
                 <Input
                   type='text'
                   placeholder='Digite uma descrição para seu primeiro projeto'
@@ -90,12 +85,13 @@ export default function ModalEditor({ isListProject }) {
           <div className="flex justify-end mt-4">
             <div className='space-x-5'>
               <Button
-                children="Criar novo Projeto"
                 variant="primary"
                 size="sm"
                 onClick={startNewProject}
                 disabled={isDisabledButton}
-              />
+              >
+                Criar novo Projeto
+              </Button>
 
             </div>
           </div>

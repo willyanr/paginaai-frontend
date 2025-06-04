@@ -4,7 +4,11 @@ import { useModalContext } from '@/context/ModalContext';
 
 
 
-const DeleteModal: React.FC<any> = ({onDelete}) => {
+interface DeleteModalProps {
+    onDelete: () => void;
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({onDelete}) => {
     const { isOpen, closeModal} = useModalContext();
 
     return (

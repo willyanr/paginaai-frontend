@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { 
+import {
   getUser as ServiceGetUser,
   putUser as ServicePutUser
- } from '../services/user';
-import { UserContextType, User } from '@/interfaces/user.interface';
+} from '../services/user';
+import { UserContextType, DataUser } from '@/interfaces/user.interface';
+import { useCallback } from 'react';
 
 
 
@@ -17,24 +18,32 @@ export const useUser = () => {
 };
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null); 
+  const [user, setUser] = useState<DataUser | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const getUserApi = async () => {
+  const getUserApi = useCallback(async () => {
     try {
       const data = await ServiceGetUser();
       setUser(data[0]);
-    } catch (err) {
-      alert('Erro ao obter dados do usuário');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('An unknown error occurred');
+      }
     }
-  };
-  
-  const putUserApi = async (payload: User) => {
+  }, []);
+
+  const putUserApi = async (payload: DataUser) => {
     setIsLoading(true);
     try {
       await ServicePutUser(payload);
-    } catch (err) {
-      throw new Error('Erro ao atualizar User:');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('An unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }

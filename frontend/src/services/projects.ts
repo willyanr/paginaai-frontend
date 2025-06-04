@@ -1,3 +1,4 @@
+import { CreateProjectUserPayload, UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 import api from './api';
 
 export async function getProjects() {
@@ -5,34 +6,53 @@ export async function getProjects() {
   return res.data
 };
 
-export async function updateProject(body: FormData, id: string) {
+export async function updateProject(body: UpdateProjectUserPayload, id: number) {
   try {
     const response = await api.put(`/projects/${id}/`, body);
     return response.data
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      'Erro desconhecido';
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao atulizar projeto';;
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
     throw new Error(errorMessage);
   }
 }
 
-export async function createProject(payload: any) {
+export async function createProject(payload: CreateProjectUserPayload) {
   try {
     await api.post(`/projects/`, payload);
-  } catch (error) {
-    console.error('Erro real:', error.response?.data || error.message);
-    throw new Error('Error update Project');
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao criar Projeto.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 
-export async function deleteProject(id: string) {
+export async function deleteProject(id: number): Promise<boolean> {
   try {
-    const response = await api.delete(`/projects/${id}/`);
+    await api.delete(`/projects/${id}/`);
     return true;
-  } catch (error) {
-    console.error('Erro real:', error.message);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao deletar projeto.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 

@@ -5,19 +5,9 @@ import {
     deleteProjectsPixel as DeleteServiceProjectPixel
 } from '../services/maketingProject';
 import { useProjects } from './ProjectsContext';
+import { MarketingContextType, UpdatePixelPayload } from '@/interfaces/marketing.interface';
 
 
-
-
-
-interface MarketingContextType {
-    marketingData: any[] | null;
-    fetchProjectsMarketing: () => Promise<void>;
-    updateProjectMarketing: (payload: any) => Promise<void>;
-    deleteProjectsMarketing: (id: id) => Promise<void>;
-    isLoading: boolean;
-
-}
 
 const MarketingContext = createContext<MarketingContextType | undefined>(undefined);
 
@@ -26,32 +16,32 @@ export const MarketingProvider: React.FC<{ children: ReactNode }> = ({ children 
     const {fetchProjects} = useProjects();
     const [ isLoading, setIsloading ] = useState<boolean>()
 
-    const fetchProjectsMarketing = async () => {
+    const fetchProjectsMarketing = React.useCallback(async () => {
         try {
             const response = await getProjectsMarketing();
             setMarketingData(response[0]);
             fetchProjects();
-        } catch (error) {
-            
+            return response[0];
+        } catch {
             throw new Error('Erro ao carregar o marketing:'); 
         }
-      };
+    }, [fetchProjects]);
 
-      const updateProjectMarketing = async (payload:any) => {
+      const updateProjectMarketing = async (payload: UpdatePixelPayload) => {
         setIsloading(true);
         try{
             await UpdateServiceProjectsMarketing(payload);
             fetchProjects();
-        } catch (error) {
+        } catch {
             throw new Error('Error atualizar Pixel:');
         } finally {
         }
       };
-      const deleteProjectsMarketing = async (id: string) => {
+      const deleteProjectsMarketing = async (id: number) => {
         try{
             await DeleteServiceProjectPixel(id);
             fetchProjects();
-        } catch (error) {
+        } catch {
             throw new Error('Error delete Pixel:');
         }
       };
