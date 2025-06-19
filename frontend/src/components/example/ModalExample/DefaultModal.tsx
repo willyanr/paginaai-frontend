@@ -9,18 +9,17 @@ import { useModal } from "@/hooks/useModal";
 export default function DefaultModal() {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
-    // Handle save logic here
     console.log("Saving changes...");
     closeModal();
   };
   return (
     <div>
       <ComponentCard title="Default Modal">
-        <Button size="sm" onClick={openModal}>
+        <Button size="sm" onClick={() => openModal("default-modal")}>
           Open Modal
         </Button>
         <Modal
-          isOpen={isOpen}
+          isOpen={isOpen('default-modal')}
           onClose={closeModal}
           className="max-w-[600px] p-5 lg:p-10"
         >

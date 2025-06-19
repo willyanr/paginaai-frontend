@@ -1,74 +1,34 @@
 // auth.ts
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
+import { LoginUser, RegisterUser, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
 
 interface TokenPayload {
   exp: number;
   user_id: string;
 }
-const extractErrorMessage = (error) => {
-  const data = error?.response?.data;
 
-  if (!data) return 'Erro desconhecido';
+interface VerifyOtpPayload {
+  cpf: string,
+  otp: string
+  email: string
+}
 
-  // Se for string simples no campo "detail"
-  if (typeof data.detail === 'string') return data.detail;
 
-  // Se for lista de erros por campo
-  const flatErrors = [];
 
-  const parseErrors = (obj) => {
-    for (const key in obj) {
-      const val = obj[key];
-
-      if (Array.isArray(val)) {
-        // Para cada mensagem de erro no array
-        val.forEach(errorMsg => {
-          if (typeof errorMsg === 'string') {
-            // Remove "profile:" e "profile" e adiciona asterisco
-            const cleanedError = errorMsg.replace(/profile:|profile /g, '').trim();
-            flatErrors.push(`*${cleanedError}`);
-          }
-        });
-      } else if (typeof val === 'object' && val !== null) {
-        parseErrors(val);
-      } else if (typeof val === 'string') {
-        // Para mensagens que são strings diretas
-        const cleanedError = val.replace(/profile:|profile /g, '').trim();
-        flatErrors.push(`*${cleanedError}`);
-      }
-    }
-  };
-
-  parseErrors(data);
-
-  // Se não encontrou erros, verifica se há uma string não processada
-  if (flatErrors.length === 0 && typeof data === 'string') {
-    return data.replace(/profile:|profile /g, '').trim();
-  }
-
-  // Junta todos os erros com quebra de linha
-  return flatErrors.length > 0 
-    ? flatErrors.join('\n') 
-    : 'Erro desconhecido';
-};
-
-export async function login(payload: any) {
-  // Import directly to avoid circular dependency
+export async function login(payload: LoginUser) {
   const { default: api } = await import('./api');
-  
   try {
     const res = await api.post('/accounts/login/', payload, {
       timeout: 5000
     });
     const { access, refresh } = res.data;
-    
-    // Store tokens
+
     Cookies.set('access', access, { secure: true, sameSite: 'strict' });
     Cookies.set('refresh', refresh, { secure: true, sameSite: 'strict' });
     localStorage.setItem('access', access);
     localStorage.setItem('refresh', refresh);
-    
+
     return res.data;
   } catch (error) {
     console.error('Login error:', error);
@@ -101,44 +61,62 @@ export function isTokenExpired(token: string) {
   }
 }
 
-export async function refreshAccessToken(apiInstance) {
-  const refresh = getRefreshToken();
+import type { AxiosInstance } from 'axios';
+
+export async function refreshAccessToken(apiInstance: AxiosInstance) {
   
+  const refresh = getRefreshToken();
+
   if (!refresh) {
     throw new Error('No refresh token available');
   }
-  
+
   try {
-    // Use the passed api instance to make the request
-    const res = await apiInstance.post('/token/refresh/', { refresh });
+    const res = await apiInstance.post('http://localhost:8000/api/token/refresh/', { refresh });
     const { access } = res.data;
-    
+    console.log('Refresh token:', refresh);
+
+
     localStorage.setItem('access', access);
+    console.log('salvei aqui', localStorage.getItem('access'));
     Cookies.set('access', access, { secure: true, sameSite: 'strict' });
-    
+
     return access;
-  } catch (error) {
-    logout();
+  } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ';
+        alert(errorMessage)
+
+    // logout();
     throw error;
   }
 }
 
-export async function registerUser(payload: any) {
+export async function registerUser(payload: RegisterUser) {
   const { default: api } = await import('./api');
   try {
-    const response = await api.post(`/accounts/register/`, payload, {
+    
+    await api.post(`/accounts/register/`, payload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
-  } catch (error: any) {
-      const msg = extractErrorMessage(error);
-      throw new Error(msg);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao criar um usuário';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
-  
+
 }
 
-export async function verifyCodeOtp(payload: any) {
+export async function verifyCodeOtp(payload: VerifyOtpPayload) {
   const { default: api } = await import('./api');
   try {
     const res = await api.post('/accounts/validate-otp/', payload, {
@@ -147,15 +125,22 @@ export async function verifyCodeOtp(payload: any) {
       },
       timeout: 1000
     });
-    
+
     return res.data;
-  } catch (error: any) {
-    const msg = extractErrorMessage(error);
-    throw new Error(msg);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao verificar código.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 
-export async function resetPassword(payload: any) {
+export async function resetPassword(payload: string | VerifyCodePayload)  {
   const { default: api } = await import('./api');
   try {
     const res = await api.post('/accounts/reset-password/', JSON.stringify(payload), {
@@ -164,15 +149,22 @@ export async function resetPassword(payload: any) {
       },
       timeout: 10000
     });
-    
+
     return res.data;
-  } catch (error: any) {
-    const msg = extractErrorMessage(error);
-    throw new Error(msg);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao redefinir senha.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 
-export async function resetPasswordFinal(payload: any) {
+export async function resetPasswordFinal(payload: ResetUserPasswordPayload) {
   const { default: api } = await import('./api');
   try {
     const res = await api.put('/accounts/reset-password/', JSON.stringify(payload), {
@@ -181,10 +173,17 @@ export async function resetPasswordFinal(payload: any) {
       },
       timeout: 10000
     });
-    
+
     return res.data;
-  } catch (error: any) {
-    const msg = extractErrorMessage(error);
-    throw new Error(msg);
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao atualizar senha.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }

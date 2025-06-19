@@ -58,7 +58,7 @@ export default function SignInForm() {
       await login(payload);
       onAlert(true, 'success', 'Login realizado com sucesso!')
     } catch (error: unknown) {
-      onAlert(true, 'error', error.message)
+      onAlert(true, 'error', error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.')
     }
   };
 
@@ -139,7 +139,6 @@ export default function SignInForm() {
                   <Input
                     placeholder="Digite seu e-mail"
                     type="email"
-                    name="email"
                     {...register("email")}
 
                   />
@@ -157,7 +156,6 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Digite sua senha"
-                      name="password"
                       {...register("password")}
                     />
                     <span
@@ -219,7 +217,7 @@ export default function SignInForm() {
           <div className="fixed top-24 right-4 z-50">
             <Alert
               message={messageAlert}
-              variant={typeAlert}
+              variant={typeAlert as "error" | "success" | "warning" | "info"}
               title={typeAlert === "success" ? "Sucesso" : "Erro"}
             />
           </div>

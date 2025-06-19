@@ -6,9 +6,10 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import Badge from "../ui/badge/Badge";
+import { DataUser } from "@/interfaces/user.interface";
 
 
-export default function UserMetaCard({user}) {
+export default function UserMetaCard({ user }: { user: DataUser }) {
   const { closeModal } = useModal();
   const avatar = (
     <svg 

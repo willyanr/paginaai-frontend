@@ -1,12 +1,11 @@
 "use client";
-
-import { createContext, useContext } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import { useModal } from "../hooks/useModal";
 import { ModalContextType } from "@/interfaces/modal.interface";
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
-export const ModalProvider = ({ children }) => {
+export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const modal = useModal(); 
 
   return (

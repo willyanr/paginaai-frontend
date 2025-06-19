@@ -55,7 +55,7 @@ export default function Page() {
       </div>
       <div className="">
         <ModalEditor 
-        isListProject={true}
+      
         />
       </div>
       {!isOpen &&
@@ -86,7 +86,6 @@ export default function Page() {
     <div className="">
       <div className="">
         <ModalEditor 
-        isListProject={true}
         />
       </div>
      
@@ -94,8 +93,7 @@ export default function Page() {
         {projectSelected &&
           <Editor
             key={projectSelectedID}
-            projectSelected={projectSelected}
-            projectSelectedID={projectSelectedID}
+          
           />
         }
       </div>

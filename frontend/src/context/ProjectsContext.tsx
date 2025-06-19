@@ -14,7 +14,7 @@ const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined
 export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [userProjects, setUserProjects] = useState<DataProjectUser[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [projectSelected, setProjectSelected] = useState<[]>([]);
+    const [projectSelected, setProjectSelected] = useState<string | null >(null);
     const [projectSelectedID, setProjectSelectedID] = useState<number | null>(null);
     const [projectSelectedName, setProjectSelectedName] = useState<string | null>(null);
 

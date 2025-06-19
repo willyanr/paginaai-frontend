@@ -119,7 +119,7 @@ const ModalCreateDomain: React.FC = () => {
                     <div className="fixed top-24 right-4 z-50">
                         <Alert
                             message={messageAlert}
-                            variant={typeAlert}
+                            variant={typeAlert as 'success' | 'error'}
                             title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
 
                         />

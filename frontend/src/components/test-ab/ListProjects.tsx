@@ -6,18 +6,19 @@ import Label from '../form/Label';
 import Select from '../form/Select';
 import ListTestsAB from "./ListTestsAB";
 import Button from "../ui/button/Button";
+import { DataProjectUser } from "@/interfaces/projects.interface";
 
 
 const ListProjects: React.FC = () => {
   const { userProjects, fetchProjects } = useProjects();
-  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [selectedProjects, setSelectedProjects] = useState<DataProjectUser[]>([]);
   const canStartTest = selectedProjects.length >= 2;
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
 
-  const handleProjectSelect = (project) => {
+  const handleProjectSelect = (project: DataProjectUser ) => {
     if (selectedProjects.find(p => p.id === project.id)) {
       setSelectedProjects(selectedProjects.filter(p => p.id !== project.id));
     } else if (selectedProjects.length < 3) {
@@ -96,7 +97,9 @@ const ListProjects: React.FC = () => {
               options={[
                 { value: 'domain1', label: 'dominio1.com' },
                 { value: 'domain2', label: 'dominio2.com' },
-              ]} />
+              ]}
+              onChange={() => {}}
+            />
           </div>
 
          {!canStartTest && 

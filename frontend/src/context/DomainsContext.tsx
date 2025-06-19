@@ -43,18 +43,18 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
     };
 
-    const deleteProjectsDomains = async (id: string) => {
+    const deleteProjectsDomains = async (id: number) => {
         setIsLoading(true);
         try {
-            if (id){
-                 await ServiceDeleteProjectDomains(id);
+            if (id !== undefined && id !== null){
+                 await ServiceDeleteProjectDomains(id.toString());
             }
             fetchProjectsDomains();
         } catch {
             throw new Error('Erro ao carregar os domínios:');
         } finally {
             setIsLoading(false);
-
+    
         }
     };
 

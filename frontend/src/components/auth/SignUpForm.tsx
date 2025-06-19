@@ -12,11 +12,12 @@ import Alert from "../ui/alert/Alert";
 
 
 import * as yup from "yup";
-import { useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePhoneMask } from "@/hooks/useFormatNumberTel";
 import { useCPFMask } from "@/hooks/useFormatCpf";
 import Button from "../ui/button/Button";
+import { RegisterUser, SignUpFormData } from "@/interfaces/user.interface";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,17 +26,17 @@ export default function SignUpForm() {
 
   function isValidCPF(cpf: string) {
     cpf = cpf.replace(/[^\d]+/g, ''); // Remove qualquer caracter não numérico
-  
+
     // Verifica se o CPF tem 11 dígitos
     if (cpf.length !== 11) return false;
-  
+
     // Verifica se todos os números são iguais (exemplo: 111.111.111-11)
     if (/^(\d)\1{10}$/.test(cpf)) return false;
-  
+
     // Validação dos dois últimos dígitos (os verificadores)
     let sum = 0;
     let remainder: number;
-  
+
     // Validação do primeiro dígito
     for (let i = 0; i < 9; i++) {
       sum += Number(cpf[i]) * (10 - i);
@@ -43,7 +44,7 @@ export default function SignUpForm() {
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== Number(cpf[9])) return false;
-  
+
     // Validação do segundo dígito
     sum = 0;
     for (let i = 0; i < 10; i++) {
@@ -52,10 +53,10 @@ export default function SignUpForm() {
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
     if (remainder !== Number(cpf[10])) return false;
-  
+
     return true;
   }
-  
+
   const validationSchema = yup.object().shape({
     fname: yup
       .string()
@@ -83,10 +84,13 @@ export default function SignUpForm() {
       .matches(/\d/, "A senha deve conter pelo menos um número.")
       .matches(/[\W_]/, "A senha deve conter pelo menos um caractere especial.")
       .required("A senha é obrigatória."),
-    
+
     terms: yup
       .boolean()
       .oneOf([true], "Você deve concordar com os Termos e Condições."),
+
+    how_did_you_hear_about_us: yup
+      .string()
 
   });
   const {
@@ -98,7 +102,7 @@ export default function SignUpForm() {
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
-
+  const { onChange } = register("terms");
   const telValue = watch("tel");
   const cpfValue = watch("cpf");
   const termsValue = watch("terms");
@@ -112,25 +116,25 @@ export default function SignUpForm() {
     { label: "Outros", value: "other" },
   ];
 
-  
+
   useEffect(() => {
-    const storedUserPayload = localStorage.getItem('userPayload') 
+    const storedUserPayload = localStorage.getItem('userPayload')
     if (!storedUserPayload) return
-    const userPayload =  JSON.parse(storedUserPayload);
+    const userPayload = JSON.parse(storedUserPayload);
     setValue('fname', userPayload?.profile?.name);
     setValue('tel', userPayload?.profile?.whatsapp);
     setValue('cpf', userPayload?.profile?.cpf);
-    
+
 
   }, [setValue]);
 
   useEffect(() => {
     if (cpfValue) {
-      const formatted = formatCPF(cpfValue); 
-      setValue("cpf", formatted); 
+      const formatted = formatCPF(cpfValue);
+      setValue("cpf", formatted);
     }
   }, [cpfValue, formatCPF, setValue]);
-  
+
   useEffect(() => {
     if (telValue) {
       const masked = formatPhone(telValue);
@@ -147,8 +151,8 @@ export default function SignUpForm() {
   }, [termsValue, setValue]);
 
 
-  const onSubmit = async (data) => {
-    const payload = {
+  const onSubmit = async (data: SignUpFormData) => {
+    const payload: RegisterUser = {
       email: data.email,
       password: data.password,
       profile: {
@@ -162,12 +166,15 @@ export default function SignUpForm() {
     try {
       await authRegister(payload);
       localStorage.setItem('userPayload', JSON.stringify(payload));
-    } catch (error) {
-      onAlert(true, "error", error.message || "Erro ao realizar cadastro.");
+    } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao realizar o cadastro.';
+      onAlert(true, 'error', errorMessage)
     }
   };
 
-  
+
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
@@ -208,7 +215,7 @@ export default function SignUpForm() {
                     type="tel"
                     placeholder="(99) 9999-9999"
                     {...register("tel")}
-                  
+
                   />
                   {errors.tel && (
                     <p className="mt-1 text-xs text-error-500">
@@ -227,7 +234,7 @@ export default function SignUpForm() {
                     type="text"
                     placeholder="Digite seu CPF"
                     {...register("cpf")}
-                   
+
                   />
                   {errors.cpf && (
                     <p className="mt-1 text-xs text-error-500">
@@ -293,9 +300,9 @@ export default function SignUpForm() {
 
               <div className="flex items-center gap-3">
                 <Checkbox
+                  onChange={(checked) => onChange({ target: { value: checked, name }, type: "checkbox" })}
                   className="w-5 h-5"
                   checked={true}
-                  {...register("terms")}
                 />
                 <p className="inline-block font-normal text-gray-500 dark:text-gray-400 text-sm">
                   Ao criar uma conta, você concorda com os{" "}
@@ -313,13 +320,13 @@ export default function SignUpForm() {
               )}
 
               <div>
-              <Button
-                className="w-full"
-                type="submit"
-                isLoading={isLoading}
-              >
-                Cadastrar
-              </Button>
+                <Button
+                  className="w-full"
+                  type="submit"
+                  isLoading={isLoading}
+                >
+                  Cadastrar
+                </Button>
               </div>
             </div>
           </form>
@@ -341,7 +348,7 @@ export default function SignUpForm() {
         <div className="fixed top-24 right-4 z-50">
           <Alert
             message={messageAlert}
-            variant={typeAlert}
+            variant={typeAlert as "error" | "success" | "warning" | "info"}
             title={typeAlert === "success" ? "Sucesso" : "Erro"}
           />
         </div>

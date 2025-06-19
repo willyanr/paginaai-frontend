@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext } from 'react';
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 
-export const AlertProvider = ({ children }) => {
+export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
     const [ isAlert, setIsAlert ] = useState<boolean>(false);
     const [ typeAlert, setTypeAlert ] = useState<string>('');
     const [ messageAlert, setMessageAlert ] = useState<string>('');

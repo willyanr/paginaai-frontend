@@ -35,7 +35,8 @@ const ListProjectMarketing: React.FC = () => {
 
     };
 
-    return (
+    if(userProjects){
+        return (
         <ul>
             {userProjects.map((item) => (
                 <li
@@ -58,7 +59,7 @@ const ListProjectMarketing: React.FC = () => {
                         <div className="flex flex-col gap-3">
                             {item?.pixels.map(
                                 (
-                                    pixel: { pixel_type: string; pixel_value: string },
+                                    pixel: { id: number, pixel_type: string; pixel_value: string },
                                     index: number
                                 ) => (
                                     <div
@@ -81,7 +82,7 @@ const ListProjectMarketing: React.FC = () => {
                                                                 ? theme === 'dark'
                                                                     ? logoDarkUtmify
                                                                     : logoWhiteUtmify
-                                                                : null
+                                                                : logoMeta // fallback image
                                                 }
 
                                                 alt={pixel.pixel_type || "Project image"}
@@ -115,6 +116,7 @@ const ListProjectMarketing: React.FC = () => {
         </ul>
 
     );
+    }
 };
 
 export default ListProjectMarketing;

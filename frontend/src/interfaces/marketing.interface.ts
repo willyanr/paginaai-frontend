@@ -17,6 +17,12 @@ export interface DataPixel {
   project: number;
 }
 
+export interface MarketingData {
+  pixel_meta?: string;
+  pixel_utmify?: string;
+  pixel_google_ads?: string;
+};
+
 
 export interface MarketingContextType {
     marketingData: DataMarketing[] | null;

@@ -19,7 +19,7 @@ const ListTestsAB: React.FC = () => {
         <div>
             {true &&
                 <div>
-                    {testsAB?.map((item, index) => (
+                    {(Array.isArray(testsAB) ? testsAB : []).map((item, index) => (
                         <div
                             key={index}
                             className='border border-gray-200 rounded-lg p-6 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-600'>
@@ -41,9 +41,12 @@ const ListTestsAB: React.FC = () => {
                                         <span> {item?.variant_a_project_name?.name}</span>
                                     </div>
                                     <Badge
-                                        size='md'
+                                        size="md"
                                         startIcon={<AB className="w-6 h-6" />}
-                                    />
+                                    >
+                                        {' '}
+                                    </Badge>
+
                                     <div className='bg-brand-50 px-3 py-1 rounded-2xl text-brand-600 text-sm'>
                                         <span> {item?.variant_b_project_name?.name}</span>
                                     </div>
@@ -76,7 +79,7 @@ const ListTestsAB: React.FC = () => {
                                     </Button>
                                 }
                                 {true &&
-                                  <Button
+                                    <Button
                                         size='sm'
                                         variant='outline'
                                     >

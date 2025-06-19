@@ -14,10 +14,11 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAlertContext } from "@/context/AlertContext";
 import Alert from "../ui/alert/Alert";
+import { DataUser, UserFormData } from "@/interfaces/user.interface";
 
 
 
-export default function UserInfoCard({ user }) {
+export default function UserInfoCard({ user }: { user: DataUser }) {
   const { isOpen, openModal, closeModal } = useModal();
   const { onAlert, typeAlert, messageAlert, isAlert } = useAlertContext();
   const { formatDate } = useFormattedDate();
@@ -68,14 +69,20 @@ export default function UserInfoCard({ user }) {
     resolver: yupResolver(validationSchema),
   });
 
+ 
 
-  const onSubmit = async (data) => {
+
+
+  const onSubmit = async (data: UserFormData) => {
     try {
       await putUserApi(data)
       onAlert(true, 'success', 'Dados atualizados com sucesso!');
       closeModal();
-    } catch (error) {
-      onAlert(true, 'error', error.message);
+    } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao atualizar os dados.';
+      onAlert(true, 'error', errorMessage)
     } finally {
 
     }
@@ -202,7 +209,7 @@ export default function UserInfoCard({ user }) {
                     <Label>CEP</Label>
                     <Input
                       type="text"
-                      defaultValue={user?.zip_code}
+                      defaultValue={String(user?.zip_code || '')}
                       placeholder="Digite seu CEP"
                       {...register("zip_code")}
                     />
@@ -211,7 +218,7 @@ export default function UserInfoCard({ user }) {
                     <Label>Cidade</Label>
                     <Input
                       type="text"
-                      defaultValue={user?.city}
+                      defaultValue={String(user?.city || '')}
                       placeholder="Digite sua cidade"
                       {...register("city")}
                     />
@@ -220,7 +227,7 @@ export default function UserInfoCard({ user }) {
                     <Label>Estado</Label>
                     <Input
                       type="text"
-                      defaultValue={user?.state}
+                      defaultValue={String(user?.state || '')}
                       placeholder="Digite seu Estado"
                       {...register("state")}
                     />
@@ -229,7 +236,7 @@ export default function UserInfoCard({ user }) {
                     <Label>CNPJ</Label>
                     <Input
                       type="text"
-                      defaultValue={user?.cnpj}
+                      defaultValue={user?.cnpj ?? ""}
                       placeholder="Digite seu CNPJ"
                       {...register("cnpj")}
                     />
@@ -272,7 +279,7 @@ export default function UserInfoCard({ user }) {
         <div className="fixed top-24 right-4 z-50">
           <Alert
             message={messageAlert}
-            variant={typeAlert}
+            variant={typeAlert as "success" | "error"}
             title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
           />
         </div>

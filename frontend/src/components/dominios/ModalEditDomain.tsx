@@ -5,6 +5,7 @@ import { useProjects } from '@/context/ProjectsContext';
 import { useModalContext } from '@/context/ModalContext';
 import Button from '../ui/button/Button';
 import { ModalEditDomainPropsType } from '@/interfaces/modalEdit.interface';
+import { UpdateDomainPayload } from '@/interfaces/domains.interface';
 
 
 
@@ -13,12 +14,12 @@ const ModalEditDomain: React.FC<ModalEditDomainPropsType> = ({ domain, id_domain
     const [selected, setSelected] = useState<{ [key: string]: string }>({});
     const { userProjects } = useProjects();
     const { isLoading } = useProjectsDomains();
-    const [selectedIDProject, setSelectedIDProject] = useState<string>('');
+    const [selectedIDProject, setSelectedIDProject] = useState<number>();
     const { updateProjectsDomains } = useProjectsDomains();
 
-    const select = (id?: string) => {
+    const select = (id?: number) => {
         setSelected({ [id!]: 'border-2 border-brand-500' });
-        setSelectedIDProject(id ?? '');
+        setSelectedIDProject(id ?? undefined);
     };
 
     const icon = (<svg
@@ -40,7 +41,7 @@ const ModalEditDomain: React.FC<ModalEditDomainPropsType> = ({ domain, id_domain
     const updateDomain = async () => {
         if (!selectedIDProject) return;
         try {
-            const payload = {
+            const payload: UpdateDomainPayload = {
                 id: id_domain,
                 project: selectedIDProject
             }

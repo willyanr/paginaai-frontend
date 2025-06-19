@@ -13,8 +13,8 @@ const ListDomains: React.FC = () => {
     const { openModal, closeModal } = useModalContext();
     const { fetchProjects } = useProjects();
     const [domainSelectedEdit, setDomainSelectedEdit] = useState<string>('');
-    const [domainSelectedEditID, setDomainSelectedEditID] = useState<string>('');
-    const [ deleteDomainID, setDomainDelete ] = useState<string>();
+    const [domainSelectedEditID, setDomainSelectedEditID] = useState<number>();
+    const [ deleteDomainID, setDomainDelete ] = useState<number>();
     
 
 
@@ -53,7 +53,7 @@ const ListDomains: React.FC = () => {
         }
     };
 
-    const editDomain = async (domain: string, id: string) => {
+    const editDomain = async (domain: string, id: number) => {
         if (!domain) return;
         setDomainSelectedEdit(domain);
         setDomainSelectedEditID(id);

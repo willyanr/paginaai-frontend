@@ -33,9 +33,11 @@ export default function ModalEditor() {
     }
     try {
       setIsDisabledButton(true);
-      const payload = new FormData();
-      payload.append('name', projectName);
-      payload.append('description', projectDescription);
+      const payload = {
+        name: projectName,
+        description: projectDescription
+      }
+
       await createNewProject(payload);
     } catch {
       return new Error('Error ao criar projeto');

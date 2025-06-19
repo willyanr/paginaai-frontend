@@ -12,13 +12,14 @@ import Label from "@/components/form/Label";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import {ResetUserPassword, ResetUserPasswordPayload, VerifyCodeOTPPassword } from '@/interfaces/user.interface';
 
 export default function ResetPassword() {
   const { isAlert, messageAlert, typeAlert, onAlert } = useAlertContext();
   const { userResetPassword, verifyCodeResetPassword, resetPasswordFinal, isLoading } = useAuth();
   const [isOTP, setIsOTP] = useState<boolean>(false);
   const [InputPassword, setIsInputPassword] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string>();
+  const [userEmail, setUserEmail] = useState<string>('');
   const [otp, setOtp] = useState('');
 
 
@@ -34,7 +35,7 @@ export default function ResetPassword() {
     confirmPassword: yup
       .string()
       .required("Confirme a senha.")
-      .oneOf([yup.ref("password"), null], "As senhas não coincidem."),
+      .oneOf([yup.ref("password")], "As senhas não coincidem."),
   });
   const {
     handleSubmit,
@@ -52,8 +53,8 @@ export default function ResetPassword() {
       await userResetPassword(userEmail);
       onAlert(true, 'success', 'Código enviado para seu email.')
       setIsOTP(true);
-    } catch (error) {
-      onAlert(true, 'error', error.message)
+    } catch {
+        onAlert(true, 'error', 'Erro ao enviar o código. Tente novamente.');
     } finally {
 
     }
@@ -64,31 +65,39 @@ export default function ResetPassword() {
     if (!otp) return onAlert(true, 'error', 'Por favor, digite o código de 6 digitos.');
     try {
 
-      const payload = {
+      const payload: VerifyCodeOTPPassword = {
         email: userEmail,
         otp: otp
       }
       await verifyCodeResetPassword(payload);
       onAlert(true, 'success', 'Boa! agora só cadastrar uma nova senha.')
       setIsInputPassword(true);
-    } catch (error) {
-      onAlert(true, 'error', error.message)
+    } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao verificar o código.';
+      onAlert(true, 'error', errorMessage)
     } finally {
 
     }
   };
-  const onSubmit = async (data) => {
+
+
+  
+  const onSubmit = async (data: ResetUserPassword) => {
     try {
-      const payload = {
+      const payload: ResetUserPasswordPayload = {
         otp: otp,
         email: userEmail,
         password: data.password,
       };
       await resetPasswordFinal(payload);
       onAlert(true, "success", 'Senha alterada com sucesso!');
-    } catch (error) {
-      console.error("Erro no reset:", error);
-      onAlert(true, "error", error.message || "Erro ao realizar cadastro.");
+     } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao verificar alterar senhas.';
+      onAlert(true, 'error', errorMessage)
     }
   };
   
@@ -244,7 +253,7 @@ export default function ResetPassword() {
         <div className="fixed top-24 right-4 z-50">
           <Alert
             message={messageAlert}
-            variant={typeAlert}
+            variant={typeAlert as "error" | "success" | "warning" | "info"}
             title={typeAlert === "success" ? "Sucesso" : "Erro"}
           />
         </div>

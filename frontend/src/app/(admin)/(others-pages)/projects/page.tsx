@@ -16,7 +16,6 @@ export default function ProjectsPage() {
             </div>
             <div>
                 <ModalEditor 
-                isListProject={false}
                 />
             </div>
             

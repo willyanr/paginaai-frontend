@@ -91,7 +91,7 @@ const DomainsManager: React.FC = () => {
                         </div>
                     </div>
                     <div className=''>
-                        <YouTubeEmbed />
+                        <YouTubeEmbed videoId="YOUR_VIDEO_ID_HERE" />
                     </div>
                 </div>
 
@@ -121,7 +121,7 @@ const DomainsManager: React.FC = () => {
                 <div className="fixed top-24 right-4 z-50">
                     <Alert
                         message={messageAlert}
-                        variant={typeAlert}
+                        variant={typeAlert as 'success' | 'error'}
                         title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
 
                     />

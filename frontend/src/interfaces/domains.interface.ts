@@ -17,8 +17,8 @@ export interface CreateDomainPayload  {
 
 }
 export interface UpdateDomainPayload  {
-    id: string,
-    project: string
+    id: number | undefined,
+    project:  number
 
 }
 
@@ -27,7 +27,7 @@ export interface DomainsContextType {
     isLoading: boolean;
     fetchProjectsDomains: (() => Promise<void>);
     createProjectsDomains: ((payload: CreateDomainPayload) => Promise<void>);
-    deleteProjectsDomains: ((id: string) => Promise<void>);
+    deleteProjectsDomains: ((id: number) => Promise<void>);
     verifyProjectsDomains: ((domain: string) => Promise<void>);
     updateProjectsDomains: ((payload: UpdateDomainPayload) => Promise<void>);
 

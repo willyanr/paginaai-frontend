@@ -18,8 +18,8 @@ export default function ListProjectPage() {
   const { theme } = useTheme();
   const { userProjects, fetchProjects, deleteProject, updateProject } = useProjects();
   const { isAlert, typeAlert, messageAlert, onAlert } = useAlertContext();
-  const [deleteDomainID, setDomainDelete] = useState<string>('');
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [deleteDomainID, setDomainDelete] = useState<number>();
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [inputProjectName, setInputProjectName] = useState<{ [key: string]: string }>({});
 
 
@@ -37,7 +37,7 @@ export default function ListProjectPage() {
 
   }, [theme]);
 
-  const filteredProjects = userProjects.filter(project =>
+  const filteredProjects = (userProjects ?? []).filter(project =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
@@ -47,19 +47,20 @@ export default function ListProjectPage() {
 
   }, [userProjects]);
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
 
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     onAlert(true, 'success', 'Domínio copiado com Sucesso!')
   };
 
   const handleDeleteProject = async () => {
+    if (deleteDomainID === undefined) return;
     try {
       await deleteProject(deleteDomainID);
       onAlert(true, 'success', 'Projeto excluido com sucesso!');
@@ -69,15 +70,19 @@ export default function ListProjectPage() {
 
   };
 
-  const handleEditProject = async (id: string) => {
+  const handleEditProject = async (id: number) => {
     if (!inputProjectName) return;
     try {
       await updateProject({
+        project: Number(id),
         name: inputProjectName[id]
       }, id)
       onAlert(true, 'success', 'Nome atualizado com sucesso!');
-    } catch (error: unknown ) {
-      onAlert(true, 'error', error.message || 'Erro desconhecido');
+     } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao atualizar o projeto.';
+      onAlert(true, 'error', errorMessage)
     } finally {
       setEditingProjectId(null); 
       setInputProjectName({});
@@ -156,10 +161,10 @@ export default function ListProjectPage() {
           </div>
         )}
 
-        {/* Projects grid */}
-        {userProjects.length > 0 &&
+      
+        {(userProjects ?? []).length > 0 &&
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {userProjects.map((project) => (
+            {(userProjects ?? []).map((project) => (
               <div
                 key={project.id}
                 className={`rounded-2xl overflow-hidden border border-gray-300 dark:border-gray-600 hover:shadow-2xl transition duration-200 ${darkMode ? 'bg-gray-800' : 'bg-white'
@@ -274,7 +279,7 @@ export default function ListProjectPage() {
         <div className="fixed top-24 right-4 z-50">
           <Alert
             message={messageAlert}
-            variant={typeAlert}
+            variant={typeAlert as 'success' | 'error'}
             title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
           />
         </div>

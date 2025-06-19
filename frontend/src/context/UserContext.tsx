@@ -3,7 +3,7 @@ import {
   getUser as ServiceGetUser,
   putUser as ServicePutUser
 } from '../services/user';
-import { UserContextType, DataUser } from '@/interfaces/user.interface';
+import { UserContextType, DataUser, UserFormData } from '@/interfaces/user.interface';
 import { useCallback } from 'react';
 
 
@@ -34,7 +34,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const putUserApi = async (payload: DataUser) => {
+  const putUserApi = async (payload: UserFormData) => {
     setIsLoading(true);
     try {
       await ServicePutUser(payload);

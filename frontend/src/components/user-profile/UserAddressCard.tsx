@@ -5,8 +5,11 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { DataUser } from "@/interfaces/user.interface";
 
-export default function UserAddressCard({ user }) {
+
+
+export default function UserAddressCard({ user }: { user: DataUser }) {
   const { closeModal } = useModal();
   const handleSave = () => {
     console.log("Saving changes...");

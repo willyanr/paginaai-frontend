@@ -14,28 +14,34 @@ import { useEffect } from 'react';
 
 export default function Profile() {
   const { user, getUserApi } = useUser();
-  
+
   useEffect(() => {
     getUserApi();
   }, [getUserApi]);
 
   return (
     <UserProvider>
-    <div>
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <div className="space-y-6">
-          <UserMetaCard 
-          user={user}
-          />
-          <UserInfoCard
-          user={user}
-          />
-          <UserAddressCard
-          user={user}
-          />
+      <div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+          <div className="space-y-6">
+            {user && (
+              <UserMetaCard
+                user={user}
+              />
+            )}
+            {user && (
+              <UserInfoCard
+                user={user}
+              />
+            )}
+            {user && (
+              <UserAddressCard
+                user={user}
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </UserProvider>
   );
 }

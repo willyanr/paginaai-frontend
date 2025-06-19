@@ -22,6 +22,7 @@ import Select from "../form/Select";
 import ListProjectMarketing from "./ListProjectMaketing";
 import YouTubeEmbed from "../ui/video/YouTubeEmbed";
 import { useTheme } from "@/context/ThemeContext";
+import { MarketingData } from "@/interfaces/marketing.interface";
 
 
 
@@ -32,9 +33,9 @@ export default function CardPixel() {
   const { userProjects, fetchProjects } = useProjects();
   const [userProjectSelectedID, setUserProjectSelectedID] = useState<string>();
 
-  const [isLoadingButton, setIsLoadingButton] = useState({});
+  const [isLoadingButton, setIsLoadingButton] = useState<Record<string, boolean>>({});
 
-  const [inputPixel, setInputPixel] = useState({});
+  const [inputPixel, setInputPixel] = useState<{ [key: string]: string }>({});
   const { theme } = useTheme();
 
 
@@ -44,7 +45,7 @@ export default function CardPixel() {
 
   }, [fetchProjectsMarketing, fetchProjects]);
 
-  const safeMarketingData = useMemo(() => {
+  const safeMarketingData: MarketingData = useMemo(() => {
     return marketingData || {};
   }, [marketingData]);
 
@@ -188,9 +189,7 @@ export default function CardPixel() {
 
                   <Select
                     options={selectOptions}
-                    key={selectOptions.value}
                     onChange={handleSelectChange}
-
                   />
 
 
@@ -233,7 +232,7 @@ export default function CardPixel() {
                       createPixelProject(platform.type);
                       setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [platform.type]: true }));
                     }}
-                    isLoading={isLoadingButton[platform.type] || null}
+                    isLoading={isLoadingButton[platform.type]}
                   >
                     + Adicionar Pixel
                   </Button>
@@ -256,6 +255,7 @@ export default function CardPixel() {
           </div>
           <div className="py-4 flex justify-center">
             <YouTubeEmbed
+              videoId="ID DO VIDEO AQUI"
               className="w-150 h-72"
             />
           </div>

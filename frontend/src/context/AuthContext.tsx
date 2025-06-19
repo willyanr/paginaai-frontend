@@ -13,33 +13,16 @@ import {
 } from '../services/auth';
 import { useRouter } from 'next/navigation';
 import { useAlertContext } from './AlertContext';
+import { ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
+import { RegisterUser } from '@/interfaces/user.interface';
 
 interface LoginType {
   email: string;
   password: string;
 }
 
-interface ResetUserPasswordType {
-  otp: string;
-  email: string;
-  password: string;
-}
 
-interface RegisterUserType {
-  email: string,
-  password: string,
-  profile: {
-    name: string,
-    whatsapp: string,
-    cpf: string,
-    how_did_you_hear_about_us: string,
-  }
-}
 
-interface VerifyCodeResetPasswordType {
-  otp: string;
-  email: string;
-}
 
 interface VerifyCodeType {
   cpf: string;
@@ -53,11 +36,11 @@ interface AuthContextType {
   login: (payload: LoginType) => Promise<void>;
   logout: () => void;
   checkAuth: () => boolean;
-  register: (payload: RegisterUserType) => Promise<void>;
+  register: (payload: RegisterUser) => Promise<void>;
   verifyCode: (payload: VerifyCodeType) => Promise<void>;
-  userResetPassword: (payload: ResetUserPasswordType) => Promise<void>;
-  verifyCodeResetPassword: (payload: VerifyCodeResetPasswordType) => Promise<void>;
-  resetPasswordFinal: (payload: ResetUserPasswordType) => Promise<void>;
+  userResetPassword: (email: string) => Promise<void>;
+  verifyCodeResetPassword: (payload: VerifyCodePayload | VerifyCodePayload) => Promise<void>;
+  resetPasswordFinal: (payload: ResetUserPasswordPayload) => Promise<void>;
 }
 
 
@@ -102,17 +85,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/signin');
   };
 
-  const register = async (payload: RegisterUserType) => {
+  const register = async (payload: RegisterUser) => {
     setIsLoading(true);
     try {
       await ServiceRegisterUser(payload);
       localStorage.setItem('cpf', payload.profile.cpf)
       localStorage.setItem('email', payload.email)
       router.push('/otp')
-    } catch (error) {
-      onAlert(true, 'error', error.message)
-
-      throw error;
+   } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao Registrar Usuário.';
+      onAlert(true, 'error', errorMessage)
     } finally {
       setIsLoading(false);
     }
@@ -134,17 +118,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const userResetPassword = async (email: string) => {
     setIsLoading(true);
     try {
-      const payload = {
-        email: email
-      }
-      await ServiceResetPassword(payload);
+    
+      await ServiceResetPassword(email);
     } catch (error) {
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
-  const verifyCodeResetPassword = async (payload: VerifyCodeResetPasswordType) => {
+  const verifyCodeResetPassword = async (payload: VerifyCodePayload) => {
     setIsLoading(true);
     try {
       await ServiceResetPassword(payload);
@@ -156,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const resetPasswordFinal = async (payload: ResetUserPasswordType) => {
+  const resetPasswordFinal = async (payload: ResetUserPasswordPayload) => {
     setIsLoading(true);
     try {
       await ServiceResetPasswordFinal(payload);
