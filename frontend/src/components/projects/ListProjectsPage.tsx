@@ -167,11 +167,10 @@ export default function ListProjectPage() {
             {(userProjects ?? []).map((project) => (
               <div
                 key={project.id}
-                className={`rounded-2xl overflow-hidden border border-gray-300 dark:border-gray-600 hover:shadow-2xl transition duration-200 ${darkMode ? 'bg-gray-800' : 'bg-white'
-                  } border ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}
+                className={`rounded-2xl bg-white border border-gray-300 overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:border-gray-600 hover:dark:border-brand-500 `}
               >
                 {/* Project header with gradient */}
-                <div className="h-24 bg-gradient-to-r from-brand-500 to-brand-400 relative">
+                <div className="h-24 bg-gray-100 dark:bg-gray-700 relative">
                   {project.domain_verified && (
                     <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
                       <Check size={12} className="mr-1" />

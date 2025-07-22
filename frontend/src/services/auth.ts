@@ -9,7 +9,6 @@ interface TokenPayload {
 }
 
 interface VerifyOtpPayload {
-  cpf: string,
   otp: string
   email: string
 }
@@ -143,7 +142,7 @@ export async function verifyCodeOtp(payload: VerifyOtpPayload) {
 export async function resetPassword(payload: string | VerifyCodePayload)  {
   const { default: api } = await import('./api');
   try {
-    const res = await api.post('/accounts/reset-password/', JSON.stringify(payload), {
+    const res = await api.post('/accounts/reset-password/', JSON.stringify({email: payload}), {
       headers: {
         'Content-Type': 'application/json',
       },

@@ -6,6 +6,8 @@ import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import ModalEditDomain from './ModalEditDomain';
 import DeleteModal from '../ui/alert/DeleteModal';
+import { useAlertContext } from '@/context/AlertContext';
+import Alert from '../ui/alert/Alert';
 
 const ListDomains: React.FC = () => {
     const { domainsData, fetchProjectsDomains, deleteProjectsDomains, verifyProjectsDomains } = useProjectsDomains();
@@ -14,8 +16,9 @@ const ListDomains: React.FC = () => {
     const { fetchProjects } = useProjects();
     const [domainSelectedEdit, setDomainSelectedEdit] = useState<string>('');
     const [domainSelectedEditID, setDomainSelectedEditID] = useState<number>();
-    const [ deleteDomainID, setDomainDelete ] = useState<number>();
-    
+    const [deleteDomainID, setDomainDelete] = useState<number>();
+    const { isAlert, messageAlert, typeAlert, onAlert } = useAlertContext();
+
 
 
     useEffect(() => {
@@ -45,9 +48,11 @@ const ListDomains: React.FC = () => {
         setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [domain]: true }));
         try {
             await verifyProjectsDomains(domain)
-        } catch (erro) {
-            console.error(erro);
-            throw new Error('Erro ao criar domínio');
+        } catch (error: unknown) {
+            const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+                ? (error as { message: string }).message
+                : 'Erro ao verificar domínio';
+            onAlert(true, 'error', errorMessage)
         } finally {
             setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [domain]: false }));
         }
@@ -130,7 +135,7 @@ const ListDomains: React.FC = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                    setDomainDelete(item.id)    
+                                    setDomainDelete(item.id)
                                     openModal('delete-domain')
                                 }}
                                 isLoading={isLoadingButton[item.id] || false}
@@ -146,6 +151,17 @@ const ListDomains: React.FC = () => {
                 id_domain={domainSelectedEditID}
             />
             <DeleteModal onDelete={deleteDomain} />
+            {isAlert &&
+                <div className="fixed top-24 right-4 z-50">
+                    <Alert
+                        message={messageAlert}
+                        variant={typeAlert as 'success' | 'error'}
+                        title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
+
+                    />
+                </div>
+
+            }
 
         </div>
     );

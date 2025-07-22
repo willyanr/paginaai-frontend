@@ -18,13 +18,32 @@ const ListProjects: React.FC = () => {
   }, [fetchProjects]);
 
 
-  const handleProjectSelect = (project: DataProjectUser ) => {
+  //   {
+  //   "name": "string",
+  //   "description": "string",
+  //   "winner_variant": "A",
+  //   "user": 0,
+  //   "variant_a_project": 0,
+  //   "variant_b_project": 0
+  // }
+
+  const handleProjectSelect = (project: DataProjectUser) => {
+
     if (selectedProjects.find(p => p.id === project.id)) {
       setSelectedProjects(selectedProjects.filter(p => p.id !== project.id));
     } else if (selectedProjects.length < 3) {
       setSelectedProjects([...selectedProjects, project]);
     }
+
   };
+
+  const startNewTestAB = () => {
+    for (const i in selectedProjects) {
+      console.log(i)
+    }
+
+  }
+
 
   if (!userProjects) {
     return (
@@ -98,31 +117,33 @@ const ListProjects: React.FC = () => {
                 { value: 'domain1', label: 'dominio1.com' },
                 { value: 'domain2', label: 'dominio2.com' },
               ]}
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </div>
 
-         {!canStartTest && 
-          <button
-            className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all duration-200 ${canStartTest
-              ? 'bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed rounded-2xl'
-              }`}
+          {!canStartTest &&
+            <button
+              className={`w-full py-3 px-4 rounded-2xl font-semibold transition-all duration-200 ${canStartTest
+                ? 'bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                : 'bg-gray-200 text-gray-500 cursor-not-allowed rounded-2xl'
+                }`}
 
-          > Selecione pelo menos 2 projetos
-          </button>
-         
-         }
-          {canStartTest && 
+            > Selecione pelo menos 2 projetos
+            </button>
+
+          }
+          {canStartTest &&
             <Button
-            className="w-full"
+              className="w-full"
+              type="button"
               startIcon={<Zap className="w-4 h-4 mr-2" />}
               disabled={!canStartTest}
+              onClick={() => startNewTestAB()}
             >
               Iniciar Teste A/B
             </Button>
           }
-          
+
         </div>
         <div className="bg-white rounded-xl shadow-lg p-6 sticky top-8 border border-gray-300 dark:bg-gray-800 dark:border-gray-600 mt-5">
           <ListTestsAB />

@@ -128,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   const verifyCodeResetPassword = async (payload: VerifyCodePayload) => {
     setIsLoading(true);
+    console.log('body', payload);
     try {
       await ServiceResetPassword(payload);
     } catch (error) {

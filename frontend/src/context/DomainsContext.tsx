@@ -63,9 +63,9 @@ export const DomainsProvider: React.FC<{ children: ReactNode }> = ({ children })
         try {
             await ServiceVerifyProjectsDomains(domain);
             fetchProjectsDomains();
-
-        }  catch {
-            throw new Error('Erro ao carregar os domínios:');
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(message);
         } finally {
             setIsLoading(false);
 

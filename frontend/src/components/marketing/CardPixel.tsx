@@ -20,7 +20,6 @@ import Button from "../ui/button/Button";
 import { useProjects } from "@/context/ProjectsContext";
 import Select from "../form/Select";
 import ListProjectMarketing from "./ListProjectMaketing";
-import YouTubeEmbed from "../ui/video/YouTubeEmbed";
 import { useTheme } from "@/context/ThemeContext";
 import { MarketingData } from "@/interfaces/marketing.interface";
 
@@ -164,13 +163,13 @@ export default function CardPixel() {
 
       }
 
-      <div className="p-5 flex gap-5 items-center">
-        <div className="w-1/2 overflow-auto max-h-[700px]">
+      <div className="p-5 flex gap-5">
+        <div className="w-1/2 overflow-auto h-screen">
           <ul className="">
             {plataforms.map((platform) => (
               <li
                 key={platform.id}
-                className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 mb-10"
+                className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 dark:bg-gray-800 mb-10"
               >
                 <div className="flex items-center gap-4 py-3">
                   <Image
@@ -190,6 +189,7 @@ export default function CardPixel() {
                   <Select
                     options={selectOptions}
                     onChange={handleSelectChange}
+                    className="cursor-pointer"
                   />
 
 
@@ -197,6 +197,7 @@ export default function CardPixel() {
                 <div className="py-3">
                   <Label>Cole seu código do Pixel</Label>
                   <Input
+                  className="cursor-pointer"
                     type="text"
                     defaultValue={inputPixel[platform.type]}
                     placeholder={
@@ -242,7 +243,7 @@ export default function CardPixel() {
 
           </ul>
         </div>
-        <div className="flex flex-col py-4 w-1/2">
+        <div className="flex flex-col w-1/2">
           {marketingData &&
             <div className="flex min-h-screen items-center justify-center">
               <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
@@ -250,16 +251,9 @@ export default function CardPixel() {
               </div>
             </div>
           }
-          <div className="p-6 w-full overflow-auto h-100">
+          <div className="p-2 w-full overflow-auto">
             <ListProjectMarketing />
           </div>
-          <div className="py-4 flex justify-center">
-            <YouTubeEmbed
-              videoId="ID DO VIDEO AQUI"
-              className="w-150 h-72"
-            />
-          </div>
-
         </div>
       </div>
 

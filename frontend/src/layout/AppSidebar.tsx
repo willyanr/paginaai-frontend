@@ -51,9 +51,9 @@ const navItems: NavItem[] = [
    
   },
   {
-    name: "Trackeamento",
+    name: "Integrações",
     icon: <Target />,
-    path: "/v",
+    path: "/integrations",
   },
   {
     name: "Upsell",

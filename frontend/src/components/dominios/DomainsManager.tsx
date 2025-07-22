@@ -6,8 +6,6 @@ import YouTubeEmbed from '../ui/video/YouTubeEmbed';
 import ModalCreateDomain from './ModalCreateDomain';
 import { useProjectsDomains } from '@/context/DomainsContext';
 import { useModalContext } from '@/context/ModalContext';
-import { useAlertContext } from '@/context/AlertContext';
-import Alert from '../ui/alert/Alert';
 import ListDomains from './ListDomains';
 
 
@@ -20,7 +18,6 @@ const DomainsManager: React.FC = () => {
     const { fetchProjectsDomains } = useProjectsDomains();
     const { openModal } = useModalContext();
     
-    const { isAlert, messageAlert, typeAlert } = useAlertContext();
 
 
     useEffect(() => {
@@ -117,17 +114,7 @@ const DomainsManager: React.FC = () => {
             <div>
                 <ModalCreateDomain />
             </div>
-            {isAlert &&
-                <div className="fixed top-24 right-4 z-50">
-                    <Alert
-                        message={messageAlert}
-                        variant={typeAlert as 'success' | 'error'}
-                        title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-
-                    />
-                </div>
-
-            }
+           
           
         </div>
 
