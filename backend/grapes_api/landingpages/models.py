@@ -100,3 +100,11 @@ class Domain(models.Model):
     def __str__(self):
         return self.domain
     
+
+class Monitoring(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project = models.ForeignKey(LandingPageProject,
+                                    on_delete=models.CASCADE,
+                                    blank=True,
+                                    null=True)
+    code_clarity = models.CharField(max_length=255, unique=True, blank=True, null=True)

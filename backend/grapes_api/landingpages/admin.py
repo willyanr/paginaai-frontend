@@ -11,4 +11,6 @@ admin.site.register([landingpages.LandingPageProject,
                      landingpages.Marketing,
                      landingpages.Domain,
                      Profile,
+                     landingpages.TestAB,
+                     landingpages.Monitoring
                      ])

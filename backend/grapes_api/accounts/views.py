@@ -31,6 +31,7 @@ class ResetPasswordUserView(APIView):
                 )
             
             user_exist = CustomUser.objects.filter(email=user_email).exists()
+            print('olha o email', user_email)
             if not user_exist:
                 return Response(
                     {"error": "Erro interno"},

@@ -1,0 +1,92 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    container_name: api_django
+    volumes:
+      - ./:/app
+      - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network  # Conecta o web à rede 'app_network'
+
+  db:
+    image: mysql:8
+    container_name: api_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network  # Conecta o db à rede 'app_network'
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./media:/app/media           
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "8081:80"
+    networks:
+      - app_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: api_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: ${DB_HOST}  
+      PMA_PORT: ${DB_PORT} 
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}  # Senha do root do MySQL
+    ports:
+      - "8080:80"  # Acesso ao painel via localhost:8080
+    depends_on:
+      - db
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7
+    container_name: api_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network  # Conecta o redis à rede 'app_network'
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: api_redis_insight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+    networks:
+      - app_network  # Conecta o redisinsight à rede 'redis_network'
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  app_network:   # Rede onde os serviços 'web', 'db' e 'redis' se comunicam
+    driver: bridge
+

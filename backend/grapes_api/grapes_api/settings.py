@@ -38,13 +38,16 @@ INSTALLED_APPS = [
     'landingpages',
      'accounts',
      'django_celery_results',
+     'drf_spectacular',
 ]
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 LANGUAGE_CODE = 'pt-br'

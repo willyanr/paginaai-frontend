@@ -1,8 +1,8 @@
 from django.utils import timezone
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB
-from .serializers import LandingPageProjectSerializer, MarketingProjectsSerializer, DomainsProjectSerializer, PixelSerializer, ImageUploadSerializer, TestABSerializer
+from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB, Monitoring
+from .serializers import LandingPageProjectSerializer, MarketingProjectsSerializer, DomainsProjectSerializer, PixelSerializer, ImageUploadSerializer, TestABSerializer, MonitoringSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -294,3 +294,23 @@ class ImageUploadViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+
+class MonitoringViewSet(viewsets.ModelViewSet):
+    serializer_class = MonitoringSerializer
+    permission_classes = [IsAuthenticated] 
+
+    def get_queryset(self):
+        return Monitoring.objects.filter(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    

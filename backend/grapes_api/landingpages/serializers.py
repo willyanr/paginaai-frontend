@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB
+from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB, Monitoring
 from .utils import verify_img
 
 class MarketingProjectsSerializer(serializers.ModelSerializer):
@@ -30,7 +30,17 @@ class PixelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pixel
         fields = ['id', 'pixel_type', 'pixel_value', 'project']
-        
+
+
+class MonitoringSerializer(serializers.ModelSerializer):
+    project_name = serializers.CharField(source='project.name', read_only=True)
+    class Meta:
+        model = Monitoring
+        fields = '__all__'
+        extra_kwargs = {
+            'user': {'required': False},
+        }
+           
 
 class LandingPageProjectSerializer(serializers.ModelSerializer):
     domain = DomainsProjectSerializer(read_only=True)
