@@ -163,13 +163,26 @@ export default function CardPixel() {
 
       }
 
-      <div className="p-5 flex gap-5">
-        <div className="w-1/2 overflow-auto h-screen">
+      <div className="p-5 flex gap-6">
+       
+        <div className="flex flex-col w-1/2">
+          {marketingData &&
+            <div className="flex min-h-screen items-center justify-center">
+              <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
+                <h1 className="mx-auto font-bold text-2xl text-center">Nenhum pixel foi associado a nenhum projeto.</h1>
+              </div>
+            </div>
+          }
+          <div className="w-full overflow-auto">
+            <ListProjectMarketing />
+          </div>
+        </div>
+         <div className="w-1/2 overflow-auto h-screen">
           <ul className="">
             {plataforms.map((platform) => (
               <li
                 key={platform.id}
-                className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 dark:bg-gray-800 mb-10"
+                className="border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 dark:bg-gray-800 mb-10"
               >
                 <div className="flex items-center gap-4 py-3">
                   <Image
@@ -242,18 +255,6 @@ export default function CardPixel() {
             ))}
 
           </ul>
-        </div>
-        <div className="flex flex-col w-1/2">
-          {marketingData &&
-            <div className="flex min-h-screen items-center justify-center">
-              <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
-                <h1 className="mx-auto font-bold text-2xl text-center">Nenhum pixel foi associado a nenhum projeto.</h1>
-              </div>
-            </div>
-          }
-          <div className="p-2 w-full overflow-auto">
-            <ListProjectMarketing />
-          </div>
         </div>
       </div>
 

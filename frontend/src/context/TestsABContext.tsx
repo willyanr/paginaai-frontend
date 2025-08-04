@@ -1,10 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { DataTestsAB, TestsABContextType } from '@/interfaces/testsab.interface';
+import { DataCreateTestAB, DataTestsAB, TestsABContextType } from '@/interfaces/testsab.interface';
 
 import {
-    getTestsAB as ServiceGetTestAB
+    getTestsAB as ServiceGetTestAB,
+    postProjectTest as ServiceCreateNewTest,
+    deleteProjectTest as ServiceDeleteProjectTest
 } from '@/services/testsAB'
 
 
@@ -13,8 +15,10 @@ const TestsABContext = createContext<TestsABContextType | undefined>(undefined);
 
 export const TestsABProvider = ({ children }: { children: ReactNode }) => {
      const [ testsAB, setTestsAB ] = useState< DataTestsAB | null >(null);   
+     const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
     const fetchTestsAB = React.useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await ServiceGetTestAB();
             setTestsAB(response);
@@ -24,8 +28,47 @@ export const TestsABProvider = ({ children }: { children: ReactNode }) => {
             } else {
                 throw new Error('An unknown error occurred');
             }
+        } finally {
+            setIsLoading(false);
         }
     }, []);
+
+     const createNewProjectTest = async (payload: DataCreateTestAB) => {
+            setIsLoading(true)
+            try {
+                await ServiceCreateNewTest(payload);
+                await fetchTestsAB();
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    throw new Error(`Error ao criar teste: ${error.message}`);
+                } else {
+                    throw new Error('An unknown error occurred while updating the project.');
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+          const deleteProjectTest = async (id: number) => {
+            setIsLoading(true);
+            try {
+                await ServiceDeleteProjectTest(id);
+                await fetchTestsAB();
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    throw new Error(`Erro ao deletar teste: ${error.message}`);
+                } else {
+                    throw new Error('An unknown error occurred while updating the project.');
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+
+
+
+    
     
 
 
@@ -34,7 +77,11 @@ export const TestsABProvider = ({ children }: { children: ReactNode }) => {
     return (
         <TestsABContext.Provider value={{ 
             fetchTestsAB,
-            testsAB
+            createNewProjectTest,
+            deleteProjectTest,
+            testsAB,
+            isLoading
+            
           }}>
             {children}
         </TestsABContext.Provider>

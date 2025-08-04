@@ -77,7 +77,7 @@ const ListDomains: React.FC = () => {
                 {domainsData?.map((item, index) => (
                     <li
                         key={index}
-                        className="border rounded-2xl p-6 shadow-sm dark:border-gray-800"
+                        className="border rounded-2xl p-6 shadow-sm  dark:border-gray-600 dark:bg-gray-800"
                     >
                         <div className="flex justify-between items-center mb-2">
                             <div className="flex flex-col">

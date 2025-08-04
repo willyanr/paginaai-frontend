@@ -3,102 +3,119 @@ import Badge from '../ui/badge/Badge';
 import { AB } from '@/icons';
 import { useTestsAB } from '@/context/TestsABContext';
 import Button from '../ui/button/Button';
-import ResultTestsAB from './ResultTestsAB';
-
+import { useModalContext } from '@/context/ModalContext';
+import DeleteModal from '../ui/alert/DeleteModal';
+import { useAlertContext } from '@/context/AlertContext';
+import { useDateFormatter } from '@/hooks/useDateFormatter';
+import { ListStatistic } from './ListStatistic';
 
 const ListTestsAB: React.FC = () => {
-    const { fetchTestsAB, testsAB } = useTestsAB();
+    const { fetchTestsAB, testsAB, deleteProjectTest, isLoading } = useTestsAB();
+    const { openModal } = useModalContext();
+    const { onAlert } = useAlertContext();
+    const { formatDateTime } = useDateFormatter();
+
 
 
     useEffect(() => {
         fetchTestsAB();
     }, [fetchTestsAB]);
 
-    if (testsAB) {
+
+    const deleteTest = async () => {
+        if (Array.isArray(testsAB) && testsAB.length > 0) {
+            try {
+                const uniqueTest = testsAB[0];
+                if (uniqueTest?.id) {
+                    await deleteProjectTest(uniqueTest.id);
+                    onAlert(true, 'success', 'Teste deletado com Sucesso.')
+                }
+                return;
+            } catch {
+                onAlert(true, 'error', 'Erro ao deletar teste.')
+            } finally {
+
+            }
+        }
+    }
+
+    if (Array.isArray(testsAB) && testsAB.length > 0) {
         return (
-            <div>
-                {true &&
+            <div className='w-full'>
+                <div className='border-2 rounded-lg p-3 flex justify-between items-center mt-5 dark:border-gray-600 dark:bg-gray-800'>
                     <div>
-                        {(Array.isArray(testsAB) ? testsAB : []).map((item, index) => (
-                            <div
-                                key={index}
-                                className='border border-gray-200 rounded-lg p-6 bg-white shadow-sm dark:bg-gray-800 dark:border-gray-600'>
+                        <span className='font-semibold text-gray-700 dark:text-white px-3'>
+                            Testes Rodando:
+                        </span>
+                    </div>
+                    <div>
+                        <Button
+                            isLoading={isLoading}
+                            onClick={() => {
+                                openModal('delete-domain');
+
+                            }}
+                        >
+                            Cancelar Teste
+                        </Button>
+                    </div>
+                </div>
+                <div className='mt-5'>
+                    {testsAB.map((item, index) => (
+                        <div
+                            key={index}
+                            className='flex justify-between gap-4'>
+                            <div className='w-1/2 p-6 rounded-lg border-2 dark:border-gray-600 dark:bg-gray-800'>
+                                <div className='flex justify-between items-center'>
+                                    <div className="w-10 h-10 bg-brand-500/15 rounded-full flex items-center justify-center p-2">
+                                        <AB className="text-brand-500" />
+                                    </div>
+
+                                    <Badge>
+                                        {item?.variant_a_project_name.name}
+                                    </Badge>
+                                </div>
+                                <div className='py-2'>
+                                    <p className='dark:text-gray-400 text-sm'>Criado em: {formatDateTime(item.created_at)}</p>
+                                </div>
                                 <div>
-                                    <div className="flex justify-between items-center py-4">
-                                        <h2 className="text-sm font-bold text-gray-900 dark:text-white">{item?.name}</h2>
-                                        <a href=""></a>
-                                        <Badge
-                                            startIcon={<AB className="w-4 h-4" />}
-                                            size='sm'
-                                        >
-                                            Testando
-                                        </Badge>
-                                    </div>
+                                    <ListStatistic
+                                        project={item.variant_a_project_name}
+                                    />
                                 </div>
-                                <div className='mb-5'>
-                                    <div className='flex justify-between items-center'>
-                                        <div className='bg-brand-50 px-3 py-1 rounded-2xl text-brand-600 text-sm'>
-                                            <span> {item?.variant_a_project_name?.name}</span>
-                                        </div>
-                                        <Badge
-                                            size="md"
-                                            startIcon={<AB className="w-6 h-6" />}
-                                        >
-                                            {' '}
-                                        </Badge>
 
-                                        <div className='bg-brand-50 px-3 py-1 rounded-2xl text-brand-600 text-sm'>
-                                            <span> {item?.variant_b_project_name?.name}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-400">
-                                    <div className="text-center">
-                                        <p className="text-2xl font-bold text-brand-600">
-                                            11221
-                                        </p>
-                                        <p className="text-xs text-gray-500">Visualizações</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-2xl font-bold text-brand-600">
-                                            12212
-                                        </p>
-                                        <p className="text-xs text-gray-500">Conversões</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-2xl font-bold text-brand-600">
-                                            12%
-                                        </p>
-                                        <p className="text-xs text-gray-500">Taxa</p>
-                                    </div>
-                                </div>
-                                <div className='flex justify-center py-5'>
-                                    {false &&
-                                        <Button size='sm'>
-                                            Ver Resultados
-                                        </Button>
-                                    }
-                                    {true &&
-                                        <Button
-                                            size='sm'
-                                            variant='outline'
-                                        >
-                                            Cancelar Teste A/B
-                                        </Button>
-                                    }
-                                </div>
                             </div>
-                        ))}
+                            <div className='w-1/2 p-6 rounded-lg border-2 dark:border-gray-600 dark:bg-gray-800'>
+                                <div className='flex justify-between items-center'>
+                                    <div className="w-10 h-10 bg-brand-500/15 rounded-full flex items-center justify-center p-2">
+                                        <AB className="text-brand-500" />
+                                    </div>
 
-                    </div>
+                                    <Badge>
+                                        {item?.variant_b_project_name.name}
+                                    </Badge>
+                                </div>
+                                <div className='py-2'>
+                                    <p className='dark:text-gray-400 text-sm'>Criado em: {formatDateTime(item.created_at)}</p>
+                                </div>
+                                <div>
+                                    <ListStatistic
+                                        project={item.variant_b_project_name}
+                                    />
+                                </div>
 
-                }
-                {false &&
-                    <div>
-                        <ResultTestsAB />
-                    </div>
-                }
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
+                <DeleteModal
+                    onDelete={() => {
+                        deleteTest();
+                    }}
+                />
             </div>
+
 
         );
     }

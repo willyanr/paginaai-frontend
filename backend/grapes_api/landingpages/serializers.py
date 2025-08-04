@@ -16,7 +16,7 @@ class DomainsProjectSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(source='project.name', read_only=True)
     class Meta:
         model = Domain
-        fields = '__all__'
+        fields = ['id', 'project_name', 'domain', 'expected_cname', 'verified', 'ssl_enabled', 'created_at', 'last_checked']
         extra_kwargs = {
             'project': {'required': False, 'allow_null': True},
             'user': {'required': False}
@@ -47,7 +47,7 @@ class LandingPageProjectSerializer(serializers.ModelSerializer):
     pixels = PixelSerializer(many=True, read_only=True)
     class Meta:
         model = LandingPageProject
-        fields = '__all__'
+        fields = ['id','name', 'description', 'domain_verified', 'project_data', 'html', 'css', 'created_at', 'updated_at', 'domain', 'pixels', 'page_view', 'button_cta_click']
         extra_kwargs = {
             'user': {'required': False},  # <--- Make user field optional, if needed
             'name': {'required': False}
@@ -85,7 +85,21 @@ class ImageUploadSerializer(serializers.ModelSerializer):
 class TestABSerializer(serializers.ModelSerializer):
     variant_a_project_name = LandingPageProjectSerializer(source='variant_a_project', read_only=True)
     variant_b_project_name = LandingPageProjectSerializer(source='variant_b_project', read_only=True)
+    winner_project_name = serializers.CharField(source='winner_project.name', read_only=True)
     class Meta:
         model = TestAB
-        fields = '__all__'
+        fields = ['id','name', 'description', 'variant_a_project', 'variant_b_project', 'variant_a_project_name', 'variant_b_project_name', 'created_at', 'winner_project', 'winner_project_name']
+        extra_kwargs = {
+            'user': {'required': False}, 
+            'winner_project': {'required': False}, 
+        }
         
+
+class StatisticsSerializer(serializers.Serializer):
+    total_projects = serializers.IntegerField()
+    total_views = serializers.IntegerField()
+    total_clicks = serializers.IntegerField()
+    total_domains = serializers.IntegerField()
+    top_utm_campaign = serializers.CharField()
+    top_utm_campaign_count = serializers.IntegerField()
+    utm_created = serializers.DateTimeField()

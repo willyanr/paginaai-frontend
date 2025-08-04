@@ -10,19 +10,7 @@ import Select from '../form/Select';
 import Input from '../form/input/InputField';
 import { useProjects } from '@/context/ProjectsContext';
 import { useMonitoring } from '@/context/MonitoringContext';
-import Alert from '../ui/alert/Alert';
 import { useAlertContext } from '@/context/AlertContext';
-
-// const plataforms = [
-//     {
-//         id: 1,
-//         name: "Microsoft Clarity",
-//         logoWhite: logoClarity,
-//         logoDark: logoClarity,
-//         description: "Permite medir a eficácia dos anúncios do Facebook, ajudando a entender o comportamento dos usuários no site após interagirem com os anúncios.",
-//     },
-
-// ];
 
 
 
@@ -31,10 +19,8 @@ export const ModalClarity = ({ }) => {
     const { userProjects, fetchProjects } = useProjects();
     const [selectUseProject, setSelectUseProject] = useState<string>();
     const { createNewIntegrationClarity } = useMonitoring();
-
+    const { onAlert } = useAlertContext();
     const [codeClarity, setCodeClarity] = useState<string>();
-    const { isAlert, typeAlert, messageAlert, onAlert } = useAlertContext();
-
 
     useEffect(() => {
         fetchProjects();
@@ -50,7 +36,7 @@ export const ModalClarity = ({ }) => {
         setSelectUseProject(value)
     };
 
-    const teste = async () => {
+    const createNewIntegration = async () => {
         try {
             if (codeClarity && selectUseProject) {
                 await createNewIntegrationClarity({
@@ -60,11 +46,12 @@ export const ModalClarity = ({ }) => {
                 closeModal();
                 onAlert(true, 'success',  'Integração salva com sucesso!')
             } else {
-                alert('Preencha todos os campos obrigatórios!');
+                onAlert(true, 'error', 'Preencha todos os campos');
             }
 
         } catch {
-            alert('erro')
+            closeModal();
+            onAlert(true, 'error', 'Erro desconhecido ao criar integração');
         }
 
 
@@ -125,7 +112,7 @@ export const ModalClarity = ({ }) => {
                     </div>
                     <div className='flex justify-end mt-10'>
                         <Button
-                            onClick={teste}
+                            onClick={createNewIntegration}
                         >
                             Criar integração
                         </Button>
@@ -134,17 +121,7 @@ export const ModalClarity = ({ }) => {
                 
 
             </Modal>
-            {isAlert &&
-                    <div className="fixed top-24 right-4 z-50">
-                        <Alert
-                            message={messageAlert}
-                            variant={typeAlert as 'success' | 'error'}
-                            title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-
-                        />
-                    </div>
-
-                }
+           
         </div>
     );
 };

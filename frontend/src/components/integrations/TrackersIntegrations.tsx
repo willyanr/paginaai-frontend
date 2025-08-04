@@ -47,7 +47,7 @@ export const TrackersIntegrations = ({ }) => {
             {plataforms.map((platform) => (
                 <div className="max-w-2xl mx-auto p-2" key={platform.id}>
                     <Link href={`/marketing`} 
-                    className="flex gap-3 bg-white border border-gray-300 rounded-xl overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:hover:text-white dark:border-gray-600 hover:dark:border-brand-500 p-2">
+                    className="flex gap-3 bg-white border-2 border-gray-300 rounded-xl overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:hover:text-white dark:border-gray-600 hover:dark:border-brand-500 p-2 h-40">
                         <div className="h-20 p-2">
                             <Image
                                 src={

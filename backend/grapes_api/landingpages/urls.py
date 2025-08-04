@@ -12,6 +12,7 @@ router.register(r'domains', views.DomainsProjectsViewSet, basename='domains')
 router.register(r'images', views.ImageUploadViewSet, basename='images')
 router.register(r'tests', views.TestABViewSet, basename='tests')
 router.register(r'monitoring', views.MonitoringViewSet, basename='monitoring')
+router.register(r'statistics', views.StatisticsViewSet, basename='statistics')
 
 urlpatterns = [
     path('api/', include(router.urls)),

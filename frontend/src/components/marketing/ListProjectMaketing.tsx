@@ -43,14 +43,14 @@ const ListProjectMarketing: React.FC = () => {
                     {userProjects.map((item) => (
                         <li
                             key={item.id}
-                            className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 mb-10 dark:bg-gray-800"
+                            className=" border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 dark:bg-gray-800"
                         >
                             <div>
 
                             </div>
                             <div className="flex flex-col items-left gap-4 py-3 justify-between">
                                 <div className='flex flex-col'>
-                                    <span className='font-semibold px-2 dark:text-white text-gray-700'>Projeto:</span>
+                                    <span className='font-medium text-sm px-2 dark:text-gray-300 text-gray-700'>Seu Projeto:</span>
                                     <div className='flex justify-between'>
                                         <span className='font-bold px-2 dark:text-white text-xl'>{item.name}</span>
                                         <Badge color='success'>

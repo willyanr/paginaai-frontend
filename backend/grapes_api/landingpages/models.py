@@ -29,6 +29,8 @@ class LandingPageProject(models.Model):
     css = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    page_view = models.IntegerField(default=0)
+    button_cta_click = models.IntegerField(default=0)
 
     class Meta:
         constraints = [
@@ -69,14 +71,16 @@ class TestAB(models.Model):
     variant_b_project = models.ForeignKey(
         LandingPageProject, on_delete=models.CASCADE, related_name='testab_variant_b'
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    winner_variant = models.CharField(
-        max_length=1,
-        choices=[('A', 'Variant A'), ('B', 'Variant B')],
+    winner_project = models.ForeignKey(
+        LandingPageProject,
+        on_delete=models.SET_NULL,
+        null=True,
         blank=True,
-        null=True
+        related_name='testab_winner_project'
     )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -108,3 +112,17 @@ class Monitoring(models.Model):
                                     blank=True,
                                     null=True)
     code_clarity = models.CharField(max_length=255, unique=True, blank=True, null=True)
+
+
+class Utms(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    project = models.ForeignKey(LandingPageProject, on_delete=models.CASCADE)
+    utm_source = models.CharField(max_length=255, blank=True, null=True)
+    utm_medium = models.CharField(max_length=255, blank=True, null=True)
+    utm_campaign = models.CharField(max_length=255, blank=True, null=True)
+    utm_content = models.CharField(max_length=255, blank=True, null=True)
+    utm_term = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"UTM for {self.project.name}"

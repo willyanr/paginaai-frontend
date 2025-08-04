@@ -43,10 +43,18 @@ export interface DataTestsAB {
   variant_b_project: number;
 }
 
-
+export interface DataCreateTestAB {
+  variant_a_project: number;
+  variant_b_project: number;
+  name: string;
+  description?: string;
+}
 
 
 export interface TestsABContextType {
-    testsAB: DataTestsAB | null;
-    fetchTestsAB: () => Promise<void>;
+  testsAB: DataTestsAB | null;
+  isLoading: boolean
+  fetchTestsAB: () => Promise<void>;
+  createNewProjectTest: (payload: DataCreateTestAB) => Promise<void>
+  deleteProjectTest: (id: number) => Promise<void>
 }

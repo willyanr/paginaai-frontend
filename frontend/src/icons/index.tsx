@@ -56,6 +56,7 @@ import AB from  "./ab.svg";
 import Domain from  "./domain.svg";
 import Upsell from "./upsell.svg";
 import Target from "./taget.svg";
+import Tracking from "./tracking.svg";
 
 
 export {
@@ -117,4 +118,5 @@ export {
   AB,
   Domain,
   Target,
+  Tracking,
 };

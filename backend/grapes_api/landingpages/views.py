@@ -1,8 +1,8 @@
 from django.utils import timezone
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB, Monitoring
-from .serializers import LandingPageProjectSerializer, MarketingProjectsSerializer, DomainsProjectSerializer, PixelSerializer, ImageUploadSerializer, TestABSerializer, MonitoringSerializer
+from .models import LandingPageProject, Marketing, Domain, Pixel, ImageUpload, TestAB, Monitoring, Utms
+from .serializers import LandingPageProjectSerializer, MarketingProjectsSerializer, DomainsProjectSerializer, PixelSerializer, ImageUploadSerializer, TestABSerializer, MonitoringSerializer, StatisticsSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -12,8 +12,10 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from .domains.utils import verify_domain, verify_cname
 from rest_framework.parsers import MultiPartParser, JSONParser
 from django.http import Http404
-
-
+from django.db.models import Q
+from .tasks import determine_winner
+from datetime import timedelta
+from django.db.models import Count
 
 @xframe_options_exempt
 def landing_page_view(request):
@@ -180,8 +182,41 @@ class DomainsProjectsViewSet(viewsets.ModelViewSet):
 
 
 class TestABViewSet(viewsets.ModelViewSet):
-    queryset = TestAB.objects.all()
+    
     serializer_class = TestABSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return TestAB.objects.filter(user=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        project_1 = data.get('variant_a_project')
+        project_2 = data.get('variant_b_project')
+        user = request.user
+        DETERMINE_TIME_TEST = timezone.localtime() + timedelta(hours=24)
+        
+        
+        if TestAB.objects.filter(user=user).exists():
+            return Response({'detail': 'Você já tem um teste ativo.'}, status=400)
+        
+        if TestAB.objects.filter(
+            Q(variant_a_project=project_1, variant_b_project=project_2) |
+            Q(variant_a_project=project_2, variant_b_project=project_1)
+        ).exists():
+            return Response({'detail': 'Um teste com essas duas variantes já existe.'}, status=400)
+
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        created_instance = serializer.instance
+        determine_winner.apply_async((created_instance.id, user.id), eta=DETERMINE_TIME_TEST)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
     
 
 class PixelViewSet(viewsets.ModelViewSet):
@@ -314,3 +349,37 @@ class MonitoringViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
+
+
+class StatisticsViewSet(viewsets.ViewSet):
+    serializer_class = StatisticsSerializer
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request):
+        user = request.user
+        projects = LandingPageProject.objects.filter(user=user)
+        domains = Domain.objects.filter(user=user)
+
+        # Total stats
+        data = {
+            'total_domains': domains.count(),
+            'total_projects': projects.count(),
+            'total_views': sum(project.page_view for project in projects),
+            'total_clicks': sum(project.button_cta_click for project in projects),
+        }
+
+        # UTM campaign mais comum
+        top_utm_campaign = (
+            Utms.objects.filter(user=user)
+            .values('utm_campaign')
+            .annotate(count=Count('utm_campaign'))
+            .order_by('-count')
+            .first()
+        )
+
+        data['top_utm_campaign'] = top_utm_campaign['utm_campaign'] if top_utm_campaign else None
+        data['top_utm_campaign_count'] = top_utm_campaign['count'] if top_utm_campaign else 0
+        data['utm_created'] =  top_utm_campaign.get('created_at') if top_utm_campaign else None
+
+        serializer = StatisticsSerializer(data)
+        return Response(serializer.data)

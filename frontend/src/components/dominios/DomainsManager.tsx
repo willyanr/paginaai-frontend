@@ -30,9 +30,9 @@ const DomainsManager: React.FC = () => {
   
 
     return (
-        <div className='flex gap-4'>
+        <div className='flex gap-8'>
 
-            <div className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 mb-10 w-1/2">
+            <div className="py-4 border border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 w-1/2 dark:bg-gray-800">
                 <div className="p-6 space-y-4">
 
                     <div className="bg-gray-100 text-gray-500 dark:bg-gray-500/15 dark:text-gray-400 text-sm rounded-lg p-6">
@@ -94,9 +94,9 @@ const DomainsManager: React.FC = () => {
 
 
             </div>
-            <div className="py-4 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6 mb-10 w-1/2">
-                <div className="p-6 space-y-8">
-                    <div className="flex justify-between items-center">
+            <div className="mb-10 w-1/2 ">
+                <div className="space-y-8">
+                    <div className="flex justify-between p-6 border rounded-2xl items-center dark:bg-gray-800 dark:border-gray-600">
                         <h1 className="text-2xl text-gray-600 font-semibold dark:text-white">Gerenciador de Domínios</h1>
                         <Button
                             variant='primary'

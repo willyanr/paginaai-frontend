@@ -27,6 +27,8 @@ export interface DataProjectUser {
   css: string,
   created_at: string,
   updated_at: string,
+  page_view: number,
+  button_cta_click: number
 }
 
 export interface CreateProjectUserPayload {

@@ -3,7 +3,7 @@ import {Award, BarChart3 } from 'lucide-react';
 
 
 
-const ResultTestsAB: React.FC = () => {
+const ResultTestsAB: React.FC = ({result}) => {
   const testData = {
     testName: "Botão CTA - Landing Page",
     duration: "14 dias",
@@ -33,20 +33,20 @@ const ResultTestsAB: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl shadow-xl">
+    <div className="max-w-4xl mx-auto p-6  rounded-2xl border-2 dark:border-gray-600 dark:bg-gray-800">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-sm font-bold text-gray-800 flex items-center gap-3">
-            <BarChart3 className="text-orange-500" size={32} />
+            <BarChart3 className="text-brand-500" size={32} />
             Resultados do Teste A/B
           </h1>
           <div className="bg-green-100 text-green-800 px-4 py-2 rounded-2xl text-sm font-semibold">
             {testData.status}
           </div>
         </div>
-        <h2 className="text-sm text-gray-600 mb-2">{testData.testName}</h2>
-        <p className="text-gray-500 text-sm">
+        <h2 className="text-sm text-gray-600 mb-2 dark:text-white">Teste Lading Page</h2>
+        <p className="text-gray-500 text-sm dark:text-white">
           {testData.startDate} - {testData.endDate} • {testData.duration}
         </p>
       </div>
@@ -57,15 +57,15 @@ const ResultTestsAB: React.FC = () => {
           <div className="flex items-center gap-4">
             <Award size={48} className="text-orange-200" />
             <div>
-              <h3 className="text-sm font-bold">Vencedor: {testData.winner}</h3>
+              <h3 className="text-sm font-bold">Vencedor:</h3>
+              <h2 className='text-sm font-bold text-xl'>{result}</h2>
               <p className="text-orange-100 text-sm">
                 Melhoria de {testData.improvement}% na conversão
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold">{testData.confidence}%</div>
-            <div className="text-orange-200 text-sm">Confiança</div>
+          <div className="text-right mt-10">
+            <div className="text-3xl font-bold">OK</div>
           </div>
         </div>
       </div>

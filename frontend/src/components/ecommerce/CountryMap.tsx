@@ -40,7 +40,7 @@ const CountryMap: React.FC<CountryMapProps> = ({ mapColor }) => {
       markerStyle={
         {
           initial: {
-            fill: "#465FFF",
+            fill: "#ef983b",
             r: 4, // Custom radius for markers
           }, // Type assertion to bypass strict CSS property checks
         } as MarkerStyle
@@ -52,10 +52,10 @@ const CountryMap: React.FC<CountryMapProps> = ({ mapColor }) => {
             latLng: [37.2580397, -104.657039],
             name: "United States",
             style: {
-              fill: "#465FFF",
+              fill: "#ef983b",
               borderWidth: 1,
               borderColor: "white",
-              stroke: "#383f47",
+              stroke: "#ef983b",
             },
           },
           {

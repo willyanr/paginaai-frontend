@@ -67,7 +67,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({onDelete}) => {
                       onDelete();
                     }}
                      type="button"
-                     className="flex justify-center w-full px-4 py-3 text-sm font-medium text-white rounded-lg bg-warning-500 shadow-theme-xs hover:bg-warning-600 sm:w-auto"
+                     className="flex justify-center w-full px-6 py-3 text-sm font-medium text-white rounded-full bg-warning-500 shadow-theme-xs hover:bg-brand-600 sm:w-auto"
                    >
                      Confirmar
                    </button>

@@ -8,37 +8,58 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { ModalProvider } from '@/context/ModalContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
-import { AlertProvider } from '@/context/AlertContext';
+import { AlertProvider, useAlertContext } from '@/context/AlertContext';
 import { UserProvider } from '@/context/UserContext';
-
+import Alert from '@/components/ui/alert/Alert';
+import { StatisticsProvider } from '@/context/StatisticsContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'], 
+  weight: ['400', '500', '600', '700'],
 });
+
+function AlertRenderer() {
+  const { isAlert, typeAlert, messageAlert } = useAlertContext();
+
+  if (!isAlert) return null;
+
+  return (
+    <div className="fixed top-24 right-4 z-999999">
+      <Alert
+        message={messageAlert}
+        variant={typeAlert as 'success' | 'error'}
+        title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
+      />
+    </div>
+  );
+}
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="pt-br">
       <body className={`${poppins.className} dark:bg-gray-900`}>
-      <AlertProvider>
-      <AuthProvider>
-        <UserProvider>
-        <ThemeProvider>
-         <ProjectsProvider>
-         <ModalProvider>
-          
-          <SidebarProvider>{children}</SidebarProvider>
-          
-          </ModalProvider>
-         </ProjectsProvider>
-        </ThemeProvider>
-        </UserProvider>
-        </AuthProvider>
-      </AlertProvider>
+        <AlertProvider>
+          <AuthProvider>
+            <UserProvider>
+              <ThemeProvider>
+                <ProjectsProvider>
+                  <ModalProvider>
+                    <SidebarProvider>
+                      <StatisticsProvider>
+                      <AlertRenderer />
+                      {children}
+                      </StatisticsProvider>
+                    </SidebarProvider>
+                  </ModalProvider>
+                </ProjectsProvider>
+              </ThemeProvider>
+            </UserProvider>
+          </AuthProvider>
+        </AlertProvider>
       </body>
     </html>
   );

@@ -153,7 +153,8 @@ class LoginView(APIView):
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
             })
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Erro nas credenciais'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class RegisterViewSet(viewsets.ModelViewSet):
     

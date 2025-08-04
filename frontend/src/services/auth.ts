@@ -29,9 +29,16 @@ export async function login(payload: LoginUser) {
     localStorage.setItem('refresh', refresh);
 
     return res.data;
-  } catch (error) {
-    console.error('Login error:', error);
-    throw error;
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao realizar login.';
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as { response?: { data?: { detail?: string; message?: string; error?: string } } };
+      errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 }
 
