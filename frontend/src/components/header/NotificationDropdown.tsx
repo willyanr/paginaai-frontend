@@ -15,10 +15,9 @@ export default function NotificationDropdown() {
     setIsOpen(!isOpen);
   }
 
-  useEffect(() => {
-    getUserApi();
-    console.log('aaaaaaaaaaaa', user)
-  }, [getUserApi,user]);
+ useEffect(() => {
+  getUserApi();
+}, []); 
 
 
   function closeDropdown() {

@@ -53,8 +53,11 @@ export default function ResetPassword() {
       await userResetPassword(userEmail);
       onAlert(true, 'success', 'Código enviado para seu email.')
       setIsOTP(true);
-    } catch {
-        onAlert(true, 'error', 'Erro ao enviar o código. Tente novamente.');
+    } catch (error: unknown) {
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'Erro ao verificar o código.';
+      onAlert(true, 'error', errorMessage)
     } finally {
 
     }

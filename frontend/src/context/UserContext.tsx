@@ -27,9 +27,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
       setUser(data[0]);
     } catch (error: unknown) {
       if (error instanceof Error) {
-        throw new Error(error.message);
+        console.error(error.message);
       } else {
-        throw new Error('An unknown error occurred');
+        console.error('An unknown error occurred');
       }
     }
   }, []);
