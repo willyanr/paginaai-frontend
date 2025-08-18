@@ -16,8 +16,11 @@ from django.db.models import Q
 from .tasks import determine_winner
 from datetime import timedelta
 from django.db.models import Count
+from .utils.sanitize_user_html import sanitize_html
 
-@xframe_options_exempt
+
+
+
 def landing_page_view(request):
     from collections import defaultdict
     host = request.get_host().split(':')[0]
@@ -30,13 +33,12 @@ def landing_page_view(request):
     if pixels.exists():
         for pixel in pixels:
             context[pixel.pixel_type].append(pixel.pixel_value)
-        print('Pixels carregados:', dict(context)) 
 
     if not project:
         raise Http404("Projeto não encontrado para esse domínio.")
     
     return render(request, 'landing_page.html', {
-        'html_content': project.html,
+        'html_content': sanitize_html(project.html),
         'css_content': project.css,
         **context  
     })
@@ -72,7 +74,7 @@ class LandingPageProjectViewSet(viewsets.ModelViewSet):
             name=name,
             description=description,
             project_data=project_data,
-            html=html,
+            html=sanitize_html(html),
             css=css,
             created_at=timezone.now()
         )
@@ -102,7 +104,11 @@ class LandingPageProjectViewSet(viewsets.ModelViewSet):
                 )
 
         def perform_update(self, serializer):
-            serializer.save(user=self.request.user)
+            html = self.request.data.get('html', '')
+            serializer.save(
+                user=self.request.user,
+                html=sanitize_html(html)
+            )
 
 
 class MarketingProjectViewSet(viewsets.ModelViewSet):

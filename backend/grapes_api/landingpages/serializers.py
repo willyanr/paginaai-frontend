@@ -12,16 +12,6 @@ class MarketingProjectsSerializer(serializers.ModelSerializer):
         }
 
 
-class DomainsProjectSerializer(serializers.ModelSerializer):
-    project_name = serializers.CharField(source='project.name', read_only=True)
-    class Meta:
-        model = Domain
-        fields = ['id', 'project_name', 'domain', 'expected_cname', 'verified', 'ssl_enabled', 'created_at', 'last_checked']
-        extra_kwargs = {
-            'project': {'required': False, 'allow_null': True},
-            'user': {'required': False}
-
-        }
 
 
 
@@ -41,6 +31,18 @@ class MonitoringSerializer(serializers.ModelSerializer):
             'user': {'required': False},
         }
            
+
+class DomainsProjectSerializer(serializers.ModelSerializer):
+    project_name = serializers.CharField(source='project.name', read_only=True)
+    class Meta:
+        model = Domain
+        fields = ['id', 'project_name', 'project','domain', 'expected_cname', 'verified', 'ssl_enabled', 'created_at', 'last_checked']
+        extra_kwargs = {
+            'project': {'required': False, 'allow_null': True},
+            'user': {'required': False}
+
+        }
+
 
 class LandingPageProjectSerializer(serializers.ModelSerializer):
     domain = DomainsProjectSerializer(read_only=True)
@@ -81,7 +83,9 @@ class ImageUploadSerializer(serializers.ModelSerializer):
         if obj.image and hasattr(obj.image, 'url'):
             return request.build_absolute_uri(obj.image.url)
         return None
-    
+
+
+
 class TestABSerializer(serializers.ModelSerializer):
     variant_a_project_name = LandingPageProjectSerializer(source='variant_a_project', read_only=True)
     variant_b_project_name = LandingPageProjectSerializer(source='variant_b_project', read_only=True)

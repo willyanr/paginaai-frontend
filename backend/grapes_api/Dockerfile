@@ -29,4 +29,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando de entrada
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
