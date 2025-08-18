@@ -2,8 +2,6 @@ import React from 'react';
 import { Modal } from '../ui/modal';
 import { useModalContext } from '@/context/ModalContext';
 import Button from '../ui/button/Button';
-import Input from '../form/input/InputField';
-import Label from '../form/Label';
 import { ListItemsTest } from './ListItemsTest';
 
 

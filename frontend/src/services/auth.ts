@@ -78,7 +78,7 @@ export async function refreshAccessToken(apiInstance: AxiosInstance) {
   }
 
   try {
-    const res = await apiInstance.post('http://localhost:8000/api/token/refresh/', { refresh });
+    const res = await apiInstance.post(`${process.env.NEXT_PUBLIC_API_URL}token/refresh/`, { refresh });
     const { access } = res.data;
     console.log('Refresh token:', refresh);
 

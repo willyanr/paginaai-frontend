@@ -165,18 +165,7 @@ export default function CardPixel() {
 
       <div className="p-5 flex gap-6">
        
-        <div className="flex flex-col w-1/2">
-          {marketingData &&
-            <div className="flex min-h-screen items-center justify-center">
-              <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
-                <h1 className="mx-auto font-bold text-2xl text-center">Nenhum pixel foi associado a nenhum projeto.</h1>
-              </div>
-            </div>
-          }
-          <div className="w-full overflow-auto">
-            <ListProjectMarketing />
-          </div>
-        </div>
+      
          <div className="w-1/2 overflow-auto h-screen">
           <ul className="">
             {plataforms.map((platform) => (
@@ -255,6 +244,18 @@ export default function CardPixel() {
             ))}
 
           </ul>
+        </div>
+          <div className="flex flex-col w-1/2">
+          {marketingData &&
+            <div className="flex min-h-screen items-center justify-center">
+              <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
+                <h1 className="mx-auto font-bold text-2xl text-center">Nenhum pixel foi associado a nenhum projeto.</h1>
+              </div>
+            </div>
+          }
+          <div className="w-full overflow-auto">
+            <ListProjectMarketing />
+          </div>
         </div>
       </div>
 

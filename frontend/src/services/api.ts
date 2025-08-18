@@ -3,14 +3,14 @@ import { getAccessToken, isTokenExpired, refreshAccessToken, logout } from './au
 
 
 const refreshApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/',
   headers: {
     'Content-Type': 'application/json',
   },

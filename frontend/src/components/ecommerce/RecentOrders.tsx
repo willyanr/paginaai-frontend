@@ -6,7 +6,6 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
-import Image from "next/image";
 import { Tracking } from "@/icons";
 import { useStatistics } from "@/context/StatisticsContext";
 import { useDateFormatter } from "@/hooks/useDateFormatter";
@@ -102,7 +101,7 @@ export default function RecentOrders() {
                   </div>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {formatDateTime(statistics?.utm_created)}
+                  {formatDateTime(statistics?.utm_created  || "Nenhum")}
                 </TableCell>
                
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">

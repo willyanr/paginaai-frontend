@@ -1,34 +1,24 @@
 "use client";
 
-import type { Metadata } from "next";
 import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React, { useEffect } from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { StatisticsProvider, useStatistics } from "@/context/StatisticsContext";
+import {  useStatistics } from "@/context/StatisticsContext";
 
 
-// export const metadata: Metadata = {
-//   title:
-//     "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-//   description: "This is Next.js Home for TailAdmin Dashboard Template",
-// };
 
 export default function Ecommerce() {
 
-  const { fetchStatistics, statistics } = useStatistics();
+  const { fetchStatistics } = useStatistics();
 
   useEffect(() => {
     fetchStatistics();
   }, [fetchStatistics]);
 
-  let dataStatistics = null;
 
-  if (statistics) {
-     dataStatistics = statistics;
-  }
 
   return (
     <ProtectedRoute>

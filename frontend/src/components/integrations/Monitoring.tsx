@@ -46,7 +46,7 @@ export const Monitoring = ({ }) => {
     return (
         <div className="w-full flex gap-5">
             {plataforms.map((platform) => (
-                <div className="max-w-xl  p-2" key={platform.id}>
+                <div className="max-w-xl" key={platform.id}>
                     <div
                         className="flex gap-3 bg-white border-2 border-gray-300 rounded-xl overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:border-gray-600 hover:dark:border-brand-500 p-2">
                         <div className="h-20 p-2">

@@ -2,8 +2,11 @@ import React from 'react';
 import {Award, BarChart3 } from 'lucide-react';
 
 
+type ResultType = {
+  result: string; 
+};
 
-const ResultTestsAB: React.FC = ({result}) => {
+const ResultTestsAB: React.FC<ResultType> = ({result}) => {
   const testData = {
     testName: "Botão CTA - Landing Page",
     duration: "14 dias",

@@ -1,6 +1,5 @@
 "use client";
 import { useStatistics } from "@/context/StatisticsContext";
-import { useNumberFormat } from "@/hooks/useNumberFormat";
 // import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
@@ -15,10 +14,9 @@ export default function MonthlyTarget() {
 
 
   const {statistics} = useStatistics();
-  const { formatNumber } = useNumberFormat();
 
   
-  const series = [ formatNumber(statistics?.total_views) || 0 ];
+  const series = [Number(statistics?.total_views)|| 0 ];
   const options: ApexOptions = {
     colors: ["#EF983B"],
     chart: {

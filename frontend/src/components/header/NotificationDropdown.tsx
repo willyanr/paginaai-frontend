@@ -1,17 +1,25 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { useUser } from "@/context/UserContext";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
+  const { getUserApi, user } = useUser();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
+
+  useEffect(() => {
+    getUserApi();
+    console.log('aaaaaaaaaaaa', user)
+  }, [getUserApi,user]);
+
 
   function closeDropdown() {
     setIsOpen(false);
@@ -98,20 +106,21 @@ export default function NotificationDropdown() {
               <span className="block">
                 <span className="mb-1.5 space-x-1 block text-theme-sm text-gray-500 dark:text-gray-400">
                   <span className="font-medium text-gray-800 dark:text-white/90">
-                    Terry Franci
+                    🎉 Bem-vindo, {user?.name}!
                   </span>
-                  <span>requests permission to change</span>
+                  <span>Você acabou de entrar para</span>
                   <span className="font-medium text-gray-800 dark:text-white/90">
-                    Project - Nganter App
+                    Time de Escala! 🚀 
                   </span>
                 </span>
 
                 <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
-                  <span>Project</span>
+                  <span>Projeto</span>
                   <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                  <span>5 min ago</span>
+                  <span>Agora mesmo</span>
                 </span>
               </span>
+
             </DropdownItem>
           </li>
           {/* Add more items as needed */}

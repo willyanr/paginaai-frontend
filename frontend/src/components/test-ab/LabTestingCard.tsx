@@ -10,7 +10,7 @@ const getProgressPercentage = (createdAt: string) => {
   const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
   const progress = Math.min((diffInMs / twentyFourHoursMs) * 100, 100);
-  return progress.toFixed(2); 
+  return progress.toFixed(2);
 };
 
 
@@ -24,7 +24,7 @@ const LabTestingCard: React.FC<LabTestingCardProps> = ({ time }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const percentage = getProgressPercentage(time);
-  
+
   const testingSteps = [
     { icon: FlaskConical, label: "Preparando amostra", color: "text-brand-500" },
     { icon: TestTube, label: "Adicionando reagentes", color: "text-brand-500" },
@@ -38,18 +38,15 @@ const LabTestingCard: React.FC<LabTestingCardProps> = ({ time }) => {
     const interval = setInterval(() => {
       setCurrentStep((prev) => {
         if (prev >= testingSteps.length - 1) {
-          setTimeout(() => {
-            setIsComplete(false);
-            return 0;
-          }, 2000);
-          return prev = 0;
+          setIsComplete(false);
+          return 0;
         }
         return prev + 1;
       });
     }, 1500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [testingSteps.length]);
 
   const CurrentIcon = testingSteps[currentStep].icon;
 
@@ -67,16 +64,14 @@ const LabTestingCard: React.FC<LabTestingCardProps> = ({ time }) => {
       <div className="relative h-32 mb-6 flex items-center justify-center">
         {/* Background Circle */}
         <div className="absolute w-24 h-24 rounded-full bg-gradient-to-br bg-brand-500/40 shadow-inner"></div>
-        
+
         {/* Animated Icon */}
-        <div className={`relative z-10 transition-all duration-700 transform ${
-          isComplete ? 'scale-110' : 'scale-100'
-        }`}>
-          <CurrentIcon 
-            size={48} 
-            className={`${testingSteps[currentStep].color} transition-colors duration-500 ${
-              currentStep === testingSteps.length - 1 ? 'animate-pulse' : 'animate-bounce'
-            }`}
+        <div className={`relative z-10 transition-all duration-700 transform ${isComplete ? 'scale-110' : 'scale-100'
+          }`}>
+          <CurrentIcon
+            size={48}
+            className={`${testingSteps[currentStep].color} transition-colors duration-500 ${currentStep === testingSteps.length - 1 ? 'animate-pulse' : 'animate-bounce'
+              }`}
           />
         </div>
 
@@ -105,21 +100,21 @@ const LabTestingCard: React.FC<LabTestingCardProps> = ({ time }) => {
           <span>{percentage}%</span>
         </div>
         <div className="w-full bg-brand-500/10 rounded-full h-8">
-          <div 
+          <div
             className="bg-gradient-to-r from-brand-500 to-brand-600 h-8 rounded-full transition-all duration-700"
             style={{ width: `${percentage}%` }}
           />
         </div>
       </div>
       <div className='mt-3'>
-       <InfoCard
-       size='xs'
-       >
-        Assim que o teste A/B for finalizado, o projeto vencedor será exibido aqui automaticamente.
-       </InfoCard>
+        <InfoCard
+          size='xs'
+        >
+          Assim que o teste A/B for finalizado, o projeto vencedor será exibido aqui automaticamente.
+        </InfoCard>
       </div>
 
-     
+
 
     </div>
   );

@@ -10,6 +10,7 @@ import Alert from '../ui/alert/Alert';
 import DeleteModal from '../ui/alert/DeleteModal';
 import Input from '../form/input/InputField';
 import { PencilIcon } from '@/icons';
+import { InfoPage } from '../ui/info/InfoPage';
 
 export default function ListProjectPage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -94,16 +95,16 @@ export default function ListProjectPage() {
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-800'}`}>
       {/* Navigation */}
-      <nav className={`px-4 py-4 rounded-2xl ${darkMode ? 'bg-gray-800' : 'bg-white'} border border-gray-200 dark:border-gray-600`}>
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <div className="h-8 w-8 rounded-full bg-orange-400 flex items-center justify-center">
-              <span className="font-bold text-white">P</span>
-            </div>
-            <h1 className="text-xl font-bold">Projetos</h1>
-          </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 justify-between">
+             <div className="w-full">
+              <InfoPage 
+             
+             title='Teste A/B'
+             subtitle='Realize seus teste automáticos e converta muito mais!'
+      
+             /> 
+             </div>
 
             {/* <div className="relative hidden md:block">
               <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -116,15 +117,15 @@ export default function ListProjectPage() {
                   } focus:outline-none focus:ring-2 focus:ring-orange-500`}
               />
             </div> */}
-            <div>
-              <Button onClick={() => openModal("project")}>
+            <div className='w-52'>
+              <Button 
+              className='w-full'
+              onClick={() => openModal("project")}>
                 Novo Projeto
               </Button>
 
             </div>
           </div>
-        </div>
-      </nav>
 
       {/* Search bar for mobile */}
       <div className="md:hidden py-3">
@@ -142,7 +143,7 @@ export default function ListProjectPage() {
       </div>
 
       {/* Main content */}
-      <main className="container mx-auto py-6">
+      <main className=" mx-auto py-6">
 
 
         {/* Empty state */}
@@ -230,12 +231,12 @@ export default function ListProjectPage() {
                   {/* Domain info */}
                   {project.domain && (
                     <div
-                      onClick={() => copyToClipboard(project.domain.domain)}
+                      onClick={() => copyToClipboard('app.' + project.domain.domain)}
                       className={`flex items-center space-x-2 mb-4 p-2 rounded-lg cursor-pointer ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
                         }`}
                     >
-                      <Globe size={16} className="text-orange-500" />
-                      <span className="text-sm flex-1 truncate">{project.domain.domain}</span>
+                      <Globe size={16} className="text-brand-500" />
+                      <span className="text-sm flex-1 truncate">{'app.' + project.domain.domain}</span>
                       <Copy size={14} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
                     </div>
                   )}

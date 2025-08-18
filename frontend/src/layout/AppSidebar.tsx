@@ -17,9 +17,9 @@ import {
   Marketing,
   AB,
   Domain,
-  Upsell,
   Target,
 } from "../icons/index";
+import Badge from "@/components/ui/badge/Badge";
 
 type NavItem = {
   name: string;
@@ -56,11 +56,11 @@ const navItems: NavItem[] = [
     icon: <Target />,
     path: "/integrations",
   },
-  {
-    name: "Upsell",
-    icon: <Upsell />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  },
+  // {
+  //   name: "Upsell",
+  //   icon: <Upsell />,
+  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+  // },
   {
     name: "Projetos",
     icon: <PageIcon />,
@@ -81,36 +81,23 @@ const othersItems: NavItem[] = [
   {
     icon: <PieChartIcon />,
     name: "Chat com IA",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
+    path: "#",
   },
   {
     icon: <BoxCubeIcon />,
     name: "Gerador com IA",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
+    path: "#",
+   
   },
   {
     icon: <PlugInIcon />,
     name: "IA SEO",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-      { name: "OTP", path: "/OTPVerify", pro: false },
-    ],
+   path: "#",
   },
   {
     name: "Checkout",
     icon: <TableIcon />,
-    path: "/",
+    path: "#",
   },
 ];
 
@@ -376,9 +363,10 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+            <div className="py-4">
+              <div className="flex items-center gap-3">
+                <h2
+                className={`text-xs uppercase flex  text-gray-400 ${
                   !isExpanded && !isHovered
                     ? "lg:justify-center"
                     : "justify-start"
@@ -390,6 +378,12 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
+              <Badge
+              size="sm"
+              >
+                EM BREVE
+              </Badge>
+              </div>
               {renderMenuItems(othersItems, "others")}
             </div>
           </div>

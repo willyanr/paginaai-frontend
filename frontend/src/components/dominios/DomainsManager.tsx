@@ -38,7 +38,7 @@ const DomainsManager: React.FC = () => {
                     <div className="bg-gray-100 text-gray-500 dark:bg-gray-500/15 dark:text-gray-400 text-sm rounded-lg p-6">
                         <p className="mb-2 font-bold dark:text-white text-xl">1º Etapa</p>
                         <p className='text-sm'>
-                            Cadastre seu domínio, remova (&#39;https://www.&#39; ou &#39;http://www.&#39;) e siga a próxima etapa.
+                            Cadastre seu domínio ao lado, remova (&#39;https://www.&#39; ou &#39;http://www.&#39;) e siga a próxima etapa.
                         </p>
                     </div>
 
@@ -55,7 +55,7 @@ const DomainsManager: React.FC = () => {
                             </div>
                             <div className="bg-gray-50 p-4 rounded-lg dark:bg-brand-500/15 dark:text-white">
                                 <p className="text-gray-500">Valor</p>
-                                <p className="font-semibold select-all text-brand-500 break-all">landing.exemplo.com</p>
+                                <p className="font-semibold select-all text-brand-500 break-all">api.paginaai.com.br</p>
                             </div>
                         </div>
                     </div>
@@ -64,7 +64,7 @@ const DomainsManager: React.FC = () => {
                         <p className="text-sm">
                             Para que seu domínio funcione corretamente, você precisa acessar o painel de gerenciamento do seu provedor de domínio (como GoDaddy, Registro.br, HostGator, etc).
                             Lá, vá até a seção de configurações de DNS e adicione um novo registro do tipo <strong>CNAME</strong>.
-                            Use os dados fornecidos abaixo exatamente como estão.
+                            Use os dados fornecidos acima exatamente como estão.
                             Após salvar, aguarde até 4 horas para que as alterações sejam propagadas na internet.
                         </p>
 
