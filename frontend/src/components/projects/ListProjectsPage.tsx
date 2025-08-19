@@ -96,7 +96,7 @@ export default function ListProjectPage() {
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-800'}`}>
       {/* Navigation */}
 
-          <div className="flex items-center space-x-4 justify-between">
+          <div className="lg:flex items-center space-x-4 justify-between">
              <div className="w-full">
               <InfoPage 
              
@@ -117,7 +117,7 @@ export default function ListProjectPage() {
                   } focus:outline-none focus:ring-2 focus:ring-orange-500`}
               />
             </div> */}
-            <div className='w-52'>
+            <div className='py-5 lg:py-0 lg:w-52'>
               <Button 
               className='w-full'
               onClick={() => openModal("project")}>

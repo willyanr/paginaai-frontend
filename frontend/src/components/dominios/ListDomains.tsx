@@ -79,8 +79,8 @@ const ListDomains: React.FC = () => {
                         key={index}
                         className="border rounded-2xl p-6 shadow-sm  dark:border-gray-600 dark:bg-gray-800"
                     >
-                        <div className="flex justify-between items-center mb-2">
-                            <div className="flex flex-col">
+                        <div className="lg:flex justify-between items-center mb-2">
+                            <div className="lg:flex">
                                 <h2 className="text-xl font-medium mb-2 text-gray-600 dark:text-gray-100">
                                     {item?.domain}
                                 </h2>
@@ -89,7 +89,7 @@ const ListDomains: React.FC = () => {
                                 </span>
 
                             </div>
-                            <div className="flex gap-2 items-center">
+                            <div className="lg:flex gap-2 items-center">
                                 <Badge
                                     variant="light"
                                     color={item?.verified ? 'success' : 'error'}
@@ -104,7 +104,7 @@ const ListDomains: React.FC = () => {
                                 </Badge>
                             </div>
                             <div onClick={() => editDomain(item.domain, item.id)}
-                                className="justify-end flex cursor-pointer">
+                                className="mt-4 lg:mt-0 justify-end flex cursor-pointer">
                                 <Badge color="dark">
                                     Editar
                                 </Badge>

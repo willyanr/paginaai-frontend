@@ -61,13 +61,13 @@ const ModalCreateDomain: React.FC = () => {
                 closeModal();
                 setDomainName('')
             }} className="max-w-[700px] m-4 dark:text-white">
-                <div className="p-8">
+                <div className="p-6">
                     <h2 className="text-lg font-bold mb-4">Vamos cadastrar seus domínios</h2>
                     <div className=''>
-                        <p className="text-lg text-gray-600 mb-2 dark:text-white">Bora começar seu projeto, e escalar muito suas vendas!</p>
+                        <p className="text-sm lg:text-lg text-gray-600 mb-2 dark:text-white">Bora começar seu projeto, e escalar muito suas vendas!</p>
                         <div className="mb-3 py-2">
                             <div className=''>
-                                <Label>
+                                <Label className='text-xs lg:text-sm'>
                                     Cole seu domínio
                                 </Label>
                                 <Input
@@ -79,15 +79,15 @@ const ModalCreateDomain: React.FC = () => {
                             </div>
 
                             {isDomain &&
-                                <div>
+                                <div className=''>
                                     <div className='mt-3'>
-                                        <span className='mt-3'>Quer associar um projeto?</span>
+                                        <span className='mt-3 text-sm  lg:text-base'>Quer associar um projeto?</span>
                                     </div>
                                     
                                     <div className="bg-gray-100 border text-gray-600 dark:bg-gray-800 dark:text-gray-200 mt-2 p-5 rounded-xl dark:border-gray-600">
-                                        <div className="flex justify-between">
-                                            <span className='font-semibold'>Domínio:</span>
-                                            <h2 className='font-bold truncate px-3 w-2/3 justify-center flex'>
+                                        <div className="lg:flex lg:justify-between">
+                                            <span className='font-semibold text-sm lg:text-base'>Domínio:</span>
+                                            <h2 className='font-bold truncate lg:px-3 lg:w-2/3 justify-center flex'>
                                                 {domainName}
                                             </h2>
                                             <Badge
@@ -97,10 +97,11 @@ const ModalCreateDomain: React.FC = () => {
                                                 Não verificado
                                             </Badge>
                                         </div>
-                                        <p className='text-center mt-3 text-sm dark:text-gray-200'>Você está cadastrando o seguinte domínio, deseja confirmar?</p>
+                                        <p className='lg:text-center mt-3 text-sm dark:text-gray-200'>Você está cadastrando o seguinte domínio, deseja confirmar?</p>
                                     </div>
                                     <div className="flex justify-center py-1 mt-5">
                                         <Button
+                                            size='sm'
                                             isLoading={isLoading}
                                             variant='primary'
                                             onClick={createNewDomain}

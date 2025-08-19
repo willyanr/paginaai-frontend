@@ -43,7 +43,7 @@ const ListProjectMarketing: React.FC = () => {
                     {userProjects.map((item) => (
                         <li
                             key={item.id}
-                            className=" border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 dark:bg-gray-800"
+                            className="p-3 border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 dark:bg-gray-800"
                         >
                             <div>
 

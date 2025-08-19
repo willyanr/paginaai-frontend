@@ -163,77 +163,84 @@ export default function CardPixel() {
 
       }
 
-      <div className="p-5 flex gap-6">
-       
-      
-         <div className="w-1/2 overflow-auto h-screen">
-          <ul className="">
+      <div className=" lg:p-5 flex flex-col lg:flex-row gap-6">
+
+        {/* Coluna esquerda */}
+        <div className="w-full lg:w-1/2 lg:overflow-auto lg:h-screen">
+          <ul>
             {plataforms.map((platform) => (
               <li
                 key={platform.id}
-                className="border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 dark:bg-gray-800 mb-10"
+                className="border-2 p-6 lg:p-6 border-gray-200 rounded-2xl dark:border-gray-600 dark:bg-gray-800 mb-6 lg:mb-10"
               >
                 <div className="flex items-center gap-4 py-3">
                   <Image
-                    src={theme === 'light' ? platform.logoWhite : platform.logoDark || platform.logoWhite }
+                    src={theme === 'light' ? platform.logoWhite : platform.logoDark || platform.logoWhite}
                     alt={`Logo ${platform.name}`}
                     width={100}
                     height={40}
                     className="object-contain"
                   />
-                  <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+                  <h4 className="text-base lg:text-lg font-semibold text-gray-800 dark:text-white/90">
                     Pixel {platform.name}
                   </h4>
                 </div>
+
+                {/* Select */}
                 <div className="py-3">
                   <Label>Selecione um projeto</Label>
-
                   <Select
                     options={selectOptions}
                     onChange={handleSelectChange}
                     className="cursor-pointer"
                   />
-
-
                 </div>
+
+                {/* Input */}
                 <div className="py-3">
                   <Label>Cole seu código do Pixel</Label>
                   <Input
-                  className="cursor-pointer"
+                    className="cursor-pointer"
                     type="text"
                     defaultValue={inputPixel[platform.type]}
                     placeholder={
-                      platform.type === 'google_ads' ? 'AW-XXXXXXXXXX' :
-                        platform.type === 'utmify' ? '67b685db1dbb22525effef90' :
-                          platform.type === 'meta' ? '123213213421213' :
-                            ''
+                      platform.type === 'google_ads'
+                        ? 'AW-XXXXXXXXXX'
+                        : platform.type === 'utmify'
+                          ? '67b685db1dbb22525effef90'
+                          : platform.type === 'meta'
+                            ? '123213213421213'
+                            : ''
                     }
                     onChange={(e) => {
-                      setInputPixel(value => ({ ...value, [platform.type]: e.target.value }));
+                      setInputPixel((value) => ({
+                        ...value,
+                        [platform.type]: e.target.value,
+                      }));
                     }}
-
                   />
                 </div>
-                <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  {platform.information}
-                </p>
-                {platform.info &&
 
+                {/* Info */}
+               
+                {platform.info && (
                   <div className="py-2">
-
-                    <div className="bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 p-4 py-4 rounded-lg">
+                    <div className="bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 p-4 rounded-lg">
                       <span className="text-xs">{platform?.info}</span>
                     </div>
-
                   </div>
+                )}
 
-                }
-
-                <div className="flex justify-end py-2">
+                {/* Botão */}
+                <div className="flex justify-end py-4">
                   <Button
+                  size="sm"
                     onClick={() => {
                       createPixelProject(platform.type);
-                      setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [platform.type]: true }));
+                      setIsLoadingButton((isLoadingButton) => ({
+                        ...isLoadingButton,
+                        [platform.type]: true,
+                      }));
                     }}
                     isLoading={isLoadingButton[platform.type]}
                   >
@@ -242,22 +249,27 @@ export default function CardPixel() {
                 </div>
               </li>
             ))}
-
           </ul>
         </div>
-          <div className="flex flex-col w-1/2">
-          {marketingData &&
-            <div className="flex min-h-screen items-center justify-center">
-              <div className="flex w-72"> {/* Removi mx-auto daqui, pois o pai já está centralizando */}
-                <h1 className="mx-auto font-bold text-2xl text-center">Nenhum pixel foi associado a nenhum projeto.</h1>
+
+        {/* Coluna direita */}
+        <div className="w-full lg:w-1/2 flex flex-col">
+          {marketingData && (
+            <div className="flex items-center justify-center py-10 lg:min-h-screen">
+              <div className="flex w-72">
+                <h1 className="mx-auto font-bold text-xl lg:text-2xl text-center">
+                  Nenhum pixel foi associado a nenhum projeto.
+                </h1>
               </div>
             </div>
-          }
-          <div className="w-full overflow-auto">
+          )}
+
+          <div className="w-full lg:overflow-auto">
             <ListProjectMarketing />
           </div>
         </div>
       </div>
+
 
 
 

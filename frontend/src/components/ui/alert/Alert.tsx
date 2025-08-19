@@ -22,12 +22,12 @@ const Alert: React.FC<AlertProps> = ({
   const variantClasses = {
     success: {
       container:
-        "border-success-500 bg-success-50 dark:border-success-500/30 dark:bg-success-500/15",
+        "border-success-500 bg-success-50 dark:border-success-500/80 dark:bg-green-500/60",
       icon: "text-success-500",
     },
     error: {
       container:
-        "border-error-500 bg-error-50 dark:border-error-500/30 dark:bg-error-500/15",
+        "border-error-500 bg-error-50 dark:border-error-500/70 dark:bg-red-500/60",
       icon: "text-error-500",
     },
     warning: {
@@ -114,7 +114,7 @@ const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
-      className={`rounded-xl border p-4 ${variantClasses[variant].container} min-w-96`}
+      className={`rounded-xl border p-4 ${variantClasses[variant].container} lg:min-w-96`}
     >
       <div className="flex items-start gap-3">
         <div className={`-mt-0.5 ${variantClasses[variant].icon}`}>

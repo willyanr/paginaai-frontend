@@ -76,12 +76,12 @@ const ListProjects: React.FC = () => {
 
   return (
     <div className="">
-      <div className="flex gap-9">
+      <div className="lg:flex gap-9">
 
 
         {/* Sidebar com projetos selecionados */}
-        <div className="w-1/2">
-          <div className="bg-white rounded-xl p-6 sticky top-8 border border-gray-300 dark:bg-gray-800 dark:border-gray-600 h-full">
+        <div className="lg:w-1/2">
+          <div className="bg-white rounded-xl p-8 sticky top-8 border border-gray-300 dark:bg-gray-800 dark:border-gray-600 h-full">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center dark:text-white">
               <BarChart3 className="w-5 h-5 text-brand-600 mr-2" />
               Projetos Selecionados
@@ -123,7 +123,7 @@ const ListProjects: React.FC = () => {
 
             {!canStartTest &&
               <button
-                className={`w-full py-3 px-4 rounded-full font-semibold transition-all duration-200 ${canStartTest
+                className={`w-full lg:py-3 px-2 py-1.5 lg:px-4 rounded-full text-sm  font-semibold transition-all duration-200 ${canStartTest
                   ? 'bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed rounded-2xl'
                   }`}
@@ -158,7 +158,7 @@ const ListProjects: React.FC = () => {
                 </div>
               )
             ) : (
-              <div className="bg-gray-100 flex gap-2 dark:bg-gray-800 mt-5 rounded-lg p-5">
+              <div className="bg-gray-100 flex gap-2 dark:bg-gray-800 mt-5 rounded-lg lg:p-5">
                 <div className="mt-5">
                   <Info className="dark:text-gray-300" />
                 </div>
@@ -177,7 +177,7 @@ const ListProjects: React.FC = () => {
           </div>
 
         </div>
-        <div className="w-full">
+        <div className="w-full py-5 lg:py-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
             {userProjects.map((project) => {
               const isSelected = selectedProjects.find(p => p.id === project.id);

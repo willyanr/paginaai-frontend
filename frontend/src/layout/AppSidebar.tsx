@@ -20,6 +20,7 @@ import {
   Target,
 } from "../icons/index";
 import Badge from "@/components/ui/badge/Badge";
+import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -388,7 +389,10 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
+        {/* {isExpanded || isHovered || isMobileOpen ? 
+        <div className="lg:pb-0 pb-12">
+           <SidebarWidget />
+        </div> : null}  */}
       </div>
     </aside>
   );

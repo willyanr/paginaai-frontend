@@ -43,36 +43,42 @@ export const TrackersIntegrations = ({ }) => {
     const { theme } = useTheme();
 
     return (
-        <div className="w-full flex gap-5">
-            {plataforms.map((platform) => (
-                <div className="max-w-2xl mx-auto " key={platform.id}>
-                    <Link href={`/marketing`} 
-                    className="flex gap-3 bg-white border-2 border-gray-300 rounded-xl overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:hover:text-white dark:border-gray-600 hover:dark:border-brand-500 p-2 h-40">
-                        <div className="h-20 p-2">
-                            <Image
-                                src={
-                                    theme === 'light'
-                                        ? platform.logoWhite
-                                        : platform.logoDark || platform.logoWhite
-                                }
-                                alt={`Logo da plataforma ${platform.name}`}
-                                className="object-contain w-full h-full"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2 py-2 p-3  transition-all duration-300">
-                            <p className="text-xl font-bold dark:text-white">
-                                {platform.name}
-                            </p>
-
-                            <p className="text-gray-600 dark:text-gray-400 text-sm">
-                               
-                               {platform.description}
-                            </p>
-                        </div>
-                    </Link>
-                </div>
-            ))}
+       <div className="w-full flex flex-wrap gap-5 justify-center">
+  {plataforms.map((platform) => (
+    <div
+      className="w-full sm:w-[48%] lg:w-[32%] xl:w-[28%] max-w-2xl "
+      key={platform.id}
+    >
+      <Link
+        href={`/marketing`}
+        className="flex gap-3 bg-white border-2 border-gray-300 rounded-xl overflow-hidden items-center justify-start dark:bg-gray-800 hover:border-b-8 hover:border-brand-500 cursor-pointer transition-all duration-300 dark:hover:text-white dark:border-gray-600 hover:dark:border-brand-500 p-2 h-40"
+      >
+        <div className="h-80 w-80 flex items-center justify-center p-2">
+          <Image
+            src={
+              theme === 'light'
+                ? platform.logoWhite
+                : platform.logoDark || platform.logoWhite
+            }
+            alt={`Logo da plataforma ${platform.name}`}
+            className="object-contain w-full h-full"
+          />
         </div>
+
+        <div className="flex flex-col gap-2 py-2 p-3 transition-all duration-300">
+          <p className="text-lg md:text-xl font-bold dark:text-white">
+            {platform.name}
+          </p>
+
+          <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm line-clamp-3">
+            {platform.description}
+          </p>
+        </div>
+      </Link>
+    </div>
+  ))}
+</div>
+
     );
 };
 

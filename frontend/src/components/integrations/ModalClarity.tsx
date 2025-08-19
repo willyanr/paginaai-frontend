@@ -65,7 +65,7 @@ export const ModalClarity = ({ }) => {
                 onClose={closeModal}
                 className="max-w-[700px] m-4 dark:text-white"
             >
-                <div className='p-8'>
+                <div className='p-5'>
                     <h1>
                         Criar integração com Microsoft Clarity.
                     </h1>
@@ -75,7 +75,7 @@ export const ModalClarity = ({ }) => {
                         </p>
                     </div>
 
-                    <div className="flex justify-left items-center gap-4">
+                    <div className="lg:flex justify-left items-center gap-4">
                         <div>
                             <Image
                                 src={logoClarity}
@@ -87,7 +87,7 @@ export const ModalClarity = ({ }) => {
                         </div>
                         <div>
                             <Label
-                                className=''
+                                className='py-2'
                             >
                                 Selecione o projeto para integrar:
                             </Label>
@@ -99,7 +99,7 @@ export const ModalClarity = ({ }) => {
                             />
                         </div>
                         <div>
-                            <Label>
+                            <Label className='py-2'>
                                 Cole seu código do Microsoft Clarity
                             </Label>
                             <Input
@@ -110,7 +110,7 @@ export const ModalClarity = ({ }) => {
                             />
                         </div>
                     </div>
-                    <div className='flex justify-end mt-10'>
+                    <div className='flex justify-center lg:justify-end mt-10'>
                         <Button
                             onClick={createNewIntegration}
                         >

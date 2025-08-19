@@ -10,7 +10,6 @@ import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import { useRef, useState } from 'react';
 import { TrashBinIcon } from '@/icons/index';
-import Alert from '../ui/alert/Alert';
 import { useAlertContext } from '@/context/AlertContext';
 import { UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 import { Modal } from '../ui/modal';
@@ -293,16 +292,7 @@ const getImagesAssets = async () => {
         onEditor={onEditor}
       />
       <div>
-        {isAlert &&
-          <div className="fixed bottom-24 right-4 z-50">
-            <Alert
-              message={messageAlert}
-              variant={typeAlert as 'success' | 'error'}
-              title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-
-            />
-          </div>
-        }
+        
         {isOpen && (
           <Modal isOpen={isOpen("import-code")} onClose={closeModal} className="max-w-[700px] m-4 dark:text-white">
             <div

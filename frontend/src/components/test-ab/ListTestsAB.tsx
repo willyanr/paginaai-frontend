@@ -43,13 +43,14 @@ const ListTestsAB: React.FC = () => {
         return (
             <div className='w-full'>
                 <div className='border-2 rounded-lg p-3 flex justify-between items-center mt-5 dark:border-gray-600 dark:bg-gray-800'>
-                    <div>
-                        <span className='font-semibold text-gray-700 dark:text-white px-3'>
+                    <div className='w-10 lg:w-40'>
+                        <span className='font-semibold text-gray-700 dark:text-white lg:px-3'>
                             Testes Rodando:
                         </span>
                     </div>
                     <div>
                         <Button
+                        size='sm'
                             isLoading={isLoading}
                             onClick={() => {
                                 openModal('delete-domain');
@@ -64,8 +65,8 @@ const ListTestsAB: React.FC = () => {
                     {testsAB.map((item, index) => (
                         <div
                             key={index}
-                            className='flex justify-between gap-4'>
-                            <div className='w-1/2 p-6 rounded-lg border-2 dark:border-gray-600 dark:bg-gray-800'>
+                            className='lg:flex justify-between gap-4'>
+                            <div className='lg:w-1/2 p-6 rounded-xl  border-2 dark:border-gray-600 dark:bg-gray-800'>
                                 <div className='flex justify-between items-center'>
                                     <div className="w-10 h-10 bg-brand-500/15 rounded-full flex items-center justify-center p-2">
                                         <AB className="text-brand-500" />
@@ -76,7 +77,7 @@ const ListTestsAB: React.FC = () => {
                                     </Badge>
                                 </div>
                                 <div className='py-2'>
-                                    <p className='dark:text-gray-400 text-sm'>Criado em: {formatDateTime(item.created_at)}</p>
+                                    <p className='dark:text-gray-400 text-xs lg:text-sm'>Criado em: {formatDateTime(item.created_at)}</p>
                                 </div>
                                 <div>
                                     <ListStatistic
@@ -85,7 +86,7 @@ const ListTestsAB: React.FC = () => {
                                 </div>
 
                             </div>
-                            <div className='w-1/2 p-6 rounded-lg border-2 dark:border-gray-600 dark:bg-gray-800'>
+                            <div className='lg:w-1/2 p-6 rounded-xl  border-2 dark:border-gray-600 dark:bg-gray-800 mt-10 lg:mt-0'>
                                 <div className='flex justify-between items-center'>
                                     <div className="w-10 h-10 bg-brand-500/15 rounded-full flex items-center justify-center p-2">
                                         <AB className="text-brand-500" />

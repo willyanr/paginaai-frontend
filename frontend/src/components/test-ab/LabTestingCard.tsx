@@ -51,7 +51,7 @@ const LabTestingCard: React.FC<LabTestingCardProps> = ({ time }) => {
   const CurrentIcon = testingSteps[currentStep].icon;
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-50 rounded-2xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800">
+    <div className="max-w-md mx-auto px-3 py-10 lg:p-6 bg-gray-50 rounded-2xl  dark:bg-gray-800">
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-2 dark:text-white">

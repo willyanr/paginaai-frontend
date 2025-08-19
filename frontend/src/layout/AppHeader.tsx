@@ -85,14 +85,14 @@ const AppHeader: React.FC = () => {
 
           <Link href="/" className="lg:hidden">
             <Image
-              width={154}
+              width={100}
               height={32}
               className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
+              src="/images/logo/Logo.png"
+              alt="Logo" 
             />
             <Image
-              width={154}
+              width={100}
               height={32}
               className="hidden dark:block"
               src="./images/logo/logo-dark.svg"
@@ -126,7 +126,7 @@ const AppHeader: React.FC = () => {
             } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
           <div className="flex items-center gap-2 2xsm:gap-3">
-            <div className="relative">
+            <div className="hidden lg:block">
               <div className="glass-glow flex  rounded-full items-center gap-3 bg-brand-400/30 cursor-pointer">
                 <span className="w-7 h-7 bg-brand-300 rounded-full flex items-center justify-center text-sm shadow-md text-white">
                   🔥
