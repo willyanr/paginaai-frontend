@@ -87,7 +87,7 @@ export default function OTPVerify() {
               />
             )}
           />
-          <span className="text-center text-sm dark:text-gray-400">
+          <span className="text-center text-sm dark:text-gray-400 mt-6">
             Você tem 3 tentativas, verifique em seu e-mail na caixa de spam ou lixeira.
           </span>
         </div>

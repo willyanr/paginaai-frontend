@@ -157,7 +157,7 @@ export default function ResetPassword() {
                   value={otp}
                   onChange={setOtp}
                   numInputs={6}
-                  inputType="text"
+                  inputType="number"
                   renderSeparator={<span className=""> </span>}
                   containerStyle="flex justify-center flex-wrap gap-1 w-full"
                   inputStyle={{
@@ -170,7 +170,7 @@ export default function ResetPassword() {
                   renderInput={(props) => <input {...props} className="text-gray-500 text-center rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-400 dark:text-white dark:border-gray-600" />}
 
                 />
-                <span className='text-center text-sm dark:text-gray-400 mt-10'>Você tem 3 tentativas, verifique em seu e-mail na caixa de spam ou lixeira.</span>
+                <span className='text-center text-sm dark:text-gray-400 mt-6'>Você tem 3 tentativas, verifique em seu e-mail na caixa de spam ou lixeira.</span>
               </div>
 
 
