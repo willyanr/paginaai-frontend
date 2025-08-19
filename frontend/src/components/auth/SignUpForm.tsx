@@ -177,7 +177,7 @@ export default function SignUpForm() {
 
 
   return (
-    <div className="flex flex-col flex-1 lg:w-1/2 w-full overflow-y-auto no-scrollbar">
+    <div className="flex flex-col flex-1 lg:w-1/2 w-full h-screen">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5"></div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
