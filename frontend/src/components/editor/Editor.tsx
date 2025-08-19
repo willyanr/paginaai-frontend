@@ -9,28 +9,40 @@ import Button from '../ui/button/Button';
 import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import { useRef, useState } from 'react';
-import { TrashBinIcon } from '@/icons/index';
 import { useAlertContext } from '@/context/AlertContext';
 import { UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 import { Modal } from '../ui/modal';
 import { InfoCard } from '../ui/info/InfoCard';
-
+import projectDataDefault from '@/components/editor/projectDataDefault.json'
 
 export default function DefaultEditor() {
+
   const { projectSelected, isLoading, projectSelectedID, projectSelectedName, updateProject, fetchProjectsAssets } = useProjects();
   const editorRef = useRef<Editor | null>(null);
   const { onAlert } = useAlertContext();
   const { isOpen, openModal, closeModal } = useModalContext();
+
+
+
 
   const onEditor = (editor: Editor) => {
     editorRef.current = editor;
     editor.Panels.removeButton('options', 'canvas-clear');
     const dataToLoad = {};
     if (dataToLoad && typeof dataToLoad === 'object' && !Array.isArray(dataToLoad) && projectSelected) {
-      editor.loadProjectData(JSON.parse(projectSelected));
+      if (typeof projectSelected === 'string' && projectSelected.trim() !== '') {
+        // Carrega os dados do projeto selecionado
+        editor.loadProjectData(JSON.parse(projectSelected));
+      } else {
+        // Caso vazio ou não seja string, carrega o default
+        editor.loadProjectData(projectDataDefault);
+      }
+
+
+
     }
     getImagesAssets();
-  
+
 
 
 
@@ -78,34 +90,34 @@ export default function DefaultEditor() {
 
 
   const OnSave = async () => {
-  const editor = editorRef.current;
-  if (editor) {
-    try {
-      if (projectSelectedID) {
-        const fullHtml = editor.getHtml();
-        // Extrai só conteúdo do <body>
-        const bodyMatch = fullHtml.match(/<body[^>]*>((.|[\n\r])*)<\/body>/im);
-        const bodyContent = bodyMatch ? bodyMatch[1] : fullHtml;
+    const editor = editorRef.current;
+    if (editor) {
+      try {
+        if (projectSelectedID) {
+          const fullHtml = editor.getHtml();
+          // Extrai só conteúdo do <body>
+          const bodyMatch = fullHtml.match(/<body[^>]*>((.|[\n\r])*)<\/body>/im);
+          const bodyContent = bodyMatch ? bodyMatch[1] : fullHtml;
 
-        const payload: UpdateProjectUserPayload = {
-          project: projectSelectedID,
-          project_data: JSON.stringify(editor.getProjectData()),
-          html: bodyContent,  // só o body
-          css: editor.getCss() ?? null
-        };
+          const payload: UpdateProjectUserPayload = {
+            project: projectSelectedID,
+            project_data: JSON.stringify(editor.getProjectData()),
+            html: bodyContent,  // só o body
+            css: editor.getCss() ?? null
+          };
 
-        await updateProject(payload, projectSelectedID);
-        onAlert(true, 'success', 'Projeto publicado com sucesso!');
+          await updateProject(payload, projectSelectedID);
+          onAlert(true, 'success', 'Projeto publicado com sucesso!');
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          typeof error === 'object' && error !== null && 'message' in error
+            ? (error as { message: string }).message
+            : 'Erro ao atualizar o projeto.';
+        onAlert(true, 'error', errorMessage);
       }
-    } catch (error: unknown) {
-      const errorMessage =
-        typeof error === 'object' && error !== null && 'message' in error
-          ? (error as { message: string }).message
-          : 'Erro ao atualizar o projeto.';
-      onAlert(true, 'error', errorMessage);
     }
-  }
-};
+  };
 
 
   const clearProject = async () => {
@@ -120,38 +132,42 @@ export default function DefaultEditor() {
     }
 
   };
-const getImagesAssets = async () => {
+  const getImagesAssets = async () => {
     const textBtn = document.querySelector('.gjs-mdl-header');
     if (textBtn) {
-      textBtn.textContent = "Adicione ou selecione novas imagens, para escolher a imagem clique duas vezes.";
+      textBtn.textContent =
+        "Adicione ou selecione novas imagens, para escolher a imagem clique duas vezes.";
     }
-  const editor = editorRef.current;
-  if (editor) {
+
+    const editor = editorRef.current;
+    if (!editor) return;
+
     try {
-      const response = await fetchProjectsAssets();
-      const res = response;
+      const res = await fetchProjectsAssets();
 
-      console.log('RESPOSTA', res);
+      // Pega o array de imagens dentro de res.data
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const images = (res as any).data;
 
-      if (!res || res.length === 0) {
+      if (!images || images.length === 0) {
         console.warn('Nenhuma imagem encontrada');
         return;
       }
 
-  
-
       const am = editor.AssetManager;
-      am.add(res.map((img) => ({
-        type: 'image',
-        src: img.url,
-        name: img.title
-      })));
+      am.add(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        images.map((img: any) => ({
+          type: 'image',
+          src: img.src,
+          name: img.name || img.title || 'Imagem',
+        }))
+      );
       am.render();
     } catch (error) {
       console.error('Erro ao obter imagens:', error);
     }
-  }
-};
+  };
 
   const [code, setCode] = useState("");
 
@@ -168,7 +184,7 @@ const getImagesAssets = async () => {
   };
 
 
-  
+
 
 
 
@@ -203,21 +219,12 @@ const getImagesAssets = async () => {
       }
     `}</style>
       <div className="flex justify-between gap-4 mb-3 items-center ">
-        <div className='flex justify-start px-3 items-center gap-5'>
-          <Button
-            size="sm"
-            startIcon={<TrashBinIcon />}
-            onClick={() => {
-              clearProject();
-            }}
-            isLoading={isLoading}
-          >
-            Desfazer tudo
-          </Button>
-          <span className='text-white text-xl font-semibold'>Projeto: {projectSelectedName}</span>
+        <div className='flex flex-col'>
+          <span className='dark:text-white text-semibold'>Voce está editando</span>
+          <span className='dark:text-white text-xl font-medium'>{projectSelectedName}</span>
         </div>
-        <div className="flex justify-end gap-4 items-center">
 
+        <div className="flex justify-end gap-4 items-center">
           <div className="flex items-center gap-3">
             <svg className='w-12 h-12' version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282 282" width="282" height="282">
               <title>image</title>
@@ -246,6 +253,16 @@ const getImagesAssets = async () => {
           >
             Trocar de projeto
           </Button>
+          <Button
+            size="sm"
+            className='bg-red-500'
+            onClick={() => {
+              clearProject();
+            }}
+            isLoading={isLoading}
+          >
+            Desfazer tudo
+          </Button>
 
           <Button
             size="sm"
@@ -256,6 +273,7 @@ const getImagesAssets = async () => {
           >
             Publicar Projeto
           </Button>
+
         </div>
       </div>
       <GjsEditor
@@ -292,7 +310,7 @@ const getImagesAssets = async () => {
         onEditor={onEditor}
       />
       <div>
-        
+
         {isOpen && (
           <Modal isOpen={isOpen("import-code")} onClose={closeModal} className="max-w-[700px] m-4 dark:text-white">
             <div

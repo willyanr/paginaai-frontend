@@ -51,7 +51,7 @@ export interface DataUserImages {
   id: number,
   title: string,
   image: string,
-  url: string,
+  src: string,
   uploaded_at: string
 }
 
