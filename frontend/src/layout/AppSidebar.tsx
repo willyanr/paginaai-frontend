@@ -20,7 +20,6 @@ import {
   Target,
 } from "../icons/index";
 import Badge from "@/components/ui/badge/Badge";
-import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;

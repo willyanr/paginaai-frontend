@@ -19,7 +19,7 @@ import { InfoCard } from '../ui/info/InfoCard';
 export default function DefaultEditor() {
   const { projectSelected, isLoading, projectSelectedID, projectSelectedName, updateProject, fetchProjectsAssets } = useProjects();
   const editorRef = useRef<Editor | null>(null);
-  const { isAlert, onAlert, typeAlert, messageAlert } = useAlertContext();
+  const { onAlert } = useAlertContext();
   const { isOpen, openModal, closeModal } = useModalContext();
 
   const onEditor = (editor: Editor) => {
