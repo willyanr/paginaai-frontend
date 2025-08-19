@@ -71,15 +71,15 @@ export default function OTPVerify() {
             onChange={setOtp}
             numInputs={6}
             inputType="number"
-            renderSeparator={<span className="mx-1"></span>}
-            containerStyle="flex justify-center flex-wrap gap-2 mb-2 w-full"
-            inputStyle={{
-              flex: '1 1 3rem',
-              minWidth: '2rem',
-              maxWidth: '3rem',
-              height: '3.5rem',
-              textAlign: 'center'
-            }}
+            renderSeparator={<span className=""></span>}
+            containerStyle="flex justify-center flex-wrap gap-1 w-full"
+                  inputStyle={{
+                    flex: '1 1 3rem',
+                    minWidth: '2rem',
+                    maxWidth: '3rem',
+                    height: '3.5rem',
+                    textAlign: 'center'
+                  }}
             renderInput={(props) => (
               <input
                 {...props}

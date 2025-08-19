@@ -12,7 +12,7 @@ import Label from "@/components/form/Label";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {ResetUserPassword, ResetUserPasswordPayload, VerifyCodeOTPPassword } from '@/interfaces/user.interface';
+import { ResetUserPassword, ResetUserPasswordPayload, VerifyCodeOTPPassword } from '@/interfaces/user.interface';
 
 export default function ResetPassword() {
   const { isAlert, messageAlert, typeAlert, onAlert } = useAlertContext();
@@ -86,7 +86,7 @@ export default function ResetPassword() {
   };
 
 
-  
+
   const onSubmit = async (data: ResetUserPassword) => {
     try {
       const payload: ResetUserPasswordPayload = {
@@ -96,19 +96,19 @@ export default function ResetPassword() {
       };
       await resetPasswordFinal(payload);
       onAlert(true, "success", 'Senha alterada com sucesso!');
-     } catch (error: unknown) {
+    } catch (error: unknown) {
       const errorMessage = typeof error === 'object' && error !== null && 'message' in error
         ? (error as { message: string }).message
         : 'Erro ao verificar alterar senhas.';
       onAlert(true, 'error', errorMessage)
     }
   };
-  
+
 
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4 w-full dark:bg-black">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 w-full dark:bg-black">
       {!isOTP && !InputPassword &&
         <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl p-6 max-w-md w-full border border-gray-300 dark:border-gray-600">
           <div className='flex flex-col gap-5 justify-center'>
@@ -130,11 +130,12 @@ export default function ResetPassword() {
             </div>
             <div className='mx-auto'>
               <Button
+                size='sm'
                 disabled={isLoading}
                 isLoading={isLoading}
                 onClick={() => sendEmail()}
               >
-                Enviar código para alterar senha
+                Enviar código
               </Button>
             </div>
           </div>
@@ -142,7 +143,7 @@ export default function ResetPassword() {
       }
       {isOTP && !InputPassword &&
         <div>
-          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4 w-full dark:bg-black">
+          <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 w-full dark:bg-black">
             <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl p-6 max-w-md w-full border border-gray-300 dark:border-gray-600">
               <h2 className="text-xl font-semibold text-center text-gray-700 mb-4 dark:text-white">
                 Quase lá...
@@ -157,13 +158,19 @@ export default function ResetPassword() {
                   onChange={setOtp}
                   numInputs={6}
                   inputType="text"
-                  renderSeparator={<span className="mx-1"> </span>}
-                  inputStyle={{ width: 'calc(100% / 6 - 0.5rem)', height: "3.5rem", margin: '0.25rem' }}
-                  containerStyle="flex justify-center mb-6 w-full"
+                  renderSeparator={<span className=""> </span>}
+                  containerStyle="flex justify-center flex-wrap gap-1 w-full"
+                  inputStyle={{
+                    flex: '1 1 3rem',
+                    minWidth: '2rem',
+                    maxWidth: '3rem',
+                    height: '3.5rem',
+                    textAlign: 'center'
+                  }}
                   renderInput={(props) => <input {...props} className="text-gray-500 text-center rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-400 dark:text-white dark:border-gray-600" />}
 
                 />
-                <span className='text-center text-sm dark:text-gray-400'>Você tem 3 tentativas, verifique em seu e-mail na caixa de spam ou lixeira.</span>
+                <span className='text-center text-sm dark:text-gray-400 mt-10'>Você tem 3 tentativas, verifique em seu e-mail na caixa de spam ou lixeira.</span>
               </div>
 
 
@@ -197,7 +204,7 @@ export default function ResetPassword() {
                 Boa! agora só digitar uma nova senha
               </h2>
               <p className="text-sm text-gray-500 text-center mb-6 dark:text-gray-300">
-               Digite sua nova senha.
+                Digite sua nova senha.
               </p>
               <form
                 className="flex flex-col gap-2"
