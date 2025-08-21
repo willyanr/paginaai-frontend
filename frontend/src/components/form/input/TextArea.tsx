@@ -39,6 +39,15 @@ const TextArea: React.FC<TextareaProps> = ({
 
   return (
     <div className="relative">
+      {hint && (
+        <p
+          className={`mt-2 text-sm ${
+            error ? "text-error-500" : "text-gray-500 text-xs dark:text-gray-300 ms-1 mb-2"
+          }`}
+        >
+          {hint}
+        </p>
+      )}
       <textarea
         placeholder={placeholder}
         rows={rows}
@@ -47,15 +56,7 @@ const TextArea: React.FC<TextareaProps> = ({
         disabled={disabled}
         className={textareaClasses}
       />
-      {hint && (
-        <p
-          className={`mt-2 text-sm ${
-            error ? "text-error-500" : "text-gray-500 dark:text-gray-400"
-          }`}
-        >
-          {hint}
-        </p>
-      )}
+      
     </div>
   );
 };

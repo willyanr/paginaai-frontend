@@ -22,15 +22,15 @@ import Select from "../form/Select";
 import ListProjectMarketing from "./ListProjectMaketing";
 import { useTheme } from "@/context/ThemeContext";
 import { MarketingData } from "@/interfaces/marketing.interface";
+import { useAlertContext } from "@/context/AlertContext";
 
 
 
 export default function CardPixel() {
   const { marketingData, fetchProjectsMarketing, updateProjectMarketing } = useProjectsMarketing();
-  const [isAlert, setIsAlert] = useState(false);
-  const [isAlertError, setIsAlerttError] = useState(false);
   const { userProjects, fetchProjects } = useProjects();
   const [userProjectSelectedID, setUserProjectSelectedID] = useState<string>();
+  const { onAlert } = useAlertContext();
 
   const [isLoadingButton, setIsLoadingButton] = useState<Record<string, boolean>>({});
 
@@ -109,15 +109,17 @@ export default function CardPixel() {
 
       };
       await updateProjectMarketing(payload);
-      setIsAlert(true);
-      setTimeout(() => {
-        setIsAlert(false);
-      }, 3000);
-    } catch {
-      setIsAlerttError(true);
-      setTimeout(() => {
-        setIsAlerttError(false);
-      }, 3000);
+      onAlert(true, 'success', 'Pixel criado com sucesso!')
+  
+    } catch (error: unknown) {
+      if(!userProjectSelectedID){
+        onAlert(true, 'error', 'Por favor, selecione um projeto.')
+      } else {
+        onAlert(true, 'error', error instanceof Error ? error.message : 'Ocorreu um erro ao cria pixel.')
+      }
+
+      
+
     } finally {
       setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [type]: false }));
       setInputPixel({});
@@ -136,33 +138,7 @@ export default function CardPixel() {
 
 
     <div>
-      {isAlert &&
-
-        <div className="w-72">
-          <div className="fixed top-26 right-4">
-            <Alert
-              variant="success"
-              title="Pixel atualizado com sucesso!"
-              message="Seu pixel foi atualizado, confira."
-            />
-          </div>
-        </div>
-
-      }
-      {!isAlert && isAlertError &&
-
-        <div className="w-72">
-          <div className="fixed top-26 right-4">
-            <Alert
-              variant="error"
-              title="Erro ao atualizar o pixel!"
-              message="Houve um erro ao atualizar o pixel, tente novamente."
-            />
-          </div>
-        </div>
-
-      }
-
+      
       <div className=" lg:p-5 flex flex-col lg:flex-row gap-6">
 
         {/* Coluna esquerda */}
@@ -197,9 +173,10 @@ export default function CardPixel() {
                 </div>
 
                 {/* Input */}
-                <div className="py-3">
+                <div className="py-3 z-0">
                   <Label>Cole seu código do Pixel</Label>
                   <Input
+                  
                     className="cursor-pointer"
                     type="text"
                     defaultValue={inputPixel[platform.type]}

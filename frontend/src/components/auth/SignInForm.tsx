@@ -5,7 +5,7 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { useAuth } from '@/context/AuthContext';
 import Alert from "../ui/alert/Alert";
 import { useAlertContext } from "@/context/AlertContext";
@@ -19,7 +19,8 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { login } = useAuth();
-  const { isAlert, messageAlert, typeAlert, onAlert } = useAlertContext();
+  const { onAlert } = useAlertContext();
+  const [ isLoading, setIsLoading ] = useState<boolean>(false)
 
   const validationSchema = yup.object().shape({
     email: yup
@@ -50,6 +51,7 @@ export default function SignInForm() {
   };
 
   const onSubmit = async (data: SignInFormData) => {
+    setIsLoading(true);
     try {
       const  payload = {
         email: data.email,
@@ -59,6 +61,8 @@ export default function SignInForm() {
       onAlert(true, 'success', 'Login realizado com sucesso!')
     } catch (error: unknown) {
       onAlert(true, 'error', error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.')
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -187,6 +191,7 @@ export default function SignInForm() {
                 </div>
                 <div>
                   <Button
+                  isLoading={isLoading}
                     className="w-full"
                     size="sm"
                     type='submit'
@@ -212,18 +217,7 @@ export default function SignInForm() {
           </div>
         </div>
       </div>
-      <div>
-        {isAlert && (
-          <div className="fixed top-24 right-4 z-50">
-            <Alert
-              message={messageAlert}
-              variant={typeAlert as "error" | "success" | "warning" | "info"}
-              title={typeAlert === "success" ? "Sucesso" : "Erro"}
-            />
-          </div>
-        )}
-
-      </div>
+      
     </div>
   );
 }

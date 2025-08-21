@@ -23,6 +23,7 @@ export async function putProjectsMarketing(payload: UpdatePixelPayload) {
       errorMessage =
         err.response?.data?.detail ||
         err.response?.data?.message ||
+        
         errorMessage;
     }
     throw new Error(errorMessage);

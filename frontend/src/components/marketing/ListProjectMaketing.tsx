@@ -66,10 +66,10 @@ const ListProjectMarketing: React.FC = () => {
                                         ) => (
                                             <div
                                                 key={index}
-                                                className="flex items-center justify-between gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl"
+                                                className="lg:flex items-center justify-between gap-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl"
                                             >
                                                 {/* Esquerda: Imagem + Valor */}
-                                                <div className="flex items-center gap-3">
+                                                <div className="lg:flex items-center gap-3 py-3 lg:py-0">
                                                     <Image
                                                         src={
                                                             pixel.pixel_type === "meta"
@@ -92,7 +92,10 @@ const ListProjectMarketing: React.FC = () => {
                                                         height={40}
                                                         className="rounded"
                                                     />
-                                                    <Badge>{pixel.pixel_value}</Badge>
+                                                    <div className="py-5 truncate rounded-xl">
+                                                        <span className="bg-yellow-500/20 !text-yellow-500 px-3 rounded-xl">{pixel.pixel_value}</span>
+
+                                                    </div>
                                                 </div>
 
                                                 <div
@@ -116,15 +119,7 @@ const ListProjectMarketing: React.FC = () => {
                         </li>
                     ))}
                 </ul>
-                {isAlert && (
-                    <div className="fixed top-24 right-4 z-50">
-                        <Alert
-                            message={messageAlert}
-                            variant={typeAlert as "error" | "success" | "warning" | "info"}
-                            title={typeAlert === "success" ? "Sucesso" : "Erro"}
-                        />
-                    </div>
-                )}
+               
             </div>
 
         );

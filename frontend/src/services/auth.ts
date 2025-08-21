@@ -31,13 +31,25 @@ export async function login(payload: LoginUser) {
     return res.data;
   } catch (error: unknown) {
     let errorMessage = 'Erro desconhecido ao realizar login.';
+
     if (typeof error === 'object' && error !== null && 'response' in error) {
-      const err = error as { response?: { data?: { detail?: string; message?: string; error?: string } } };
-      errorMessage =
-        err.response?.data?.detail ||
-        err.response?.data?.message ||
-        errorMessage;
+      const err = error as {
+        response?: { data?: Record<string, any> };
+      };
+
+      const data = err.response?.data;
+
+      if (data) {
+        errorMessage =
+          data.detail ||
+          data.message ||
+          data.error ||
+          // pega o primeiro erro de qualquer campo (ex: email, password etc.)
+          (Object.values(data)[0]?.[0] as string) ||
+          errorMessage;
+      }
     }
+
     throw new Error(errorMessage);
   }
 }
@@ -68,9 +80,10 @@ export function isTokenExpired(token: string) {
 }
 
 import type { AxiosInstance } from 'axios';
+import { profile } from 'console';
 
 export async function refreshAccessToken(apiInstance: AxiosInstance) {
-  
+
   const refresh = getRefreshToken();
 
   if (!refresh) {
@@ -89,10 +102,10 @@ export async function refreshAccessToken(apiInstance: AxiosInstance) {
 
     return access;
   } catch (error: unknown) {
-      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
-        ? (error as { message: string }).message
-        : 'Erro ';
-        alert(errorMessage)
+    const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+      ? (error as { message: string }).message
+      : 'Erro ';
+    alert(errorMessage)
 
     // logout();
     throw error;
@@ -102,21 +115,38 @@ export async function refreshAccessToken(apiInstance: AxiosInstance) {
 export async function registerUser(payload: RegisterUser) {
   const { default: api } = await import('./api');
   try {
-    
+
     await api.post(`/accounts/register/`, payload, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
   } catch (error: unknown) {
-    let errorMessage = 'Erro desconhecido ao criar um usuário';
+    let errorMessage = 'Erro interno, verifique com suporte.';
+
     if (typeof error === 'object' && error !== null && 'response' in error) {
-      const err = error as { response?: { data?: { detail?: string; message?: string } } };
-      errorMessage =
-        err.response?.data?.detail ||
-        err.response?.data?.message ||
-        errorMessage;
+      const err = error as {
+        response?: { data?: Record<string, any> };
+      };
+
+      const data = err.response?.data;
+      console.log('data', data)
+      if (data) {
+        errorMessage =
+          data.detail ||
+          data.message ||
+          data.error ||
+          (Array.isArray(Object.values(data)[0])
+            ? (Object.values(data)[0] as string[])[0]
+            : undefined) ||
+          (data.profile
+            ? (Object.values(data.profile)[0] as string[])[0]
+            : undefined) ||
+          errorMessage;
+      }
+
     }
+
     throw new Error(errorMessage);
   }
 
@@ -146,10 +176,10 @@ export async function verifyCodeOtp(payload: VerifyOtpPayload) {
   }
 }
 
-export async function resetPassword(payload: string | VerifyCodePayload)  {
+export async function resetPassword(payload: string | VerifyCodePayload) {
   const { default: api } = await import('./api');
   try {
-    const res = await api.post('/accounts/reset-password/', JSON.stringify({email: payload}), {
+    const res = await api.post('/accounts/reset-password/', JSON.stringify({ email: payload }), {
       headers: {
         'Content-Type': 'application/json',
       },

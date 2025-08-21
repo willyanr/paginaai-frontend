@@ -40,7 +40,20 @@ const Input: FC<InputProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className="">
+      {hint && (
+        <p
+          className={`mt-1.5 text-xs ms-1 py-2 dark:text-gray-300 ${
+            error
+              ? "text-error-500"
+              : success
+              ? "text-success-500"
+              : "text-gray-500"
+          }`}
+        >
+          {hint}
+        </p>
+      )}
       <input
         type={type}
         id={id}
@@ -57,19 +70,7 @@ const Input: FC<InputProps> = ({
       />
 
       {/* Optional Hint Text */}
-      {hint && (
-        <p
-          className={`mt-1.5 text-xs ${
-            error
-              ? "text-error-500"
-              : success
-              ? "text-success-500"
-              : "text-gray-500"
-          }`}
-        >
-          {hint}
-        </p>
-      )}
+      
     </div>
   );
 };

@@ -12,6 +12,7 @@ import { AlertProvider, useAlertContext } from '@/context/AlertContext';
 import { UserProvider } from '@/context/UserContext';
 import Alert from '@/components/ui/alert/Alert';
 import { StatisticsProvider } from '@/context/StatisticsContext';
+import { ProductProvider } from '@/context/ProductContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,7 +25,7 @@ function AlertRenderer() {
   if (!isAlert) return null;
 
   return (
-    <div className="fixed top-24 right-4 z-999999">
+    <div className="fixed top-8 right-4 z-9999999">
       <Alert
         message={messageAlert}
         variant={typeAlert as 'success' | 'error'}
@@ -46,7 +47,8 @@ export default function RootLayout({
           <AuthProvider>
             <UserProvider>
               <ThemeProvider>
-                <ProjectsProvider>
+                <ProductProvider>
+                  <ProjectsProvider>
                   <ModalProvider>
                     <SidebarProvider>
                       <StatisticsProvider>
@@ -56,6 +58,7 @@ export default function RootLayout({
                     </SidebarProvider>
                   </ModalProvider>
                 </ProjectsProvider>
+                </ProductProvider>
               </ThemeProvider>
             </UserProvider>
           </AuthProvider>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { 
+import {
     getProjectsMarketing as getProjectsMarketing,
     putProjectsMarketing as UpdateServiceProjectsMarketing,
     deleteProjectsPixel as DeleteServiceProjectPixel
@@ -12,9 +12,9 @@ import { MarketingContextType, UpdatePixelPayload } from '@/interfaces/marketing
 const MarketingContext = createContext<MarketingContextType | undefined>(undefined);
 
 export const MarketingProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [ marketingData , setMarketingData] = useState(null);
-    const {fetchProjects} = useProjects();
-    const [ isLoading, setIsloading ] = useState<boolean>()
+    const [marketingData, setMarketingData] = useState(null);
+    const { fetchProjects } = useProjects();
+    const [isLoading, setIsloading] = useState<boolean>()
 
     const fetchProjectsMarketing = React.useCallback(async () => {
         try {
@@ -23,37 +23,38 @@ export const MarketingProvider: React.FC<{ children: ReactNode }> = ({ children 
             fetchProjects();
             return response[0];
         } catch {
-            throw new Error('Erro ao carregar o marketing:'); 
+            throw new Error('Erro ao carregar o marketing:');
         }
     }, [fetchProjects]);
 
-      const updateProjectMarketing = async (payload: UpdatePixelPayload) => {
+    const updateProjectMarketing = async (payload: UpdatePixelPayload) => {
         setIsloading(true);
-        try{
+        try {
             await UpdateServiceProjectsMarketing(payload);
             fetchProjects();
-        } catch {
-            throw new Error('Error atualizar Pixel:');
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : String(error);
+            throw new Error(message);
         } finally {
         }
-      };
-      const deleteProjectsMarketing = async (id: number) => {
-        try{
+    };
+    const deleteProjectsMarketing = async (id: number) => {
+        try {
             await DeleteServiceProjectPixel(id);
             fetchProjects();
         } catch {
             throw new Error('Error delete Pixel:');
         }
-      };
-      
+    };
+
     return (
-        <MarketingContext.Provider value={{ 
-        marketingData, 
-        fetchProjectsMarketing,
-        updateProjectMarketing, 
-        deleteProjectsMarketing,
-        isLoading
-        
+        <MarketingContext.Provider value={{
+            marketingData,
+            fetchProjectsMarketing,
+            updateProjectMarketing,
+            deleteProjectsMarketing,
+            isLoading
+
         }}>
             {children}
         </MarketingContext.Provider>
