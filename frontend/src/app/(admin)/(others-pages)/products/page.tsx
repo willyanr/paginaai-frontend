@@ -1,6 +1,5 @@
 "use client";
 import { ProductsManage } from "@/components/products/ProductsManage";
-import { InfoCard } from "@/components/ui/info/InfoCard";
 import { InfoPage } from "@/components/ui/info/InfoPage";
 import React from "react";
 

@@ -10,7 +10,7 @@ export const ProductsManage = () => {
   const {refresh } = useProductsContext();
 
     useEffect(() => {
-      refresh
+      refresh()
     }, []);
   
     

@@ -10,6 +10,7 @@ import { useProductsContext } from "@/context/ProductContext";
 import { DataProduct } from "@/interfaces/products.interface";
 import ToggleSwitch from "../form/form-elements/ToggleSwitch";
 import Switch from "../form/switch/Switch";
+import { useAlertContext } from "@/context/AlertContext";
 
 
 
@@ -21,8 +22,10 @@ const ProductForm: React.FC = () => {
 
   const { createProduct, products, refresh } = useProductsContext();
 
+  const { onAlert } = useAlertContext();
 
-  const teste = async (data: DataProduct) => {
+
+  const createNewProduct = async (data: DataProduct) => {
 
 
     const formData = new FormData();
@@ -44,6 +47,7 @@ const ProductForm: React.FC = () => {
 
 
     const reponse = await createProduct(formData);
+    onAlert(true, 'success', 'Produto criado com sucesso!')
     console.log(reponse)
     refresh();
     console.log(products)
@@ -106,7 +110,7 @@ const ProductForm: React.FC = () => {
   const onSubmit = (data: any) => {
     setIsLoading(true);
     try {
-      teste(data)
+      createNewProduct(data)
     } finally {
       setIsLoading(false);
 
@@ -116,7 +120,7 @@ const ProductForm: React.FC = () => {
 
   return (
     <div>
-      <form className="w-120 mx-auto p-6 rounded-lg" onSubmit={handleSubmit(onSubmit)}>
+      <form className=" mx-auto p-6 rounded-lg" onSubmit={handleSubmit(onSubmit)}>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-white">

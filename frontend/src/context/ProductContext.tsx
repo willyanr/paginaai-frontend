@@ -43,6 +43,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     setLoading(true);
     setError(null);
     try {
+      console.log('to sendo chamado', +1)
       const data = await productService.getAll();
       setProducts(data);
     } catch (err: any) {
@@ -61,7 +62,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
       const newProduct = await productService.create(product);
       console.log('fuichaado')
       setProducts((prev) => [...prev, newProduct]); 
-return newProduct; 
+      return newProduct; 
     } catch (err: any) {
       setError(err.message || "Erro ao criar produto");
       throw err;
@@ -92,9 +93,6 @@ return newProduct;
     }
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
 
   return (
     <ProductContext.Provider value={{ products, loading, error, refresh: fetchProducts, createProduct, deleteProducts, updateProducts }}>

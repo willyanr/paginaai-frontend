@@ -26,7 +26,7 @@ export const productService = {
     if (!res || !res.data) throw new Error("Erro ao deletar produto");
     return res.data;
   },
-async update(product: DataProduct | FormData, id: number): Promise<DataProduct> {
+  async update(product: DataProduct | FormData, id: number): Promise<DataProduct> {
     const res = await api.put(`/checkout/products/${id}/`, product, {
       headers: {
         "Content-Type": "multipart/form-data",
