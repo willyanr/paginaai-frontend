@@ -11,7 +11,7 @@ export const ProductsManage = () => {
 
     useEffect(() => {
       refresh()
-    }, []);
+    }, [refresh]);
   
     
     return(

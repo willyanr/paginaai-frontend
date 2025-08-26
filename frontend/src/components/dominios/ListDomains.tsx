@@ -8,6 +8,7 @@ import ModalEditDomain from './ModalEditDomain';
 import DeleteModal from '../ui/alert/DeleteModal';
 import { useAlertContext } from '@/context/AlertContext';
 import Alert from '../ui/alert/Alert';
+import { Card } from '../ui/card/Card';
 
 const ListDomains: React.FC = () => {
     const { domainsData, fetchProjectsDomains, deleteProjectsDomains, verifyProjectsDomains } = useProjectsDomains();
@@ -75,12 +76,13 @@ const ListDomains: React.FC = () => {
         <div>
             <ul className="grid grid-cols-1 md:grid-cols-1 gap-6 dark:text-white">
                 {domainsData?.map((item, index) => (
-                    <li
+                   <Card>
+                     <li
                         key={index}
-                        className="border rounded-2xl p-6 shadow-sm  dark:border-gray-600 dark:bg-gray-800"
+                        className=""
                     >
                         <div className="lg:flex justify-between items-center mb-2">
-                            <div className="lg:flex">
+                            <div className="lg:flex flex-col">
                                 <h2 className="text-xl font-medium mb-2 text-gray-600 dark:text-gray-100">
                                     {item?.domain}
                                 </h2>
@@ -144,6 +146,7 @@ const ListDomains: React.FC = () => {
                             </Button>
                         </div>
                     </li>
+                   </Card>
                 ))}
             </ul>
             <ModalEditDomain

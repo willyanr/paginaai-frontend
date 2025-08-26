@@ -17,7 +17,7 @@ export default function NotificationDropdown() {
 
  useEffect(() => {
   getUserApi();
-}, []); 
+}, [getUserApi]); 
 
 
   function closeDropdown() {

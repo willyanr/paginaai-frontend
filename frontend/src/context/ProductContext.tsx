@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { productService } from "@/services/products";
 import { DataProduct } from "@/interfaces/products.interface";
 
@@ -7,9 +7,9 @@ interface ProductContextProps {
   loading: boolean;
   error: string | null;
   refresh: () => void;
-  createProduct: (product: DataProduct) => Promise<DataProduct>;
-  deleteProducts: (id:number) => void;
-  updateProducts: (product: DataProduct, id: number) => Promise<void>;
+  createProduct: (product: FormData) => Promise<DataProduct>;
+  deleteProducts: (id: number) => void;
+  updateProducts: (product: FormData, id: number) => Promise<void>;
 
 };
 
@@ -18,14 +18,14 @@ const ProductContext = createContext<ProductContextProps>({
   products: [],
   loading: false,
   error: null,
-  refresh: () => {},
-  createProduct: async (product: DataProduct) => {
+  refresh: () => { },
+  createProduct: async () => {
     return {} as DataProduct;
   },
-  deleteProducts: (id:number) => {},
-  updateProducts: async (product: DataProduct, id: number) => {
+  updateProducts: async () => {
     return;
   },
+  deleteProducts: () => { },
 });
 
 export const useProductsContext = () => useContext(ProductContext);
@@ -46,26 +46,33 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
       console.log('to sendo chamado', +1)
       const data = await productService.getAll();
       setProducts(data);
-    } catch (err: any) {
-      setError(err.message || "Erro ao buscar produtos");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Error: ${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred while updating the project.');
+      }
     } finally {
       setLoading(false);
     }
   }, []);
 
 
-  const createProduct = useCallback(async (product: DataProduct) => {
+  const createProduct = useCallback(async (product: FormData) => {
     setLoading(true);
-    console.log('fuichaado')
+
     setError(null);
     try {
       const newProduct = await productService.create(product);
       console.log('fuichaado')
-      setProducts((prev) => [...prev, newProduct]); 
-      return newProduct; 
-    } catch (err: any) {
-      setError(err.message || "Erro ao criar produto");
-      throw err;
+      setProducts((prev) => [...prev, newProduct]);
+      return newProduct;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Error: ${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred while updating the project.');
+      }
     } finally {
       setLoading(false);
     }
@@ -75,19 +82,27 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     setLoading(true);
     try {
       await productService.delete(id);
-    } catch (err: any) {
-      setError(err.message || "Erro ao deletar produtos");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Error: ${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred while updating the project.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const updateProducts = async (product: DataProduct | FormData, id: number) => {
+  const updateProducts = async (product: FormData, id: number) => {
     setLoading(true);
     try {
       await productService.update(product, id);
-    } catch (err: any) {
-      setError(err.message || "Erro ao atualizar produtos");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`Error: ${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred while updating the project.');
+      }
     } finally {
       setLoading(false);
     }

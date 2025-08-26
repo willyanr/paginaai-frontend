@@ -13,14 +13,14 @@ import logoGoogleAdsDark from '../../../public/images/pixel/google-adwords-logo-
 import { useProjectsMarketing } from "@/context/MarketingContext";
 import { useTheme } from '@/context/ThemeContext';
 import { useAlertContext } from '@/context/AlertContext';
-import Alert from '../ui/alert/Alert';
+import { Card } from '../ui/card/Card';
 
 
 const ListProjectMarketing: React.FC = () => {
     const { userProjects, fetchProjects } = useProjects();
     const { deleteProjectsMarketing } = useProjectsMarketing();
     const { theme } = useTheme();
-    const { onAlert, isAlert, messageAlert, typeAlert } = useAlertContext();
+    const { onAlert } = useAlertContext();
 
     useEffect(() => {
         fetchProjects();
@@ -41,9 +41,9 @@ const ListProjectMarketing: React.FC = () => {
             <div>
                 <ul>
                     {userProjects.map((item) => (
-                        <li
+                       <Card>
+                         <li
                             key={item.id}
-                            className="p-3 border-2 border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 dark:bg-gray-800"
                         >
                             <div>
 
@@ -117,6 +117,7 @@ const ListProjectMarketing: React.FC = () => {
 
                             </div>
                         </li>
+                       </Card>
                     ))}
                 </ul>
                

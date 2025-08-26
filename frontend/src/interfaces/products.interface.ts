@@ -11,4 +11,5 @@ export interface DataProduct {
   dimensions?: string;
   is_active: boolean;
   id: number | null;
+  url_checkout: string;
 }

@@ -5,9 +5,8 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 
 import Link from "next/link";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from '@/context/AuthContext';
-import Alert from "../ui/alert/Alert";
 import { useAlertContext } from "@/context/AlertContext";
 
 import * as yup from "yup";

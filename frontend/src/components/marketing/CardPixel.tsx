@@ -15,7 +15,6 @@ import logoGoogleAdsDark from '../../../public/images/pixel/google-adwords-logo-
 
 
 import { useProjectsMarketing } from "@/context/MarketingContext";
-import Alert from "../ui/alert/Alert";
 import Button from "../ui/button/Button";
 import { useProjects } from "@/context/ProjectsContext";
 import Select from "../form/Select";
@@ -23,6 +22,7 @@ import ListProjectMarketing from "./ListProjectMaketing";
 import { useTheme } from "@/context/ThemeContext";
 import { MarketingData } from "@/interfaces/marketing.interface";
 import { useAlertContext } from "@/context/AlertContext";
+import { Card } from "../ui/card/Card";
 
 
 
@@ -145,9 +145,10 @@ export default function CardPixel() {
         <div className="w-full lg:w-1/2 lg:overflow-auto lg:h-screen">
           <ul>
             {plataforms.map((platform) => (
-              <li
+              <Card className="mb-5">
+                <li
                 key={platform.id}
-                className="border-2 p-6 lg:p-6 border-gray-200 rounded-2xl dark:border-gray-600 dark:bg-gray-800 mb-6 lg:mb-10"
+                className=""
               >
                 <div className="flex items-center gap-4 py-3">
                   <Image
@@ -225,6 +226,7 @@ export default function CardPixel() {
                   </Button>
                 </div>
               </li>
+              </Card>
             ))}
           </ul>
         </div>

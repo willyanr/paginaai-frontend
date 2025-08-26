@@ -7,6 +7,7 @@ import ModalCreateDomain from './ModalCreateDomain';
 import { useProjectsDomains } from '@/context/DomainsContext';
 import { useModalContext } from '@/context/ModalContext';
 import ListDomains from './ListDomains';
+import { Card } from '../ui/card/Card';
 
 
 
@@ -32,7 +33,8 @@ const DomainsManager: React.FC = () => {
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Bloco Esquerda */}
-            <div className="w-full lg:w-1/2 py-4 border border-gray-200 rounded-2xl dark:border-gray-600 lg:p-6 mb-10 dark:bg-gray-800">
+           <Card className='w-1/2'>
+             <div className="w-full py-4 lg:p-6 mb-10">
                 <div className="p-6 space-y-4">
                     <div className="bg-gray-100 text-gray-500 dark:bg-gray-500/15 dark:text-gray-400 text-sm rounded-lg p-6">
                         <p className="mb-2 font-bold dark:text-white text-xl">1º Etapa</p>
@@ -115,11 +117,13 @@ const DomainsManager: React.FC = () => {
                     </div>
                 </div>
             </div>
+           </Card>
 
             {/* Bloco Direita */}
             <div className="w-full lg:w-1/2 mb-10">
                 <div className="space-y-8">
-                    <div className="flex justify-between p-6 border rounded-2xl items-center dark:bg-gray-800 dark:border-gray-600">
+                    <Card>
+                        <div className="flex justify-between p-6">
                         <h1 className="text-sm lg:text-xl text-gray-600 font-semibold dark:text-white">
                             Gerenciador de Domínios
                         </h1>
@@ -127,6 +131,7 @@ const DomainsManager: React.FC = () => {
                             Adicionar Domínio +
                         </Button>
                     </div>
+                    </Card>
                     <ListDomains />
                 </div>
             </div>

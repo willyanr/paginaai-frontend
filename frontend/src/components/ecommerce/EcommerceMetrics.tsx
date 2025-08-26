@@ -2,57 +2,61 @@
 import React from "react";
 import { BoxIconLine, GroupIcon } from "@/icons";
 import { useStatistics } from "@/context/StatisticsContext";
+import { DataWalletWithTransactions } from "@/interfaces/checkout.interface";
+import { BadgeDollarSign, BadgePercent } from "lucide-react";
+import { Card } from "../ui/card/Card";
+import { useNumberFormat } from "@/hooks/useNumberFormat";
 
 
 
+interface Props {
+  wallet: DataWalletWithTransactions
+}
 
 
-export const EcommerceMetrics = () => {
+export const EcommerceMetrics: React.FC<Props> = ({ wallet }) => {
   const { statistics } = useStatistics();
+
+  const { formatNumber } = useNumberFormat();
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
 
 
       
-      {/* <!-- Metric Item Start --> */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+      <Card>
         <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
-        </div>
-
-        <div className="flex items-end justify-between mt-5">
-          <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Total Projetos
-            </span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-            {statistics?.total_projects}
-            </h4>
-          </div>
-          
-        </div>
-      </div>
-      {/* <!-- Metric Item End --> */}
-
-      {/* <!-- Metric Item Start --> */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <BoxIconLine className="text-gray-800 dark:text-white/90" />
+          <BadgeDollarSign className="size-10 text-brand-400" />
         </div>
         <div className="flex items-end justify-between mt-5">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Total Domínios
+              Saldo Total
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              {statistics?.total_domains || 0}
+            R$ {formatNumber(wallet?.balance)}
+            </h4>
+          </div>
+        
+        </div>
+      </Card>
+
+      <Card >
+        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+          <BadgePercent className="text-brand-500 size-10" />
+        </div>
+        <div className="flex items-end justify-between mt-5">
+          <div>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              Total de Vendas
+            </span>
+            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
+              R$ {formatNumber(wallet?.total_orders_amount)}
             </h4>
           </div>
           
         </div>
-      </div>
-      {/* <!-- Metric Item End --> */}
+      </Card>
     </div>
   );
 };

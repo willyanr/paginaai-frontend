@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Edit,Package, Download, DollarSign, Box, Ruler, Eye, EyeOff } from 'lucide-react';
+import { Edit,Package, Download, DollarSign, Box, Ruler, Eye, EyeOff, Link } from 'lucide-react';
 import { Card } from '../ui/card/Card';
 import { useProductsContext } from '@/context/ProductContext';
 import Badge from '../ui/badge/Badge';
@@ -12,18 +12,13 @@ const ProductList = () => {
 
     const { products, deleteProducts, refresh } = useProductsContext();
 
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [editForm, setEditForm] = useState({});
+    const [editingId, setEditingId] = useState<boolean | number >(false);
 
     const startEdit = (product: DataProduct) => {
-        setEditingId(product.id);
-        setEditForm({ ...product });
+        setEditingId(product!.id!);
     };
 
-    const cancelEdit = () => {
-        setEditingId(null);
-        setEditForm({});
-    };
+
 
 ;
 
@@ -40,10 +35,12 @@ const ProductList = () => {
                         <Card key={product.id}>
                             {editingId === product.id ? (
                                 // Modo de edição
-                                <FormEditProduct
+                               <div className='max-w-2xl'>
+                                 <FormEditProduct
                                     product={product}
                                     setEditingId={setEditingId}
                                 />
+                               </div>
                             ) : (
                                 // Modo de visualização
                                 <div className="flex max-h-60">
@@ -63,10 +60,10 @@ const ProductList = () => {
 
                                     </div>
 
-                                    <div className="flex-1 p-4 items-center">
+                                    <div className="flex-1 items-center">
                                         <div className="flex justify-between items-start mb-4 ">
                                             <div>
-                                                <div className="flex items-center gap-2 mb-2 tr">
+                                                <div className="flex items-center gap-1 mb-2 tr">
                                                     <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 t">
                                                         {product.name}
                                                     </h3>
@@ -109,7 +106,7 @@ const ProductList = () => {
 
                                         </div>
 
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                                             <div className="flex items-center text-sm">
                                                 <DollarSign className="w-4 h-4 mr-2 text-brand-500" />
                                                 <span className="text-gray-600 dark:text-gray-400 mr-1">Preço:</span>
@@ -152,15 +149,28 @@ const ProductList = () => {
                                                     </a>
                                                 </div>
                                             )}
+
+                                            <div className="flex items-center text-sm col-span-2">
+                                                    <Link className="w-4 h-4 mr-2 text-brand-500" />
+                                                    <span className="text-gray-600 dark:text-gray-400 mr-1">Link do Checkout:</span>
+                                                    <a
+                                                        href={product.url_checkout }
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="font-medium text-brand-500 hover:text-brand-600 dark:text-brand-400 dark:hover:text-brand-300 truncate max-w-48"
+                                                    >
+                                                        { product.url_checkout}
+                                                    </a>
+                                                </div>
                                         </div>
                                         <div className="flex justify-end">
                                             <div
                                                 onClick={async () => {
                                                     try {
-                                                        await deleteProducts(product.id);
+                                                        await deleteProducts(product!.id!);
                                                         refresh();
-                                                    } catch (err: any) {
-                                                        console.error("Erro ao deletar produto:", err.message);
+                                                    } catch {
+                                                        console.error("Erro ao deletar produto:");
                                                     }
                                                 }}
                                                 className="cursor-pointer"

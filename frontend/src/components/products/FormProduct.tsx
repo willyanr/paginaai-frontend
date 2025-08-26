@@ -1,19 +1,29 @@
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import * as yup from "yup";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useProductsContext } from "@/context/ProductContext";
-import { DataProduct } from "@/interfaces/products.interface";
-import ToggleSwitch from "../form/form-elements/ToggleSwitch";
 import Switch from "../form/switch/Switch";
 import { useAlertContext } from "@/context/AlertContext";
 
 
 
+interface DataCreateNewProductForm {
+  product_type: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  price: number;
+  download_url?: string | null;
+  stock?: number | null;
+  weight?: number | null;
+  dimensions?: string | null;
+  image?: FileList | undefined;
+}
 
 
 
@@ -25,13 +35,15 @@ const ProductForm: React.FC = () => {
   const { onAlert } = useAlertContext();
 
 
-  const createNewProduct = async (data: DataProduct) => {
+
+
+  const createNewProduct = async (data: DataCreateNewProductForm) => {
 
 
     const formData = new FormData();
     if (data.image instanceof FileList) {
       formData.append("image", data.image[0]);
-    } else if (data.image instanceof File) {
+    } else if (data.image) {
       formData.append("image", data.image);
     }
 
@@ -76,39 +88,42 @@ const ProductForm: React.FC = () => {
     stock: yup.number().min(0, "Estoque inválido").nullable(),
     weight: yup.number().min(0, "Peso inválido").nullable(),
     dimensions: yup.string().nullable(),
+    // No seu esquema de validação
     image: yup
-      .mixed()
-      .required("A imagem é obrigatória")
+      .mixed<FileList>() // Explicitamente define o tipo FileList
+      .test("file-required", "A imagem é obrigatória", (value) => {
+        // Validação para garantir que um arquivo foi selecionado
+        return value !== null && value !== undefined && value.length > 0;
+      })
       .test("fileSize", "O arquivo é muito grande", (value) => {
-        const fileList = value as FileList | undefined;
-        return !fileList || (fileList[0] && fileList[0].size <= 5 * 1024 * 1024);
+        // Valida o tamanho do arquivo apenas se ele existir
+        if (!value) return true;
+        return value[0].size <= 5 * 1024 * 1024;
       })
       .test("fileType", "Formato de arquivo não suportado", (value) => {
-        const fileList = value as FileList | undefined;
-        return (
-          !fileList ||
-          (fileList[0] &&
-            ["image/jpeg", "image/png", "image/webp"].includes(fileList[0].type))
-        );
+        // Valida o tipo de arquivo apenas se ele existir
+        if (!value) return true;
+        return ["image/jpeg", "image/png", "image/webp"].includes(value[0].type);
       }),
 
 
 
   });
+
   const {
     handleSubmit,
     register,
     setValue,
-    watch,
     control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
+
   });
 
 
-  const onSubmit = (data: any) => {
-    setIsLoading(true);
+  const onSubmit = (data: DataCreateNewProductForm) => {
+    setIsLoading(true)
     try {
       createNewProduct(data)
     } finally {
@@ -143,7 +158,7 @@ const ProductForm: React.FC = () => {
                 setProductType("digital");
                 setValue("product_type", "digital");
               }}
-              className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "digital" ? "text-white" : "text-gray-700 dark:text-white hover:text-gray-900"
+              className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "digital" ? "text-white" : "text-white dark:text-white hover:text-gray-900"
                 }`}
             >
               Digital
@@ -154,7 +169,7 @@ const ProductForm: React.FC = () => {
                 setProductType("physical");
                 setValue("product_type", "physical");
               }}
-              className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "physical" ? "text-white" : "text-gray-700 dark:text-white hover:text-gray-900"
+              className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "physical" ? "text-white" : "text-white dark:text-white hover:text-gray-900"
                 }`}
             >
               Físico
@@ -305,7 +320,7 @@ const ProductForm: React.FC = () => {
             render={({ field }) => (
               <Switch
                 label="Ativo"
-                defaultChecked={field.value}
+                checked={field.value}
                 onChange={field.onChange}
                 color="blue"
               />

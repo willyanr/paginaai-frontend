@@ -9,15 +9,30 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useProductsContext } from "@/context/ProductContext";
 import { DataProduct } from "@/interfaces/products.interface";
 import FileInput from "../form/input/FileInput";
-import {  Save  } from "lucide-react";
+import { Save } from "lucide-react";
 import { useAlertContext } from "@/context/AlertContext";
 import Switch from "../form/switch/Switch";
 
 
 interface FormEditProductProps {
   product: DataProduct;
-  setEditingId: boolean;
+  setEditingId: React.Dispatch<React.SetStateAction<boolean | number>>;
 }
+
+interface DataEditProductForm {
+  product_type: "digital" | "physical";
+  name?: string;
+  description?: string;
+  price?: number;
+  download_url?: string;
+  image?: string | File | FileList;
+  stock?: number;
+  weight?: number;
+  dimensions?: string;
+  is_active?: boolean;
+  id?: number;
+}
+
 
 
 const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId }) => {
@@ -29,7 +44,7 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
 
 
 
-  const editProduct = async (data: DataProduct) => {
+  const editProduct = async (data: DataEditProductForm) => {
 
     const formData = new FormData();
     if (data.image instanceof FileList) {
@@ -39,9 +54,11 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
     }
 
     formData.append("product_type", productType);
-    formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("price", data.price.toString());
+    formData.append("name", data.name || "");
+    formData.append("description", data.description || "");
+    formData.append("price", data.price?.toString() || "0");
+    formData.append("download_url", data.download_url || "");
+
     formData.append("download_url", data.download_url || "");
     formData.append("stock", String(data.stock || 0));
     formData.append("weight", String(data.weight || 0));
@@ -49,8 +66,8 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
     formData.append("is_active", String(data.is_active));
 
 
-    const reponse = await updateProducts(formData, product.id);
-    console.log(reponse)
+    await updateProducts(formData, product!.id!);
+
     refresh();
     console.log(product)
 
@@ -97,7 +114,6 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
     handleSubmit,
     register,
     setValue,
-    watch,
     control,
     formState: { errors },
   } = useForm({
@@ -117,7 +133,7 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
 
 
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: DataEditProductForm) => {
     setIsLoading(true);
     try {
       await editProduct(data)
@@ -337,7 +353,7 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
                 render={({ field }) => (
                   <Switch
                     label="Ativo"
-                    defaultChecked={field.value}
+                    checked={field.value}
                     onChange={field.onChange}
                     color="blue"
                   />

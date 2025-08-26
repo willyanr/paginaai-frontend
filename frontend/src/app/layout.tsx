@@ -13,6 +13,7 @@ import { UserProvider } from '@/context/UserContext';
 import Alert from '@/components/ui/alert/Alert';
 import { StatisticsProvider } from '@/context/StatisticsContext';
 import { ProductProvider } from '@/context/ProductContext';
+import { CheckoutProvider } from '@/context/CheckoutContext';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -47,7 +48,8 @@ export default function RootLayout({
           <AuthProvider>
             <UserProvider>
               <ThemeProvider>
-                <ProductProvider>
+                <CheckoutProvider>
+                  <ProductProvider>
                   <ProjectsProvider>
                   <ModalProvider>
                     <SidebarProvider>
@@ -59,6 +61,7 @@ export default function RootLayout({
                   </ModalProvider>
                 </ProjectsProvider>
                 </ProductProvider>
+                </CheckoutProvider>
               </ThemeProvider>
             </UserProvider>
           </AuthProvider>

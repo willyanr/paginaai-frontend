@@ -34,7 +34,8 @@ export async function login(payload: LoginUser) {
 
     if (typeof error === 'object' && error !== null && 'response' in error) {
       const err = error as {
-        response?: { data?: Record<string, any> };
+
+        response?: { data?: Record<string, string> };
       };
 
       const data = err.response?.data;
@@ -80,7 +81,6 @@ export function isTokenExpired(token: string) {
 }
 
 import type { AxiosInstance } from 'axios';
-import { profile } from 'console';
 
 export async function refreshAccessToken(apiInstance: AxiosInstance) {
 
@@ -122,33 +122,54 @@ export async function registerUser(payload: RegisterUser) {
       },
     });
   } catch (error: unknown) {
-    let errorMessage = 'Erro interno, verifique com suporte.';
+  let errorMessage = 'Erro interno, verifique com suporte.';
 
-    if (typeof error === 'object' && error !== null && 'response' in error) {
-      const err = error as {
-        response?: { data?: Record<string, any> };
-      };
+  // Define um tipo mais preciso para os dados de erro da API
+  type ApiResponseData = {
+    detail?: string;
+    message?: string;
+    error?: string;
+    profile?: Record<string, string[]>;
+    // Esta linha permite que outras chaves existam
+    // onde o valor pode ser uma string ou um array de strings
+    [key: string]: string | string[] | undefined | Record<string, string[]>;
+  };
 
-      const data = err.response?.data;
-      console.log('data', data)
-      if (data) {
-        errorMessage =
-          data.detail ||
-          data.message ||
-          data.error ||
-          (Array.isArray(Object.values(data)[0])
-            ? (Object.values(data)[0] as string[])[0]
-            : undefined) ||
-          (data.profile
-            ? (Object.values(data.profile)[0] as string[])[0]
-            : undefined) ||
-          errorMessage;
+  if (typeof error === 'object' && error !== null && 'response' in error) {
+    const err = error as {
+      response?: { data?: ApiResponseData };
+    };
+
+    const data = err.response?.data;
+    console.log('data', data);
+
+    if (data) {
+      // Prioridade 1: Chaves conhecidas com mensagens de erro simples
+      if (typeof data.detail === 'string') {
+        errorMessage = data.detail;
+      } else if (typeof data.message === 'string') {
+        errorMessage = data.message;
+      } else if (typeof data.error === 'string') {
+        errorMessage = data.error;
       }
-
+      
+      // Prioridade 2: Lidar com a estrutura de array de strings
+      else {
+        const firstValue = Object.values(data)[0];
+        if (Array.isArray(firstValue) && typeof firstValue[0] === 'string') {
+          errorMessage = firstValue[0];
+        } else if (data.profile) {
+          const profileValue = Object.values(data.profile)[0];
+          if (Array.isArray(profileValue) && typeof profileValue[0] === 'string') {
+            errorMessage = profileValue[0];
+          }
+        }
+      }
     }
-
-    throw new Error(errorMessage);
   }
+
+  throw new Error(errorMessage);
+}
 
 }
 
