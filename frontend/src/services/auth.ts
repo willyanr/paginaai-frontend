@@ -45,7 +45,6 @@ export async function login(payload: LoginUser) {
           data.detail ||
           data.message ||
           data.error ||
-          // pega o primeiro erro de qualquer campo (ex: email, password etc.)
           (Object.values(data)[0]?.[0] as string) ||
           errorMessage;
       }

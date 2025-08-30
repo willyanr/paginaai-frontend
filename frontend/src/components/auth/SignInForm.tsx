@@ -12,13 +12,14 @@ import { useAlertContext } from "@/context/AlertContext";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Alert from "../ui/alert/Alert";
 
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { login } = useAuth();
-  const { onAlert } = useAlertContext();
+  const { onAlert, isAlert, messageAlert, typeAlert } = useAlertContext();
   const [ isLoading, setIsLoading ] = useState<boolean>(false)
 
   const validationSchema = yup.object().shape({
@@ -52,14 +53,16 @@ export default function SignInForm() {
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     try {
-      const  payload = {
+      const payload = {
         email: data.email,
         password: data.password
-      }
+      };
       await login(payload);
-      onAlert(true, 'success', 'Login realizado com sucesso!')
+      onAlert(true, 'success', 'Login realizado com sucesso!');
     } catch (error: unknown) {
-      onAlert(true, 'error', error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.')
+      const message =
+        error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.';
+      onAlert(true, 'error', message);
     } finally {
       setIsLoading(false);
     }
@@ -216,6 +219,17 @@ export default function SignInForm() {
           </div>
         </div>
       </div>
+      {isAlert &&
+      
+      <div className="fixed top-8 right-4 z-9999999">
+      <Alert
+        message={messageAlert}
+        variant={typeAlert as 'success' | 'error'}
+        title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
+      />
+    </div>
+    
+      }
       
     </div>
   );

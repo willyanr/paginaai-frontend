@@ -69,14 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (payload: LoginType) => {
-    try {
       await loginService(payload);
       setIsAuthenticated(true);
-      router.push('/editor');
-    } catch (error) {
-      console.error('Erro de login:', error);
-      throw error;
-    }
+      router.push('/');
   };
 
   const logout = () => {
@@ -92,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('cpf', payload.profile.cpf)
       localStorage.setItem('email', payload.email)
       router.push('/otp')
-   } catch (error: unknown) {
+    } catch (error: unknown) {
       const errorMessage = typeof error === 'object' && error !== null && 'message' in error
         ? (error as { message: string }).message
         : 'Erro ao Registrar Usuário.';
@@ -118,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const userResetPassword = async (email: string) => {
     setIsLoading(true);
     try {
-    
+
       await ServiceResetPassword(email);
     } catch (error) {
       throw error;

@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useProductsContext } from "@/context/ProductContext";
 import Switch from "../form/switch/Switch";
 import { useAlertContext } from "@/context/AlertContext";
+import { Save } from "lucide-react";
 
 
 
@@ -137,7 +138,8 @@ const ProductForm: React.FC = () => {
     <div>
       <form className=" mx-auto p-6 rounded-lg" onSubmit={handleSubmit(onSubmit)}>
 
-        <div className="mb-4">
+      <div className="flex justify-between">
+          <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
             Tipo de Produto
           </label>
@@ -180,6 +182,17 @@ const ProductForm: React.FC = () => {
             <p className="mt-1 text-xs text-red-500">{errors.product_type.message}</p>
           )}
         </div>
+        <div className="w-full flex justify-end">
+          <Button
+            startIcon={<Save/>}
+            isLoading={isLoading}
+            type="submit"
+            className="w-full"
+          >
+            Cadastrar Produto
+          </Button>
+        </div>
+      </div>
 
 
 
@@ -332,15 +345,7 @@ const ProductForm: React.FC = () => {
         </div>
 
         {/* Botão */}
-        <div className="w-full flex justify-center">
-          <Button
-            isLoading={isLoading}
-            type="submit"
-            className="w-full"
-          >
-            Cadastrar Produto
-          </Button>
-        </div>
+        
       </form>
     </div>
   );

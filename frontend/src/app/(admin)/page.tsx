@@ -23,7 +23,6 @@ export default function Ecommerce() {
   }, [fetchStatistics, refreshWallet]);
 
 
-    console.log(wallet, 'CARTEIRA')
 
 
   return (
@@ -33,9 +32,11 @@ export default function Ecommerce() {
           <EcommerceMetrics 
           wallet={wallet[0]}
           />
-          <BasicTableOne 
+         <div className="min-h-[600px]">
+           <BasicTableOne 
           wallet={wallet[0]}
           />
+         </div>
         </div>
 
       <div className="col-span-12 xl:col-span-5">

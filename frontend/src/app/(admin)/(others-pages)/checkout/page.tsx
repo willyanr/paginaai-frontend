@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, Palette, Truck, CreditCard, Clock, Package, XIcon } from 'lucide-react';
 import * as yup from "yup";
-import { useForm, Controller, Control, Resolver  } from "react-hook-form";
+import { useForm, Controller, Control, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import FileInput from '@/components/form/input/FileInput';
 import { InfoCard } from '@/components/ui/info/InfoCard';
@@ -13,6 +13,12 @@ import { useCheckoutContext } from '@/context/CheckoutContext';
 import { DataCheckout } from '@/interfaces/checkout.interface';
 import { InfoPage } from '@/components/ui/info/InfoPage';
 import { useAlertContext } from '@/context/AlertContext';
+import Input from '@/components/form/input/InputField';
+import { useNumberFormat } from '@/hooks/useNumberFormat';
+import { CardTaxUser } from '@/components/checkout/CardTaxUser';
+
+
+
 
 // Interface para o formulário
 interface DataCheckoutForm {
@@ -28,6 +34,8 @@ interface DataCheckoutForm {
     header_color: string;
     estimated_delivery: string;
     delivery_type: "correios" | "jadlog";
+    delivery_amount: number
+    store_name: string
 }
 
 const CheckoutCustomizer = () => {
@@ -39,6 +47,13 @@ const CheckoutCustomizer = () => {
         logo?: string;
         banner_mobile?: string;
     }>({});
+
+    const { formatNumber } = useNumberFormat();
+
+    const [frete, setFrete] = useState("");
+    const [freteRaw, setFreteRaw] = useState<number | null>(null);
+
+
 
     useEffect(() => {
         refresh();
@@ -105,11 +120,13 @@ const CheckoutCustomizer = () => {
             header_color: "#000000",
             estimated_delivery: "",
             delivery_type: "correios",
+            delivery_amount: 0
         },
     });
 
     useEffect(() => {
         if (userCheckout) {
+
             reset({
                 logo: userCheckout.logo || null,
                 banner: null,
@@ -123,6 +140,7 @@ const CheckoutCustomizer = () => {
                 header_color: userCheckout.header_color || "#000000",
                 estimated_delivery: userCheckout.estimated_delivery || "",
                 delivery_type: (userCheckout.delivery_type as "correios" | "jadlog") || "correios",
+                delivery_amount: Number(frete)
             });
         }
     }, [userCheckout, reset]);
@@ -223,88 +241,114 @@ const CheckoutCustomizer = () => {
                     {/* Header */}
 
                     <div className="space-y-8">
-                        {/* Seção de Imagens */}
-                        <Card>
-                            <div className="flex justify-between px-4">
-                                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                    <Upload className="mr-2" size={20} />
-                                    Imagens
-                                </h2>
-
-                                <div className="grid md:grid-cols-3 gap-6">
-                                    <div>
-                                        <span className='font-bold dark:text-white text-center flex justify-center'>Logo</span>
+                        <div className="flex gap-4">
+                            <Card>
+                                <div className=''>
+                                    <span className='text-white font-semibold'>Nome da loja</span>
+                                    <div className="mt-3">
                                         <Controller
+                                            name="store_name"
                                             control={control}
-                                            name="logo"
-                                            defaultValue={userCheckout?.logo}
+                                            defaultValue={userCheckout.store_name}
                                             render={({ field }) => (
-                                                <FileInput
-                                                    label="Envie sua Logo"
-                                                    {...field}
-                                                    onChange={(file) => {
-                                                        field.onChange(file);
-                                                        if (file) {
-                                                            const previewUrl = URL.createObjectURL(file);
-                                                            setPreviewImages((prev) => ({
-                                                                ...prev,
-                                                                logo: previewUrl,
-                                                            }));
-                                                        } else {
-                                                            setPreviewImages((prev) => ({
-                                                                ...prev,
-                                                                logo: undefined,
-                                                            }));
-                                                        }
-                                                    }}
+                                                <Input
+                                                    {...field} 
+                                                    placeholder="Digite o nome da loja"
                                                 />
                                             )}
                                         />
+                                        <div className="py-5 w-72">
+                                            <InfoCard
+                                                size='xs'
+                                            >
+                                                O nome da sua loja é importante, dados de faturamento, marketing email, e visibilidade no seu checkout.
+                                            </InfoCard>
+                                        </div>
                                     </div>
+                                </div>
+                            </Card>
+                            <Card className='w-full'>
+                                <div className="flex justify-between px-4">
+                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                                        <Upload className="mr-2" size={20} />
+                                        Imagens
+                                    </h2>
+
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <span className='font-bold dark:text-white text-center flex justify-center'>Logo</span>
+                                            <Controller
+                                                control={control}
+                                                name="logo"
+                                                defaultValue={userCheckout?.logo}
+                                                render={({ field }) => (
+                                                    <FileInput
+                                                        label="Envie sua Logo"
+                                                        {...field}
+                                                        onChange={(file) => {
+                                                            field.onChange(file);
+                                                            if (file) {
+                                                                const previewUrl = URL.createObjectURL(file);
+                                                                setPreviewImages((prev) => ({
+                                                                    ...prev,
+                                                                    logo: previewUrl,
+                                                                }));
+                                                            } else {
+                                                                setPreviewImages((prev) => ({
+                                                                    ...prev,
+                                                                    logo: undefined,
+                                                                }));
+                                                            }
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="">
+                                            <span className='font-bold dark:text-white text-center flex justify-center'>Banner</span>
+                                            <Controller
+                                                control={control}
+                                                name="banner_mobile"
+                                                render={({ field }) => (
+                                                    <FileInput
+                                                        label="Envie seu Banner"
+                                                        {...field}
+                                                        onChange={(file) => {
+                                                            field.onChange(file);
+                                                            if (file) {
+                                                                const previewUrl = URL.createObjectURL(file);
+                                                                setPreviewImages((prev) => ({
+                                                                    ...prev,
+                                                                    banner_mobile: previewUrl,
+                                                                }));
+                                                            } else {
+                                                                setPreviewImages((prev) => ({
+                                                                    ...prev,
+                                                                    banner_mobile: undefined,
+                                                                }));
+                                                            }
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+
                                     <div className="">
-                                        <span className='font-bold dark:text-white text-center flex justify-center'>Banner</span>
-                                        <Controller
-                                            control={control}
-                                            name="banner_mobile"
-                                            render={({ field }) => (
-                                                <FileInput
-                                                    label="Envie seu Banner"
-                                                    {...field}
-                                                    onChange={(file) => {
-                                                        field.onChange(file);
-                                                        if (file) {
-                                                            const previewUrl = URL.createObjectURL(file);
-                                                            setPreviewImages((prev) => ({
-                                                                ...prev,
-                                                                banner_mobile: previewUrl,
-                                                            }));
-                                                        } else {
-                                                            setPreviewImages((prev) => ({
-                                                                ...prev,
-                                                                banner_mobile: undefined,
-                                                            }));
-                                                        }
-                                                    }}
-                                                />
-                                            )}
-                                        />
+                                        <Button
+                                            startIcon={<XIcon />}
+                                            type="button"
+                                            onClick={() => {
+                                                deleteImages();
+                                                refresh();
+                                            }}
+                                        >
+                                            Limpar
+                                        </Button>
                                     </div>
                                 </div>
-
-                                <div className="">
-                                    <Button
-                                        startIcon={<XIcon />}
-                                        type="button"
-                                        onClick={() => {
-                                            deleteImages();
-                                            refresh();
-                                        }}
-                                    >
-                                        Limpar
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
+                            </Card>
+                        </div>
 
                         {/* Seção de Cores */}
                         <Card>
@@ -340,7 +384,7 @@ const CheckoutCustomizer = () => {
                                     <div className="p-2">
                                         <InfoCard
                                             size='sm'
-                                            
+
                                         >
                                             Personalize a cor dos textos do Header
                                         </InfoCard>
@@ -422,27 +466,68 @@ const CheckoutCustomizer = () => {
 
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div>
-                                    <div className="flex justify-between border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
-                                        <span className='flex gap-3 items-center font-semibold dark:text-white'>
-                                            <Truck />
-                                            Frete Ativo
-                                        </span>
-                                        <Controller
-                                            name="is_frete"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <Switch
-                                                    checked={field.value}
-                                                    onChange={field.onChange}
-                                                    color="blue"
+                                    <div className="border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
+                                        <div className='flex justify-between '>
+                                            <span className='flex gap-3 items-center font-semibold dark:text-white'>
+                                                <Truck />
+                                                Frete Ativo
+                                            </span>
+                                            <Controller
+                                                name="is_frete"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Switch
+                                                        checked={field.value}
+                                                        onChange={field.onChange}
+                                                        color="blue"
+                                                    />
+                                                )}
+                                            />
+                                        </div>
+                                        {userCheckout.is_frete &&
+                                            <div className='py-4'>
+                                                <Controller
+                                                    name="delivery_amount"
+                                                    control={control}
+                                                    defaultValue={userCheckout.delivery_amount}
+                                                    render={({ field }) => (
+                                                        <>
+                                                            <Input
+                                                                type="text"
+                                                                value={frete}
+                                                                onChange={(e) => {
+                                                                    let value = e.target.value.replace(/\D/g, "");
+                                                                    let numericValue = value ? parseInt(value, 10) / 100 : 0;
+
+                                                                    setFrete(
+                                                                        numericValue
+                                                                            ? new Intl.NumberFormat("pt-BR", {
+                                                                                style: "currency",
+                                                                                currency: "BRL",
+                                                                            }).format(numericValue)
+                                                                            : ""
+                                                                    );
+
+                                                                    field.onChange(numericValue);
+                                                                }}
+                                                                placeholder={'R$ ' + formatNumber(userCheckout.delivery_amount)}
+                                                            />
+
+                                                            <input type="hidden" {...field} />
+                                                        </>
+                                                    )}
                                                 />
-                                            )}
-                                        />
+
+                                            </div>
+                                        }
+
+
                                     </div>
+
                                     <div className="p-2">
                                         <InfoCard
                                             size='sm'
-                                            
+
                                         >
                                             Isso só ficará ativo caso o seu produto seja físico
                                         </InfoCard>
@@ -470,7 +555,7 @@ const CheckoutCustomizer = () => {
                                     <div className="p-2">
                                         <InfoCard
                                             size='sm'
-                                            
+
                                         >
                                             Aceite pix como forma de pagamento em seu checkout
                                         </InfoCard>
@@ -629,15 +714,24 @@ const CheckoutCustomizer = () => {
                                 </div>
                             </div>
                         </Card>
+                        <div className='mb-30'>
+                            <CardTaxUser
+                                data={userCheckout}
+                            />
+                        </div>
 
                         {/* Botão de Salvar */}
-                        <div className="flex justify-end">
-                            <Button
-                                isLoading={isLoading}
-                                type='submit'
-                            >
-                                Salvar Checkout
-                            </Button>
+                        <div className='fixed bottom-0 left-0 right-0'>
+                            <Card className='w-full'>
+                                <div className="flex justify-end w-full">
+                                    <Button
+                                        isLoading={isLoading}
+                                        type='submit'
+                                    >
+                                        Salvar Checkout
+                                    </Button>
+                                </div>
+                            </Card>
                         </div>
                     </div>
                 </div>

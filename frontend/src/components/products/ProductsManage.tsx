@@ -17,14 +17,14 @@ export const ProductsManage = () => {
     return(
         <div>
           <div className="flex gap-5">
-            <div className="h-100 w-1/2">
+            <div className="h-95 w-1/2">
               <Card>
                 <div>
                  <ProductForm />
                 </div>
               </Card>
             </div>
-            <div className="">
+            <div className="h-180 overflow-auto w-1/2">
               <ProductList/>
             </div>
 

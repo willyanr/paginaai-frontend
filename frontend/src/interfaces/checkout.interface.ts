@@ -11,7 +11,13 @@ export interface DataCheckout {
     text_color_header: string,
     header_color: string,
     estimated_delivery: string,
-    delivery_type: string
+    delivery_type: string,
+    delivery_amount: number,
+    tax_pix_in: number,
+    tax_pix_out: number,
+    tax_card_in: number,
+    tax_card_out: number
+    store_name: string
 }
 
 export interface DataCheckoutForm {
