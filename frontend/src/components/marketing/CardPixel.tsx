@@ -145,9 +145,11 @@ export default function CardPixel() {
         <div className="w-full lg:w-1/2 lg:overflow-auto lg:h-screen">
           <ul>
             {plataforms.map((platform) => (
-              <Card className="mb-5">
+              <Card 
+              key={platform.id}
+              className="mb-5">
                 <li
-                key={platform.id}
+                
                 className=""
               >
                 <div className="flex items-center gap-4 py-3">

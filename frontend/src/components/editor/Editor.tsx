@@ -145,7 +145,6 @@ export default function DefaultEditor() {
     try {
       const res = await fetchProjectsAssets();
 
-      // Pega o array de imagens dentro de res.data
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const images = (res as any).data;
 

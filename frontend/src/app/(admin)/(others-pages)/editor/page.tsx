@@ -21,16 +21,14 @@ export default function Page() {
 
     const ua = navigator.userAgent || navigator.vendor || (window as WindowWithOpera).opera;
 
-    // Garantir que seja string
     const userAgent = typeof ua === 'string' ? ua : '';
 
     setIsMobile(/android|iphone|ipad|iPod/i.test(userAgent));
   }, []);
 
 
-  // Desktop effect – sempre chamado
   useEffect(() => {
-    if (!isMobile) { // só aplica para desktop
+    if (!isMobile) { 
       setIsExpanded(false);
       openModal("project");
 
@@ -40,15 +38,12 @@ export default function Page() {
     }
   }, [openModal, setIsExpanded, isMobile]);
 
-  // Enquanto não detectou, renderiza nada
   if (isMobile === null) return null;
 
-  // JSX condicional
   if (isMobile) {
     return <IsMobile />;
   }
 
-  // Desktop
   if (!projectSelected) {
     return (
       <div className="bg-yellow-400/20 rounded-2xl h-screen flex items-center justify-center dark:bg-orange-500 dark:text-white">

@@ -76,9 +76,11 @@ const ListDomains: React.FC = () => {
         <div>
             <ul className="grid grid-cols-1 md:grid-cols-1 gap-6 dark:text-white">
                 {domainsData?.map((item, index) => (
-                   <Card>
+                   <Card
+                   key={index}
+                   >
                      <li
-                        key={index}
+                        
                         className=""
                     >
                         <div className="lg:flex justify-between items-center mb-2">

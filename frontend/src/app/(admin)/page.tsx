@@ -3,7 +3,6 @@
 import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React, { useEffect } from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import {  useStatistics } from "@/context/StatisticsContext";

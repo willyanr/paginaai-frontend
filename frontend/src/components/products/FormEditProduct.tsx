@@ -152,226 +152,175 @@ const FormEditProduct: React.FC<FormEditProductProps> = ({ product, setEditingId
 
 
   return (
-    <div>
-      <form className="mx-auto rounded-lg p-6" onSubmit={handleSubmit(onSubmit)}>
+   <div>
+  <form className="mx-auto rounded-lg md:p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+    {/* Tipo de Produto e Botões */}
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="mb-4 w-full md:w-auto">
+        <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
+          Tipo de Produto
+        </label>
 
-        <div className="flex justify-between items-center">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-white">
-              Tipo de Produto
-            </label>
+        <div className="relative w-full max-w-xs h-12 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer flex items-center p-1">
+          {/* Indicador de seleção */}
+          <div
+            className="absolute top-1 left-1 w-1/2 h-10 bg-brand-500 rounded-full shadow-md transition-all duration-300 ease-in-out"
+            style={{
+              transform: productType === "physical" ? "translateX(100%)" : "translateX(0%)",
+            }}
+          />
 
-            <div className="relative w-44 h-12 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer flex items-center p-1">
-              {/* Indicador de seleção */}
-              <div
-                className="absolute top-1 left-1 w-20  h-10 bg-brand-500 rounded-full shadow-md transition-all duration-300 ease-in-out"
-                style={{
-                  transform: productType === "physical" ? "translateX(100%)" : "translateX(0%)",
-                }}
-              />
-
-              {/* Botões */}
-              <button
-                type="button"
-                onClick={() => {
-                  setProductType("digital");
-                  setValue("product_type", "digital");
-                }}
-                className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "digital" ? "text-white" : "text-gray-700 dark:text-white hover:text-gray-900"
-                  }`}
-              >
-                Digital
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setProductType("physical");
-                  setValue("product_type", "physical");
-                }}
-                className={`relative w-1/2 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${productType === "physical" ? "text-white" : "text-gray-700 dark:text-white hover:text-gray-900"
-                  }`}
-              >
-                Físico
-              </button>
-            </div>
-
-            {errors.product_type && (
-              <p className="mt-1 text-xs text-red-500">{errors.product_type.message}</p>
-            )}
-          </div>
-          <div className="w-full flex justify-end gap-4 px-6">
-            <Button
-              isLoading={isLoading}
-              type="submit"
-              className="w-full"
-              startIcon={<Save />}
-            >
-              Salvar
-            </Button>
-            <Button
-              variant="outline"
-              onClick={setEd}
-              isLoading={isLoading}
-              className="w-full"
-            >
-              Cancelar
-            </Button>
-
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div>
-
-
-            {/* Nome do Produto */}
-            <Input
-              type="text"
-              defaultValue={product.name}
-              placeholder="Nome do produto"
-              hint="Informe o nome do produto"
-              {...register("name")}
-
-            />
-            {errors.name && (
-              <p className="py-2 ms-1 text-xs text-error-500">
-                {errors.name.message}
-              </p>
-            )}
-
-            {/* Descrição */}
-            <div className="mt-3">
-              <label className="text-xs ms-1 text-gray-500 dark:text-gray-300 mb-2">
-                Descrição do produto
-              </label>
-              <textarea
-                defaultValue={product.description}
-                className="w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-hidden bg-transparent text-gray-400 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
-                placeholder="Descrição do produto"
-                {...register("description")}
-
-              >
-
-              </textarea>
-              {errors.description && (
-                <p className="mt-1 text-xs text-error-500">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
-            {/* Preço */}
-            <Input
-              type="number"
-              placeholder="0.00"
-              step={0.01}
-              hint="Preço em R$"
-              defaultValue={product.price}
-
-              {...register("price")}
-            />
-            {errors.price && (
-              <p className="mt-1 text-xs text-error-500">
-                {errors.price.message}
-              </p>
-            )}
-          </div>
-          <div className="
-            ">
-
-
-
-            <Input
-              defaultValue={product?.download_url}
-              type="url"
-              placeholder="https://exemplo.com/arquivo"
-              hint="Link para download do produto digital"
-              {...register("download_url")}
-
-            />
-
-            {errors.download_url && (
-              <p className="mt-1 text-xs text-error-500">
-                {errors.download_url.message}
-              </p>
-            )}
-
-            {/* Imagem */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="flex justify-center">
-                <Controller
-                  control={control}
-                  name="image"
-                  render={({ field }) => (
-                    <FileInput
-                      {...field}
-                      onChange={(file) => field.onChange(file)}
-                    />
-                  )}
-                />
-                {errors.image && (
-                  <p className=" mt-2 text-red-500 text-xs mt-1">{errors.image.message}</p>
-                )}
-              </div>
-            </div>
-
-
-            {productType === "physical" && (
-              <div className="transition-all duration-500 ease-in-out">
-
-                <Input
-                  type="number"
-                  name="stock"
-                  placeholder="0"
-                  min={0}
-                  hint="Quantidade em estoque"
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input
-                    type="number"
-                    name="weight"
-                    placeholder="0.00"
-                    step={0.01}
-                    hint="Peso em kg"
-                  />
-                  <Input
-                    type="text"
-                    name="dimensions"
-                    placeholder="Ex: 10x20x5 cm"
-                    hint="Largura x Altura x Profundidade"
-                  />
-                </div>
-              </div>
-
-            )}
-
-
-            <div className="flex items-center mb-6 space-x-2 py-4">
-              <Controller
-                name="is_active"
-                control={control}
-                defaultValue={product.is_active}
-                render={({ field }) => (
-                  <Switch
-                    label="Ativo"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    color="blue"
-                  />
-                )}
-              />
-              {errors.image && (
-                <p className=" mt-2 text-red-500 text-xs mt-1">{errors.is_active?.message}</p>
-              )}
-
-            </div>
-
-          </div>
+          {/* Botões */}
+          <button
+            type="button"
+            onClick={() => {
+              setProductType("digital");
+              setValue("product_type", "digital");
+            }}
+            className={`relative w-1/2 md:w-20 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${
+              productType === "digital"
+                ? "text-white"
+                : "text-gray-700 dark:text-white hover:text-gray-900"
+            }`}
+          >
+            Digital
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setProductType("physical");
+              setValue("product_type", "physical");
+            }}
+            className={`relative w-1/2 md:w-20 h-full z-10 flex items-center justify-center text-sm font-medium transition-colors duration-300 ${
+              productType === "physical"
+                ? "text-white"
+                : "text-gray-700 dark:text-white hover:text-gray-900"
+            }`}
+          >
+            Físico
+          </button>
         </div>
 
+        {errors.product_type && (
+          <p className="mt-1 text-xs text-red-500">{errors.product_type.message}</p>
+        )}
+      </div>
 
-
-      </form>
+      {/* Botões Salvar/Cancelar */}
+      <div className="flex flex-col sm:flex-row w-full md:w-auto gap-2">
+        <Button
+          isLoading={isLoading}
+          type="submit"
+          className="w-full sm:w-auto"
+          startIcon={<Save />}
+        >
+          Salvar
+        </Button>
+        <Button
+          variant="outline"
+          onClick={setEd}
+          isLoading={isLoading}
+          className="w-full sm:w-auto"
+        >
+          Cancelar
+        </Button>
+      </div>
     </div>
+
+    {/* Campos do Formulário */}
+    <div className="flex flex-col lg:flex-row gap-6 w-full">
+      {/* Coluna 1 */}
+      <div className="flex-1 flex flex-col gap-4">
+        <Input
+          type="text"
+          defaultValue={product.name}
+          placeholder="Nome do produto"
+          hint="Informe o nome do produto"
+          {...register("name")}
+        />
+        {errors.name && (
+          <p className="py-2 ms-1 text-xs text-error-500">{errors.name.message}</p>
+        )}
+
+        <div>
+          <label className="text-xs ms-1 text-gray-500 dark:text-gray-300 mb-2 block">
+            Descrição do produto
+          </label>
+          <textarea
+            defaultValue={product.description}
+            className="w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-hidden bg-transparent text-gray-400 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
+            placeholder="Descrição do produto"
+            {...register("description")}
+          />
+          {errors.description && (
+            <p className="mt-1 text-xs text-error-500">{errors.description.message}</p>
+          )}
+        </div>
+
+        <Input
+          type="number"
+          placeholder="0.00"
+          step={0.01}
+          hint="Preço em R$"
+          defaultValue={product.price}
+          {...register("price")}
+        />
+        {errors.price && (
+          <p className="mt-1 text-xs text-error-500">{errors.price.message}</p>
+        )}
+      </div>
+
+      {/* Coluna 2 */}
+      <div className="flex-1 flex flex-col gap-4">
+        <Input
+          defaultValue={product?.download_url}
+          type="url"
+          placeholder="https://exemplo.com/arquivo"
+          hint="Link para download do produto digital"
+          {...register("download_url")}
+        />
+        {errors.download_url && (
+          <p className="mt-1 text-xs text-error-500">{errors.download_url.message}</p>
+        )}
+
+        {/* Imagem */}
+        <div className="flex flex-col items-center gap-2">
+          <Controller
+            control={control}
+            name="image"
+            render={({ field }) => <FileInput {...field} onChange={(file) => field.onChange(file)} />}
+          />
+          {errors.image && <p className="mt-2 text-red-500 text-xs">{errors.image.message}</p>}
+        </div>
+
+        {/* Campos físicos */}
+        {productType === "physical" && (
+          <div className="transition-all duration-500 ease-in-out flex flex-col gap-4">
+            <Input type="number" name="stock" placeholder="0" min={0} hint="Quantidade em estoque" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input type="number" name="weight" placeholder="0.00" step={0.01} hint="Peso em kg" />
+              <Input type="text" name="dimensions" placeholder="Ex: 10x20x5 cm" hint="Largura x Altura x Profundidade" />
+            </div>
+          </div>
+        )}
+
+        {/* Ativo */}
+        <div className="flex items-center space-x-2 py-4">
+          <Controller
+            name="is_active"
+            control={control}
+            defaultValue={product.is_active}
+            render={({ field }) => <Switch label="Ativo" checked={field.value} onChange={field.onChange} color="blue" />}
+          />
+          {errors.is_active && (
+            <p className="mt-1 text-xs text-red-500">{errors.is_active.message}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
   );
 };
 

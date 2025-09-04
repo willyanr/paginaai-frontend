@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import Badge from '../ui/badge/Badge';
 import Button from '../ui/button/Button';
-import YouTubeEmbed from '../ui/video/YouTubeEmbed';
 import ModalCreateDomain from './ModalCreateDomain';
 import { useProjectsDomains } from '@/context/DomainsContext';
 import { useModalContext } from '@/context/ModalContext';
@@ -33,9 +32,9 @@ const DomainsManager: React.FC = () => {
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             {/* Bloco Esquerda */}
-           <Card className='w-1/2'>
-             <div className="w-full py-4 lg:p-6 mb-10">
-                <div className="p-6 space-y-4">
+           <Card className='md:w-1/2'>
+             <div className="w-full py-2 lg:p-6 mb-10">
+                <div className="p-2 space-y-4">
                     <div className="bg-gray-100 text-gray-500 dark:bg-gray-500/15 dark:text-gray-400 text-sm rounded-lg p-6">
                         <p className="mb-2 font-bold dark:text-white text-xl">1º Etapa</p>
                         <p className="text-sm">
@@ -83,13 +82,14 @@ const DomainsManager: React.FC = () => {
                             <p className="text-sm text-gray-300 font-medium px-2 py-1">
                                 Propagação
                             </p>
-                            <Badge color="dark">Geralmente dentro de 30min</Badge>
+                            <Badge size='sm' color="dark">Dentro de 30min</Badge>
                         </div>
                         <div className="flex-1 border border-gray-300 dark:border-gray-800 rounded-lg p-4">
                             <p className="text-sm text-gray-300 font-medium px-2 py-1">
                                 Certificado SSL
                             </p>
                             <Badge
+                            size='sm'
                                 color="success"
                                 startIcon={
                                     <svg
@@ -111,10 +111,10 @@ const DomainsManager: React.FC = () => {
                             </Badge>
                         </div>
                     </div>
-
+{/* 
                     <div>
                         <YouTubeEmbed videoId="YOUR_VIDEO_ID_HERE" />
-                    </div>
+                    </div> */}
                 </div>
             </div>
            </Card>
@@ -123,13 +123,15 @@ const DomainsManager: React.FC = () => {
             <div className="w-full lg:w-1/2 mb-10">
                 <div className="space-y-8">
                     <Card>
-                        <div className="flex justify-between p-6">
+                        <div className="md:flex justify-between p-6">
                         <h1 className="text-sm lg:text-xl text-gray-600 font-semibold dark:text-white">
                             Gerenciador de Domínios
                         </h1>
-                        <Button variant="primary" size="sm" onClick={() => openModal("1")}>
+                        <div className="py-3">
+                            <Button variant="primary" size="sm" onClick={() => openModal("1")}>
                             Adicionar Domínio +
                         </Button>
+                        </div>
                     </div>
                     </Card>
                     <ListDomains />

@@ -1,5 +1,4 @@
 "use client";
-import { useStatistics } from "@/context/StatisticsContext";
 import { useNumberFormat } from "@/hooks/useNumberFormat";
 import { ApexOptions } from "apexcharts";
 
@@ -62,7 +61,7 @@ export default function MonthlyTarget({
             fontWeight: "600",
             offsetY: -40,
             color: "#ef983b",
-            formatter: function (val) {
+            formatter: function () {
               return 'R$ ' + formatNumber(totalOrder);
             },
           },

@@ -23,8 +23,12 @@ export const productService = {
   },
   async delete(id: number): Promise<void> {
     const res = await api.delete(`/checkout/products/${id}/`);
-    if (!res || !res.data) throw new Error("Erro ao deletar produto");
-    return res.data;
+
+    if (!res || (res.status !== 200 && res.status !== 204)) {
+      throw new Error("Erro ao deletar produto");
+    }
+
+    return;
   },
   async update(product: DataProduct | FormData, id: number): Promise<DataProduct> {
     const res = await api.put(`/checkout/products/${id}/`, product, {

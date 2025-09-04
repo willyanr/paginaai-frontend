@@ -20,7 +20,6 @@ import { CardTaxUser } from '@/components/checkout/CardTaxUser';
 
 
 
-// Interface para o formulário
 interface DataCheckoutForm {
     logo: File | string | null;
     banner: File | string | null;
@@ -51,7 +50,6 @@ const CheckoutCustomizer = () => {
     const { formatNumber } = useNumberFormat();
 
     const [frete, setFrete] = useState("");
-    const [freteRaw, setFreteRaw] = useState<number | null>(null);
 
 
 
@@ -67,12 +65,8 @@ const CheckoutCustomizer = () => {
 
     const validationSchema = yup.object().shape({
         logo: yup
-            .mixed()
-            .test(
-                "required-logo",
-                "Logo é obrigatória",
-                value => value instanceof File || typeof value === "string"
-            ),
+    .mixed()
+   .nullable(),
         banner: yup.mixed().nullable(),
         banner_mobile: yup.mixed().nullable(),
         is_frete: yup.boolean().required(),
@@ -143,30 +137,51 @@ const CheckoutCustomizer = () => {
                 delivery_amount: Number(frete)
             });
         }
-    }, [userCheckout, reset]);
+    }, [userCheckout, reset, frete]);
 
     const watchedColors = watch(["header_color", "text_color_header"]);
 
+    const SUPPORTED_IMAGE_TYPES = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/bmp",
+        "image/tiff",
+        "image/webp",
+    ];
+
     const onSubmit = async (data: DataCheckoutForm) => {
         setIsLoading(true);
+
+
         const form = new FormData();
 
-        Object.entries(data).forEach(([key, value]) => {
-            if ((key === "logo" || key === "banner_mobile") && !(value instanceof File)) return;
-            if (value !== null && value !== undefined) {
-                form.append(key, value as string | Blob);
-            }
-        });
-
         try {
+            Object.entries(data).forEach(([key, value]) => {
+                if ((key === "logo" || key === "banner_mobile") && value instanceof File) {
+                    if (!SUPPORTED_IMAGE_TYPES.includes(value.type)) {
+                        throw new Error(
+                            `Formato inválido: ${value.type}. Use JPG, PNG, GIF, BMP, TIFF ou WEBP.`
+                        );
+                    }
+                }
+
+                if (value !== null && value !== undefined) {
+                    form.append(key, value as string | Blob);
+                }
+            });
+
             await updateCustomCheckout(form, userCheckout!.id);
-            onAlert(true, 'success', 'Checkout Atualizado com sucesso.');
-        } catch {
-            onAlert(true, 'error', 'Erro ao atualizar checkout');
+            onAlert(true, "success", "Checkout atualizado com sucesso.");
+        } catch (err) {
+            const message =
+                err instanceof Error ? err.message : "Erro ao atualizar checkout";
+            onAlert(true, "error", message);
         } finally {
             setIsLoading(false);
         }
     };
+
 
     const deleteImages = async () => {
         if (!userCheckout) return;
@@ -209,13 +224,13 @@ const CheckoutCustomizer = () => {
                             type="color"
                             {...field}
                             value={String(field.value) || "#ffffff"}
-                            className="w-12 h-12 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
+                            className="h-12 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer"
                         />
                         <input
                             type="text"
                             {...field}
                             value={String(field.value) || "#ffffff"}
-                            className={`flex-1 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${error ? "border-red-300 dark:border-red-600" : "border-gray-300 dark:border-gray-600"}`}
+                            className={`flex-1 w-20 px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${error ? "border-red-300 dark:border-red-600" : "border-gray-300 dark:border-gray-600"}`}
                             placeholder="#ffffff"
                         />
                     </div>
@@ -226,7 +241,37 @@ const CheckoutCustomizer = () => {
         </div>
     );
 
-    if (!userCheckout) return <p>Carregando...</p>;
+    if (!userCheckout) {
+        return (
+            <div className="bg-yellow-400/20 rounded-2xl h-screen flex items-center justify-center dark:bg-orange-500 dark:text-white">
+                <div className="flex flex-col items-center">
+                    <svg
+                        className="animate-spin h-10 w-10 text-orange-500 mb-4 dark:text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        />
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        />
+                    </svg>
+                    <h1 className="text-2xl text-orange-500 text-center dark:text-white font-bold">
+                        Carregando seu checkout...
+                    </h1>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={`min-h-screen transition-colors duration-300`}>
@@ -241,42 +286,41 @@ const CheckoutCustomizer = () => {
                     {/* Header */}
 
                     <div className="space-y-8">
-                        <div className="flex gap-4">
-                            <Card>
-                                <div className=''>
-                                    <span className='text-white font-semibold'>Nome da loja</span>
-                                    <div className="mt-3">
+                        <div className="flex flex-col md:flex-row gap-4 w-full">
+                            {/* Card do nome da loja */}
+                            <Card className="w-full md:w-1/2">
+                                <div>
+                                    <span className="text-white font-semibold">Nome da loja</span>
+                                    <div className="mt-3 w-full">
                                         <Controller
                                             name="store_name"
                                             control={control}
                                             defaultValue={userCheckout.store_name}
                                             render={({ field }) => (
-                                                <Input
-                                                    {...field} 
-                                                    placeholder="Digite o nome da loja"
-                                                />
+                                                <Input {...field} placeholder="Digite o nome da loja" className="w-full" />
                                             )}
                                         />
-                                        <div className="py-5 w-72">
-                                            <InfoCard
-                                                size='xs'
-                                            >
+                                        <div className="py-5 w-full md:w-72">
+                                            <InfoCard size="xs">
                                                 O nome da sua loja é importante, dados de faturamento, marketing email, e visibilidade no seu checkout.
                                             </InfoCard>
                                         </div>
                                     </div>
                                 </div>
                             </Card>
-                            <Card className='w-full'>
-                                <div className="flex justify-between px-4">
+
+                            {/* Card de imagens */}
+                            <Card className="w-full md:w-1/2">
+                                <div className="flex flex-col gap-4 px-4">
                                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                                         <Upload className="mr-2" size={20} />
                                         Imagens
                                     </h2>
 
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                        <div>
-                                            <span className='font-bold dark:text-white text-center flex justify-center'>Logo</span>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                                        {/* Logo */}
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-bold dark:text-white mb-2">Logo</span>
                                             <Controller
                                                 control={control}
                                                 name="logo"
@@ -285,27 +329,36 @@ const CheckoutCustomizer = () => {
                                                     <FileInput
                                                         label="Envie sua Logo"
                                                         {...field}
-                                                        onChange={(file) => {
-                                                            field.onChange(file);
+                                                        onChange={(file: File | null) => {
                                                             if (file) {
-                                                                const previewUrl = URL.createObjectURL(file);
+                                                                if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+                                                                    onAlert(
+                                                                        true,
+                                                                        'error',
+                                                                        `Formato inválido: ${file.type}. Use apenas JPG, PNG, GIF, BMP, TIFF ou WEBP.`
+                                                                    );
+                                                                    field.onChange(null);
+                                                                    setPreviewImages((prev) => ({ ...prev, logo: undefined }));
+                                                                    return;
+                                                                }
+                                                                field.onChange(file);
                                                                 setPreviewImages((prev) => ({
                                                                     ...prev,
-                                                                    logo: previewUrl,
+                                                                    logo: URL.createObjectURL(file),
                                                                 }));
                                                             } else {
-                                                                setPreviewImages((prev) => ({
-                                                                    ...prev,
-                                                                    logo: undefined,
-                                                                }));
+                                                                field.onChange(null);
+                                                                setPreviewImages((prev) => ({ ...prev, logo: undefined }));
                                                             }
                                                         }}
                                                     />
                                                 )}
                                             />
                                         </div>
-                                        <div className="">
-                                            <span className='font-bold dark:text-white text-center flex justify-center'>Banner</span>
+
+                                        {/* Banner */}
+                                        <div className="flex flex-col items-center">
+                                            <span className="font-bold dark:text-white mb-2">Banner</span>
                                             <Controller
                                                 control={control}
                                                 name="banner_mobile"
@@ -313,19 +366,26 @@ const CheckoutCustomizer = () => {
                                                     <FileInput
                                                         label="Envie seu Banner"
                                                         {...field}
-                                                        onChange={(file) => {
-                                                            field.onChange(file);
+                                                        onChange={(file: File | null) => {
                                                             if (file) {
-                                                                const previewUrl = URL.createObjectURL(file);
+                                                                if (!SUPPORTED_IMAGE_TYPES.includes(file.type)) {
+                                                                    onAlert(
+                                                                        true,
+                                                                        'error',
+                                                                        `Formato inválido: ${file.type}. Use apenas JPG, PNG, GIF, BMP, TIFF ou WEBP.`
+                                                                    );
+                                                                    field.onChange(null);
+                                                                    setPreviewImages((prev) => ({ ...prev, banner_mobile: undefined }));
+                                                                    return;
+                                                                }
+                                                                field.onChange(file);
                                                                 setPreviewImages((prev) => ({
                                                                     ...prev,
-                                                                    banner_mobile: previewUrl,
+                                                                    banner_mobile: URL.createObjectURL(file),
                                                                 }));
                                                             } else {
-                                                                setPreviewImages((prev) => ({
-                                                                    ...prev,
-                                                                    banner_mobile: undefined,
-                                                                }));
+                                                                field.onChange(null);
+                                                                setPreviewImages((prev) => ({ ...prev, banner_mobile: undefined }));
                                                             }
                                                         }}
                                                     />
@@ -334,7 +394,8 @@ const CheckoutCustomizer = () => {
                                         </div>
                                     </div>
 
-                                    <div className="">
+                                    {/* Botão limpar */}
+                                    <div className="flex justify-center md:justify-end">
                                         <Button
                                             startIcon={<XIcon />}
                                             type="button"
@@ -350,6 +411,7 @@ const CheckoutCustomizer = () => {
                             </Card>
                         </div>
 
+
                         {/* Seção de Cores */}
                         <Card>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -358,8 +420,9 @@ const CheckoutCustomizer = () => {
                             </h2>
 
                             <div className="grid md:grid-cols-2 gap-6">
-                                <div>
+                                <div >
                                     <ColorField
+
                                         name="header_color"
                                         label="Cor do Fundo"
                                         control={control}
@@ -367,7 +430,7 @@ const CheckoutCustomizer = () => {
                                     />
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Personalize a cor de fundo do Header
@@ -383,7 +446,7 @@ const CheckoutCustomizer = () => {
                                     />
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Personalize a cor dos textos do Header
@@ -496,8 +559,8 @@ const CheckoutCustomizer = () => {
                                                                 type="text"
                                                                 value={frete}
                                                                 onChange={(e) => {
-                                                                    let value = e.target.value.replace(/\D/g, "");
-                                                                    let numericValue = value ? parseInt(value, 10) / 100 : 0;
+                                                                    const value = e.target.value.replace(/\D/g, "");
+                                                                    const numericValue = value ? parseInt(value, 10) / 100 : 0;
 
                                                                     setFrete(
                                                                         numericValue
@@ -526,7 +589,7 @@ const CheckoutCustomizer = () => {
 
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Isso só ficará ativo caso o seu produto seja físico
@@ -554,7 +617,7 @@ const CheckoutCustomizer = () => {
 
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Aceite pix como forma de pagamento em seu checkout
@@ -582,7 +645,7 @@ const CheckoutCustomizer = () => {
 
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Aceite cartões como forma de pagamento em seu checkout
@@ -609,7 +672,7 @@ const CheckoutCustomizer = () => {
                                     </div>
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
                                         >
                                             Adicione um contador em seu checkout o tempo padrão é de 10 minutos
 
@@ -636,7 +699,7 @@ const CheckoutCustomizer = () => {
                                     </div>
                                     <div className="p-2">
                                         <InfoCard
-                                            size='sm'
+                                            size='xs'
 
                                         >
                                             Atenção: Esssa opção só ficará disponível em produtos físicos, detaque frete grátis em seu checkout
@@ -654,7 +717,7 @@ const CheckoutCustomizer = () => {
                             </h2>
                             <div className="py-2">
                                 <InfoCard
-                                    size='sm'
+                                    size='xs'
 
                                 >
                                     Essas configurações se aplicam somente em produtos físicos

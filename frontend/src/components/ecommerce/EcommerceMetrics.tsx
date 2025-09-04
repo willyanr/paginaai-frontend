@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import { BoxIconLine, GroupIcon } from "@/icons";
-import { useStatistics } from "@/context/StatisticsContext";
 import { DataWalletWithTransactions } from "@/interfaces/checkout.interface";
 import { BadgeDollarSign, BadgePercent } from "lucide-react";
 import { Card } from "../ui/card/Card";
@@ -15,7 +13,6 @@ interface Props {
 
 
 export const EcommerceMetrics: React.FC<Props> = ({ wallet }) => {
-  const { statistics } = useStatistics();
 
   const { formatNumber } = useNumberFormat();
 

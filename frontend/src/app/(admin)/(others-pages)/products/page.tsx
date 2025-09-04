@@ -10,7 +10,7 @@ export default function Products() {
 
 
   return (
-    <div>
+    <div className="max-w-7xl mx-auto">
       <div className="">
         <InfoPage
           title="Produtos"

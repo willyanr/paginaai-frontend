@@ -14,7 +14,7 @@ import { useProjectsMarketing } from "@/context/MarketingContext";
 import { useTheme } from '@/context/ThemeContext';
 import { useAlertContext } from '@/context/AlertContext';
 import { Card } from '../ui/card/Card';
-import { CreativeCommons, Package, Plus, Projector } from 'lucide-react';
+import { Plus, Projector } from 'lucide-react';
 import Button from '../ui/button/Button';
 import Link from 'next/link';
 
@@ -80,7 +80,6 @@ const ListProjectMarketing: React.FC = () => {
                             {item?.pixels?.map(
                                 (
                                     pixel: { id: number; pixel_type: string; pixel_value: string },
-                                    index: number
                                 ) => (
                                     <div
                                         key={pixel.id}
