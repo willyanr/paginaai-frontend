@@ -150,37 +150,40 @@ const CheckoutCustomizer = () => {
         "image/webp",
     ];
 
-    const onSubmit = async (data: DataCheckoutForm) => {
-        setIsLoading(true);
+const onSubmit = async (data: DataCheckoutForm) => {
+    setIsLoading(true);
 
+    const form = new FormData();
 
-        const form = new FormData();
-
-        try {
-            Object.entries(data).forEach(([key, value]) => {
-                if ((key === "logo" || key === "banner_mobile") && value instanceof File) {
+    try {
+        Object.entries(data).forEach(([key, value]) => {
+            // Se for campo de imagem, só envia se for File
+            if (["logo", "banner", "banner_mobile"].includes(key)) {
+                if (value instanceof File) {
                     if (!SUPPORTED_IMAGE_TYPES.includes(value.type)) {
                         throw new Error(
                             `Formato inválido: ${value.type}. Use JPG, PNG, GIF, BMP, TIFF ou WEBP.`
                         );
                     }
+                    form.append(key, value); // só adiciona se for File
                 }
+            } else if (value !== null && value !== undefined) {
+                // Para os outros campos (boolean, string, number)
+                form.append(key, String(value));
+            }
+        });
 
-                if (value !== null && value !== undefined) {
-                    form.append(key, value as string | Blob);
-                }
-            });
+        await updateCustomCheckout(form, userCheckout!.id);
+        onAlert(true, "success", "Checkout atualizado com sucesso.");
+    } catch (err) {
+        const message =
+            err instanceof Error ? err.message : "Erro ao atualizar checkout";
+        onAlert(true, "error", message);
+    } finally {
+        setIsLoading(false);
+    }
+};
 
-            await updateCustomCheckout(form, userCheckout!.id);
-            onAlert(true, "success", "Checkout atualizado com sucesso.");
-        } catch (err) {
-            const message =
-                err instanceof Error ? err.message : "Erro ao atualizar checkout";
-            onAlert(true, "error", message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
 
     const deleteImages = async () => {
