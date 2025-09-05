@@ -24,7 +24,7 @@ export default function SidebarWidget() {
       onAlert(true, "success", "Obrigado pelo seu feedback! 🧡");
       setFeedback(""); 
       closeModal();
-    } catch (error) {
+    } catch  {
       onAlert(true, "error", "Erro ao enviar feedback.");
     }
   };
