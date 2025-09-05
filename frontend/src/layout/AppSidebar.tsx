@@ -21,6 +21,7 @@ import {
   Product,
 } from "../icons/index";
 import Badge from "@/components/ui/badge/Badge";
+import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -342,7 +343,7 @@ const AppSidebar: React.FC = () => {
         </Link>
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
-        <nav className="mb-6">
+        <nav className="">
           <div className="flex flex-col gap-4 mt-6 mb-20">
             <div>
               <h2
@@ -360,7 +361,7 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(navItems, "main")}
             </div>
 
-            <div className="py-4">
+            {/* <div className="py-4">
               <div className="flex items-center gap-3">
                 <h2
                   className={`text-xs uppercase flex  text-gray-400 ${!isExpanded && !isHovered
@@ -381,13 +382,13 @@ const AppSidebar: React.FC = () => {
                 </Badge>
               </div>
               {renderMenuItems(othersItems, "others")}
-            </div>
+            </div> */}
           </div>
         </nav>
-        {/* {isExpanded || isHovered || isMobileOpen ? 
+        {isExpanded || isHovered || isMobileOpen ? 
         <div className="lg:pb-0 pb-12">
            <SidebarWidget />
-        </div> : null}  */}
+        </div> : null}  
       </div>
     </aside>
   );
