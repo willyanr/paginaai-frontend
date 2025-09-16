@@ -9,18 +9,29 @@ export const productService = {
     return res.data as DataProduct[];
   },
   async create(product: DataProduct | FormData): Promise<DataProduct> {
-    const res = await api.post("/checkout/products/", product, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
 
-    if (!res || !res.data) {
-      throw new Error("Erro ao criar produto");
+    try {
+      const res = await api.post("/checkout/products/", product, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return res.data as DataProduct;
+    } catch (error: unknown) {
+      let errorMessage = 'Erro desconhecido ao criar domínio.';
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const err = error as { response?: { data?: { detail?: string; message?: string } } };
+        errorMessage =
+          err.response?.data?.detail ||
+          err.response?.data?.message ||
+          errorMessage;
+      }
+      throw new Error(errorMessage);
     }
 
-    return res.data as DataProduct;
   },
+
+
   async delete(id: number): Promise<void> {
     const res = await api.delete(`/checkout/products/${id}/`);
 

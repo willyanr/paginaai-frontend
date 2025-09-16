@@ -1,6 +1,4 @@
 // auth.ts
-import { jwtDecode } from 'jwt-decode';
-import Cookies from 'js-cookie';
 import { LoginUser, RegisterUser, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
 
 interface TokenPayload {
@@ -14,6 +12,21 @@ interface VerifyOtpPayload {
 }
 
 
+export const AuthService = {
+  
+  async checkAuth(): Promise<void> {
+    const { default: api } = await import('./api');
+    const res = await api.get('/accounts/me/')
+
+    if (!res || !res.data) {
+      
+      throw new Error("Usuário não autenticado.");
+      
+    }
+
+    return res.data;
+  },
+}
 
 export async function login(payload: LoginUser) {
   const { default: api } = await import('./api');
@@ -21,13 +34,6 @@ export async function login(payload: LoginUser) {
     const res = await api.post('/accounts/login/', payload, {
       timeout: 5000
     });
-    const { access, refresh } = res.data;
-
-    Cookies.set('access', access, { secure: true, sameSite: 'strict' });
-    Cookies.set('refresh', refresh, { secure: true, sameSite: 'strict' });
-    localStorage.setItem('access', access);
-    localStorage.setItem('refresh', refresh);
-
     return res.data;
   } catch (error: unknown) {
     let errorMessage = 'Erro desconhecido ao realizar login.';
@@ -54,62 +60,34 @@ export async function login(payload: LoginUser) {
   }
 }
 
-export function logout() {
-  localStorage.removeItem('access');
-  localStorage.removeItem('refresh');
-  Cookies.remove('access');
-  Cookies.remove('refresh');
-}
-
-export function getAccessToken() {
-  return localStorage.getItem('access');
-}
-
-export function getRefreshToken() {
-  return localStorage.getItem('refresh');
-}
-
-export function isTokenExpired(token: string) {
+export async function logout() {
+  const { default: api } = await import('./api');
   try {
-    const decoded = jwtDecode<TokenPayload>(token);
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime;
+    await api.post('/accounts/logout/', {}); 
   } catch {
-    return true;
+    console.error('Erro ao fazer logout');
+  } finally {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/signin';
+    }
   }
 }
+
+
+
+
 
 import type { AxiosInstance } from 'axios';
-
 export async function refreshAccessToken(apiInstance: AxiosInstance) {
-
-  const refresh = getRefreshToken();
-
-  if (!refresh) {
-    throw new Error('No refresh token available');
-  }
-
   try {
-    const res = await apiInstance.post(`${process.env.NEXT_PUBLIC_API_URL}token/refresh/`, { refresh });
-    const { access } = res.data;
-    console.log('Refresh token:', refresh);
-
-
-    localStorage.setItem('access', access);
-    console.log('salvei aqui', localStorage.getItem('access'));
-    Cookies.set('access', access, { secure: true, sameSite: 'strict' });
-
-    return access;
-  } catch (error: unknown) {
-    const errorMessage = typeof error === 'object' && error !== null && 'message' in error
-      ? (error as { message: string }).message
-      : 'Erro ';
-    alert(errorMessage)
-
-    // logout();
-    throw error;
+    const res = await apiInstance.post('/token/refresh/', {}, { withCredentials: true });
+    return res.data.access; 
+  } catch  {
+    console.error('Erro atualizar token');
+    throw new Error('Não foi possível atualizar o token');
   }
 }
+
 
 export async function registerUser(payload: RegisterUser) {
   const { default: api } = await import('./api');
@@ -140,7 +118,7 @@ export async function registerUser(payload: RegisterUser) {
     };
 
     const data = err.response?.data;
-    console.log('data', data);
+
 
     if (data) {
       // Prioridade 1: Chaves conhecidas com mensagens de erro simples

@@ -234,7 +234,7 @@ export default function DefaultEditor() {
             
             <button
               onClick={() => openModal('import-code')}
-              className="flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-500 text-brand-500 hover:bg-brand-600 hover:text-white transition"
+              className="flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-500 text-brand-500 hover:border-purple-500 hover:text-purple-500 transition"
             >
               <svg className='w-12 h-7' version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 282 282" width="282" height="282">
               <title>image</title>

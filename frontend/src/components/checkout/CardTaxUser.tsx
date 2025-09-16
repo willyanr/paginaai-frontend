@@ -10,7 +10,7 @@ export const CardTaxUser = ({ data }: Props) => {
 
     return (
        <div className="w-full">
-      <Card className="w-full bg-primary border-2 border-primary/20 rounded-2xl p-6 sm:p-8 shadow-lg">
+      <Card className="w-full bg-primary rounded-2xl p-6 sm:p-8 ">
         <h2 className="text-xl sm:text-2xl font-bold mb-8 text-white text-center">
           Suas Taxas
         </h2>

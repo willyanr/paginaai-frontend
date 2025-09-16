@@ -7,6 +7,7 @@ import { Modal } from '../ui/modal';
 
 import { useProjects } from '@/context/ProjectsContext';
 import { useModalContext } from '@/context/ModalContext';
+import { useAlertContext } from '@/context/AlertContext';
 
 
 
@@ -18,7 +19,7 @@ export default function ModalEditor() {
   const [projectDescription, setProjectDescription] = useState('');
   const [errorInput, setErrorInput] = useState(false);
   const [isDisabledButton, setIsDisabledButton] = useState(false);
-
+  const { onAlert } = useAlertContext();
 
   useEffect(() => {
     fetchProjects();
@@ -39,8 +40,13 @@ export default function ModalEditor() {
       }
 
       await createNewProject(payload);
-    } catch {
-      return new Error('Error ao criar projeto');
+    } catch (error: unknown) {
+      let message = 'Erro ao criar projeto.';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      onAlert(true,'error', message)
+
     } finally {
       setIsDisabledButton(false);
     }

@@ -523,15 +523,14 @@ const onSubmit = async (data: DataCheckoutForm) => {
                             </div>
                         </Card>
 
-                        {/* Seção de Funcionalidades */}
-                        <Card>
+                        <div>
                             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                                 <CreditCard className="mr-2" size={20} />
                                 Funcionalidades
                             </h2>
 
                             <div className="grid md:grid-cols-2 gap-6">
-                                <div>
+                                <Card>
                                     <div className="border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
                                         <div className='flex justify-between '>
                                             <span className='flex gap-3 items-center font-semibold dark:text-white'>
@@ -598,8 +597,8 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                             Isso só ficará ativo caso o seu produto seja físico
                                         </InfoCard>
                                     </div>
-                                </div>
-                                <div>
+                                </Card>
+                                <Card>
                                     <div className="flex justify-between border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
                                         <span className='flex gap-3 items-center font-semibold dark:text-white'>
                                             <CreditCard />
@@ -626,8 +625,8 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                             Aceite pix como forma de pagamento em seu checkout
                                         </InfoCard>
                                     </div>
-                                </div>
-                                <div>
+                                </Card>
+                                <Card>
                                     <div className="flex justify-between border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
                                         <span className='flex gap-3 items-center font-semibold dark:text-white'>
                                             <CreditCard />
@@ -654,8 +653,8 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                             Aceite cartões como forma de pagamento em seu checkout
                                         </InfoCard>
                                     </div>
-                                </div>
-                                <div>
+                                </Card>
+                                <Card>
                                     <div className="flex justify-between border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
                                         <span className='flex gap-3 items-center font-semibold dark:text-white'>
                                             <Clock />
@@ -681,8 +680,8 @@ const onSubmit = async (data: DataCheckoutForm) => {
 
                                         </InfoCard>
                                     </div>
-                                </div>
-                                <div>
+                                </Card>
+                                <Card>
                                     <div className="flex justify-between border-2 border-dashed dark:border-gray-600 p-3 rounded-xl">
                                         <span className='flex gap-3 items-center font-semibold dark:text-white'>
                                             <Package />
@@ -708,83 +707,87 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                             Atenção: Esssa opção só ficará disponível em produtos físicos, detaque frete grátis em seu checkout
                                         </InfoCard>
                                     </div>
-                                </div>
+                                </Card>
                             </div>
-                        </Card>
-
+                           </div>                 
                         {/* Seção de Entrega */}
-                        <Card className='p-6'>
-                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                                <Truck className="mr-2" size={20} />
-                                Configurações de Entrega
-                            </h2>
-                            <div className="py-2">
-                                <InfoCard
-                                    size='xs'
+                        <Card className="p-6 space-y-6">
+  {/* Header */}
+  <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+    <Truck size={20} />
+    Configurações de Entrega
+  </h2>
 
-                                >
-                                    Essas configurações se aplicam somente em produtos físicos
-                                </InfoCard>
-                            </div>
+  {/* Info */}
+  <InfoCard size="xs">
+    Essas configurações se aplicam somente em produtos físicos
+  </InfoCard>
 
-                            <div className='flex justify-between items-center'>
-                                <div className="flex-col gap-3 space-y-3">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Tipo de Entrega
-                                        </label>
-                                        <Controller
-                                            name="delivery_type"
-                                            control={control}
-                                            render={({ field }) => (
-                                                <select
-                                                    {...field}
-                                                    className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${errors.delivery_type ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
-                                                        }`}
-                                                >
-                                                    <option value="correios">Correios</option>
-                                                    <option value="jadlog">Jad Log</option>
-                                                </select>
-                                            )}
-                                        />
-                                        {errors.delivery_type && (
-                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.delivery_type.message}</p>
-                                        )}
-                                    </div>
+  {/* Form Fields */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="flex flex-col gap-3">
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        Tipo de Entrega
+      </label>
+      <Controller
+        name="delivery_type"
+        control={control}
+        render={({ field }) => (
+          <select
+            {...field}
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
+              errors.delivery_type
+                ? 'border-red-300 dark:border-red-600'
+                : 'border-gray-300 dark:border-gray-600'
+            }`}
+          >
+            <option value="correios">Correios</option>
+            <option value="jadlog">Jad Log</option>
+          </select>
+        )}
+      />
+      {errors.delivery_type && (
+        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+          {errors.delivery_type.message}
+        </p>
+      )}
+    </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Prazo de Entrega Estimado
-                                        </label>
-                                        <Controller
-                                            name="estimated_delivery"
-                                            control={control}
-                                            defaultValue={userCheckout?.estimated_delivery}
-                                            render={({ field }) => (
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${errors.estimated_delivery ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
-                                                        }`}
-                                                    placeholder="Ex: De 2 a 3 dias úteis."
-                                                />
-                                            )}
-                                        />
-                                        {errors.estimated_delivery && (
-                                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.estimated_delivery.message}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className='w-40 px-5'>
+    <div className="flex flex-col gap-3">
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        Prazo de Entrega Estimado
+      </label>
+      <Controller
+        name="estimated_delivery"
+        control={control}
+        defaultValue={userCheckout?.estimated_delivery}
+        render={({ field }) => (
+          <input
+            {...field}
+            type="text"
+            placeholder="Ex: De 2 a 3 dias úteis"
+            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
+              errors.estimated_delivery
+                ? 'border-red-300 dark:border-red-600'
+                : 'border-gray-300 dark:border-gray-600'
+            }`}
+          />
+        )}
+      />
+      {errors.estimated_delivery && (
+        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+          {errors.estimated_delivery.message}
+        </p>
+      )}
+    </div>
+  </div>
 
-                                </div>
-                            </div>
-                        </Card>
-                        <div className='mb-30'>
-                            <CardTaxUser
-                                data={userCheckout}
-                            />
-                        </div>
+  {/* Tax Card / Additional Info */}
+  <div className="mt-4">
+    <CardTaxUser data={userCheckout} />
+  </div>
+</Card>
+
 
                         {/* Botão de Salvar */}
                         <div className='fixed bottom-0 left-0 right-0'>

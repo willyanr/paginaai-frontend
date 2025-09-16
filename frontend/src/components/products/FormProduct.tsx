@@ -33,7 +33,7 @@ const ProductForm: React.FC = () => {
 
 
   const { createProduct, products, refresh } = useProductsContext();
-
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
   const { onAlert } = useAlertContext();
 
 
@@ -93,25 +93,19 @@ const ProductForm: React.FC = () => {
     image: yup
       .mixed<File | FileList>()
       .test("file-required", "A imagem é obrigatória", (value) => {
-        console.log("[DEBUG file-required] value:", value);
         // suporta File ou FileList
         return value && (value instanceof FileList ? value.length > 0 : true);
       })
       .test("fileSize", "O arquivo é muito grande", (value) => {
-        console.log("[DEBUG fileSize] value:", value);
         if (!value) return true;
 
         const file = value instanceof FileList ? value[0] : value;
-        console.log("[DEBUG fileSize] file:", file);
-        console.log("[DEBUG fileSize] size:", file.size);
         return file.size <= 5 * 1024 * 1024;
       })
       .test("fileType", "Formato de arquivo não suportado", (value) => {
-        console.log("[DEBUG fileType] value:", value);
         if (!value) return true;
 
         const file = value instanceof FileList ? value[0] : value;
-        console.log("[DEBUG fileType] type:", file.type);
         return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
       }),
 
@@ -138,10 +132,28 @@ const ProductForm: React.FC = () => {
     setIsLoading(true);
     try {
       await createNewProduct(data);
-      reset();
+      reset({
+        product_type: "digital",
+        name: "",
+        description: "",
+        is_active: true,
+        price: 0,
+        download_url: "",
+        stock: null,
+        weight: null,
+        dimensions: "",
+        image: undefined, 
+      });
+
+      setFileInputKey(Date.now());
       onAlert(true, 'success', 'Produto criado com sucesso!');
-    } catch {
-      onAlert(true, 'error', 'Erro ao criar produto.');
+    } catch (error: unknown) {
+      let message = 'Erro ao criar projeto.';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      onAlert(true,'error', message)
+
     } finally {
       setIsLoading(false);
     }
@@ -281,9 +293,12 @@ const ProductForm: React.FC = () => {
         <div className="py-4 flex justify-center">
           <div className=" flex flex-col items-center gap-2">
             <Controller
+              
               control={control}
               name="image"
-              render={({ field }) => <FileInput {...field} onChange={(file) => field.onChange(file)} />}
+              render={({ field }) => <FileInput 
+              key={fileInputKey}
+              {...field} onChange={(file) => field.onChange(file)} />}
             />
             {errors.image && <p className="mt-2 text-red-500 text-xs">{errors.image.message}</p>}
           </div>

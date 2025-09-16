@@ -69,7 +69,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
       return newProduct;
     } catch (error: unknown) {
       if (error instanceof Error) {
-        throw new Error(`Error: ${error.message}`);
+        throw new Error(`${error.message}`);
       } else {
         throw new Error('An unknown error occurred while updating the project.');
       }

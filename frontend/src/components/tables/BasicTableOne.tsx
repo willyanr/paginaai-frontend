@@ -101,10 +101,12 @@ export const BasicTableOne: React.FC<Props> = ({ wallet }) => {
                             ? "success"
                             : order.status === "pending"
                               ? "warning"
-                              : "error"
+                              : order.status === "rejected"
+                                ? "error"
+                                : "error"
                         }
                       >
-                        { order.status === 'paid' ? 'Pago' : order.status === 'pending' ? 'Pendente' : ''}
+                        { order.status === 'paid' ? 'Pago' : order.status === 'pending' ? 'Pendente' : order.status === 'rejected' ? 'Estornado' : ''}
                       </Badge>
                     </TableCell>
                    

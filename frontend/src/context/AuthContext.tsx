@@ -4,12 +4,11 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import {
   login as loginService,
   logout as logoutService,
-  getAccessToken,
   registerUser as ServiceRegisterUser,
   verifyCodeOtp as ServiceVerifyCodeOtp,
   resetPassword as ServiceResetPassword,
   resetPasswordFinal as ServiceResetPasswordFinal,
-
+  AuthService
 } from '../services/auth';
 import { useRouter } from 'next/navigation';
 import { useAlertContext } from './AlertContext';
@@ -35,7 +34,6 @@ interface AuthContextType {
   isLoading: boolean;
   login: (payload: LoginType) => Promise<void>;
   logout: () => void;
-  checkAuth: () => boolean;
   register: (payload: RegisterUser) => Promise<void>;
   verifyCode: (payload: VerifyCodeType) => Promise<void>;
   userResetPassword: (email: string) => Promise<void>;
@@ -52,21 +50,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { onAlert } = useAlertContext();
 
-
   useEffect(() => {
-    const checkAuthentication = () => {
-      const token = getAccessToken();
-      setIsAuthenticated(!!token);
-    };
+  const verifyAuth = async () => {
+    try {
+      await AuthService.checkAuth(); 
+      setIsAuthenticated(true);
+      router.push('/');
+    } catch {
+      setIsAuthenticated(false);
+    }
+  };
 
-    checkAuthentication();
+  
+  verifyAuth();
+}, []);
 
-    window.addEventListener('storage', checkAuthentication);
-
-    return () => {
-      window.removeEventListener('storage', checkAuthentication);
-    };
-  }, []);
 
   const login = async (payload: LoginType) => {
       await loginService(payload);
@@ -150,10 +148,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
 
-  const checkAuth = () => {
-    const token = getAccessToken();
-    return !!token;
-  };
 
   return (
     <AuthContext.Provider value={{
@@ -161,7 +155,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
       login,
       logout,
-      checkAuth,
       register,
       verifyCode,
       userResetPassword,

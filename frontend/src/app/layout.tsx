@@ -43,6 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
+      <title>Paginaai - Tudo no mesmo lugar!</title>
       <body className={`${poppins.className} dark:bg-gray-900`}>
         <AlertProvider>
           <AuthProvider>

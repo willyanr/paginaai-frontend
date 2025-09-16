@@ -63,7 +63,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
             setIsSuccess(true);
         } catch (error: unknown) {
             if (error instanceof Error) {
-                throw new Error(`Error updating project: ${error.message}`);
+                throw new Error(`${error.message}`);
             } else {
                 throw new Error('An unknown error occurred while updating the project.');
             }
