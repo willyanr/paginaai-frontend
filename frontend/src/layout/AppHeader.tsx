@@ -2,18 +2,21 @@
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
-import Button from "@/components/ui/button/Button";
-import { Modal } from "@/components/ui/modal";
 import { useModalContext } from "@/context/ModalContext";
 import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
+import ModalPremium from "./ModalPremium";
+import { useUser } from "@/context/UserContext";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isOpen, closeModal, openModal } = useModalContext();
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+
+  const { user } = useUser();
+
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -42,6 +45,10 @@ const AppHeader: React.FC = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  const hasActiveSubscription = user?.subscriptions?.some(
+  (sub) => sub.status === "active"
+);
 
   return (
     <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
@@ -128,9 +135,10 @@ const AppHeader: React.FC = () => {
           className={`${isApplicationMenuOpen ? "flex" : "hidden"
             } items-center justify-between w-full gap-4 px-5 py-4 lg:flex shadow-theme-md lg:justify-end lg:px-0 lg:shadow-none`}
         >
-          <div className="flex items-center gap-2 2xsm:gap-3" onClick={() => openModal('modal-premium')}>
-            <div className="hidden lg:block">
-              <div className="glass-glow flex  rounded-full items-center gap-3 bg-brand-400/30 cursor-pointer">
+          <div className="flex items-center gap-2 2xsm:gap-3" >
+           {!hasActiveSubscription ? (
+             <div className="hidden lg:block">
+              <div onClick={() => openModal('modal-premium')} className="glass-glow flex  rounded-full items-center gap-3 bg-brand-400/30 cursor-pointer">
                 <span className="w-7 h-7 bg-brand-300 rounded-full flex items-center justify-center text-sm shadow-md text-white">
                   🔥
                 </span>
@@ -141,6 +149,22 @@ const AppHeader: React.FC = () => {
                 <div className="shine" />
               </div>
             </div>
+           ):(
+            <div className="hidden lg:block">
+              <div className="glass-glow flex  rounded-full items-center gap-3 bg-brand-400/30 cursor-pointer">
+                <span className="w-7 h-7 bg-brand-300 rounded-full flex items-center justify-center text-sm shadow-md text-white">
+                 ⭐
+                </span>
+
+                <span className="text-sm font-semibold text-brand-300 pr-3">PREMIUM</span>
+
+                {/* Brilho animado passando */}
+                <div className="shine" />
+              </div>
+            </div>
+           )
+           
+           } 
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />
             {/* <!-- Dark Mode Toggler --> */}
@@ -155,76 +179,7 @@ const AppHeader: React.FC = () => {
 
         </div>
       </div>
-        <Modal isOpen={isOpen("modal-premium")} onClose={closeModal} >
-           <div className="mt-12 md:p-8">
-  {/* Badge de destaque */}
-  <div className="flex justify-end">
-    <span className="bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full uppercase">
-      Em Breve
-    </span>
-  </div>
-
-  {/* Título */}
-  <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mt-2">
-    Plano Premium
-  </h2>
-  <p className="text-sm text-gray-600 dark:text-gray-300 text-center mt-1">
-    Aproveite todos os benefícios e potencialize suas vendas
-  </p>
-
-  {/* Lista de Benefícios */}
-  <ul className="mt-6 space-y-3 text-gray-700 dark:text-gray-300 text-sm">
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Até 5 páginas de vendas
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Até 5 domínios próprios
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Melhores taxas no PIX e cartão
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Suporte personalizado
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Participação de premiações por metas batidas
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Uploads de fotos ilimitadas
-    </li>
-    <li className="flex items-center gap-2">
-      <span className="text-green-500">✔️</span>
-      Cadastro de até 10 produtos
-    </li>
-  </ul>
-
-  {/* CTA */}
-  <div className="mt-6 flex flex-col gap-3">
-    <Button
-      variant="primary"
-      className="w-full bg-brand-500 hover:bg-brand-600 text-white dark:bg-brand-400 dark:hover:bg-brand-500"
-      onClick={() => alert("Redirecionar para página de assinatura")}
-    >
-      Assinar Premium
-    </Button>
-
-    <Button
-      variant="outline"
-      className="w-full text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600"
-      onClick={closeModal}
-    >
-      Fechar
-    </Button>
-  </div>
-</div>
-
-          </Modal>
+            <ModalPremium closeModal={closeModal} isOpen={isOpen('modal-premium')}/>
         </header>
       );
     };

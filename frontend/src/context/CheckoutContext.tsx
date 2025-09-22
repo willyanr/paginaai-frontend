@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { checkoutService } from "@/services/checkout";
-import { DataCheckout, DataWalletWithTransactions } from "@/interfaces/checkout.interface";
+import { DataCheckout, DataRequestWithdraw, DataWalletWithTransactions, VerifyPaymentResponse } from "@/interfaces/checkout.interface";
 
 interface CheckoutContextProps {
   checkout: DataCheckout[];
@@ -9,17 +9,24 @@ interface CheckoutContextProps {
   refresh: () => void;
   updateCustomCheckout: (customCheckout: FormData, id: number) => Promise<void>;
   refreshWallet: () => void;
+  requestWithdraw: (payload: DataRequestWithdraw) => void;
+  verifyPayment: (id: string) => Promise<VerifyPaymentResponse>;
 }
 
 const CheckoutContext = createContext<CheckoutContextProps>({
   checkout: [],
   wallet: [],
   error: null,
-  refresh: () => {},
+  refresh: () => { },
   updateCustomCheckout: async () => {
     return;
   },
-  refreshWallet: () => {},
+  refreshWallet: () => { },
+  requestWithdraw: () => { },
+  verifyPayment: async () => {
+    return {} as VerifyPaymentResponse;
+},
+
 });
 
 
@@ -30,8 +37,8 @@ interface CheckoutProviderProps {
 }
 
 export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) => {
-  const [checkout, setCheckout ] = useState<DataCheckout[]>([]);
-  const [ wallet , setWallet ] = useState<DataWalletWithTransactions[]>([]);
+  const [checkout, setCheckout] = useState<DataCheckout[]>([]);
+  const [wallet, setWallet] = useState<DataWalletWithTransactions[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchCheckout = useCallback(async () => {
@@ -92,7 +99,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
   //   }
   // };
 
- const updateCustomCheckout = async (customCheckout: FormData, id: number) => {
+  const updateCustomCheckout = async (customCheckout: FormData, id: number) => {
     try {
       await checkoutService.update(customCheckout, id);
     } catch (error: unknown) {
@@ -106,8 +113,42 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
   };
 
 
+
+  const verifyPayment = async (id:string) => {
+    try {
+      const data = await checkoutService.getVerifyPayment(id);
+      return data
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred while getVerifyPayment .');
+      }
+    } finally {
+    }
+  };
+
+
+  const requestWithdraw = async (payload: DataRequestWithdraw) => {
+    try {
+      await checkoutService.requstWithdraw(payload)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new Error(`${error.message}`);
+      } else {
+        throw new Error('Erro ao solicitar saque');
+      }
+    } finally {
+    }
+  };
+
+
   return (
-    <CheckoutContext.Provider value={{ checkout, wallet, error, refresh: fetchCheckout, updateCustomCheckout, refreshWallet: fetchWallet  }}>
+    <CheckoutContext.Provider value={{
+      checkout, wallet, error,
+      requestWithdraw,
+      refresh: fetchCheckout, updateCustomCheckout, refreshWallet: fetchWallet, verifyPayment
+    }}>
       {children}
     </CheckoutContext.Provider>
   );

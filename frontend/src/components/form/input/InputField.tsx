@@ -26,7 +26,7 @@ const Input: FC<InputProps> = ({
   ...rest
 }) => {
   // Determine input styles based on state (disabled, success, error)
-  let inputClasses = `h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-base shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:focus:text-white ${className}`;
+  let inputClasses = `h-12 w-full rounded-xl border appearance-none px-4 py-2.5 text-base shadow-theme-xs placeholder:text-gray-400 focus:outline-none focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:focus:text-white ${className}`;
 
   // Add styles for the different states
   if (disabled) {

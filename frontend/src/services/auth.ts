@@ -1,10 +1,7 @@
 // auth.ts
-import { LoginUser, RegisterUser, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
+import { DataSubscription, LoginUser, RegisterUser, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
 
-interface TokenPayload {
-  exp: number;
-  user_id: string;
-}
+
 
 interface VerifyOtpPayload {
   otp: string
@@ -32,9 +29,67 @@ export async function login(payload: LoginUser) {
   const { default: api } = await import('./api');
   try {
     const res = await api.post('/accounts/login/', payload, {
-      timeout: 5000
+      timeout: 5000,
+      withCredentials: true, 
     });
     return res.data;
+  } catch (error: unknown) {
+    let errorMessage = 'Erro desconhecido ao realizar login.';
+
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const err = error as {
+
+        response?: { data?: Record<string, string> };
+      };
+
+      const data = err.response?.data;
+
+      if (data) {
+        errorMessage =
+          data.detail ||
+          data.message ||
+          data.error ||
+          (Object.values(data)[0]?.[0] as string) ||
+          errorMessage;
+      }
+    }
+
+    throw new Error(errorMessage);
+  }
+}
+function getCsrfToken(name = 'csrftoken') {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+export async function createSubscription() {
+  const { default: api } = await import('./api');
+   const csrfToken = getCsrfToken();
+
+  try {
+    const res = await api.post(
+      '/checkout/subscribe/',
+      {}, // corpo do POST
+      {
+        withCredentials: true, // envia cookie de sessão
+        headers: {
+          'X-CSRFToken': csrfToken, 
+        },
+        timeout: 5000,
+      }
+    );
+
+    return res.data as DataSubscription;
   } catch (error: unknown) {
     let errorMessage = 'Erro desconhecido ao realizar login.';
 
@@ -93,11 +148,12 @@ export async function registerUser(payload: RegisterUser) {
   const { default: api } = await import('./api');
   try {
 
-    await api.post(`/accounts/register/`, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+   await api.post(`/accounts/register/`, payload, {
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false, // importante para evitar enviar cookies
+});
   } catch (error: unknown) {
   let errorMessage = 'Erro interno, verifique com suporte.';
 
@@ -157,6 +213,7 @@ export async function verifyCodeOtp(payload: VerifyOtpPayload) {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: false, 
       timeout: 1000
     });
 

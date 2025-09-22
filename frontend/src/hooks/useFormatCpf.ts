@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 
-export function useCPFMask() {
+export function useFormatCpf() {
     const formatCPF = useCallback((value: string) => {
+      if (!value) return "";
       const onlyNums = value.replace(/\D/g, "");
       if (onlyNums.length <= 3) {
         return onlyNums;

@@ -8,11 +8,12 @@ import {
   verifyCodeOtp as ServiceVerifyCodeOtp,
   resetPassword as ServiceResetPassword,
   resetPasswordFinal as ServiceResetPasswordFinal,
+  createSubscription as ServiceCreateSSubscription,
   AuthService
 } from '../services/auth';
 import { useRouter } from 'next/navigation';
 import { useAlertContext } from './AlertContext';
-import { ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
+import { DataSubscription, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
 import { RegisterUser } from '@/interfaces/user.interface';
 
 interface LoginType {
@@ -34,6 +35,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (payload: LoginType) => Promise<void>;
   logout: () => void;
+  subscription: () => Promise<DataSubscription | undefined>;
   register: (payload: RegisterUser) => Promise<void>;
   verifyCode: (payload: VerifyCodeType) => Promise<void>;
   userResetPassword: (email: string) => Promise<void>;
@@ -50,20 +52,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { onAlert } = useAlertContext();
 
-  useEffect(() => {
-  const verifyAuth = async () => {
-    try {
-      await AuthService.checkAuth(); 
-      setIsAuthenticated(true);
-      router.push('/');
-    } catch {
-      setIsAuthenticated(false);
-    }
-  };
+    useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        await AuthService.checkAuth(); 
+        setIsAuthenticated(true);
+        router.push('/');
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
 
-  
-  verifyAuth();
-}, []);
+    verifyAuth();
+  }, [router]);
 
 
   const login = async (payload: LoginType) => {
@@ -76,6 +77,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logoutService();
     setIsAuthenticated(false);
     router.push('/signin');
+  };
+
+    const subscription = async () => {
+      try{
+        const sub = await ServiceCreateSSubscription();
+        return sub
+      }
+      catch (error: unknown) {
+        const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+          ? (error as { message: string }).message
+          : 'Erro ao criar assinatura.';
+        onAlert(true, 'error', errorMessage)
+      } 
   };
 
   const register = async (payload: RegisterUser) => {
@@ -154,6 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated,
       isLoading,
       login,
+      subscription,
       logout,
       register,
       verifyCode,

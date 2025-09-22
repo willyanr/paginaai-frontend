@@ -1,17 +1,35 @@
+export interface Subscription {
+  id: number;
+  status: 'pending' | 'active' | 'canceled';
+  start_date: string;
+  end_date: string;
+  last_payment_qrcode: string;
+  last_payment_date: string;
+  external_id: string;
+  plan: number;
+}
+
+export interface DataSubscription {
+  id: string;
+  last_payment_qrcode: string;
+  status?: string;
+}
+
 export interface DataUser {
   id: number;
   email: string;
   name: string;
   whatsapp: string;
   cpf: string;
-  cnpj: string | null;
+  cnpj: string;
   address: string | null;
   city: string | null;
   state: string | null;
   country: string | null;
   zip_code: string | null;
   created_at: string;
-  how_did_you_hear_about_us: string;
+  how_did_you_hear_about_us: string | null;
+  subscriptions: Subscription[]; // adicionando aqui
 }
 
 export interface LoginUser {
@@ -81,7 +99,6 @@ export interface RegisterUser {
 
 export interface UserContextType {
   user: DataUser | null;
-  isLoading: boolean;
   getUserApi: () => void;
   putUserApi: (payload: UserFormData) => Promise<void>;
 }

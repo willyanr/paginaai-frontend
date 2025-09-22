@@ -4,10 +4,10 @@ import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React, { useEffect } from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import {  useStatistics } from "@/context/StatisticsContext";
 import { useCheckoutContext } from "@/context/CheckoutContext";
 import { BasicTableOne } from "@/components/tables/BasicTableOne";
+import { CardRequestWithdraws } from "@/components/checkout/CardRequestWithdraws";
 
 
 
@@ -43,7 +43,13 @@ export default function Ecommerce() {
         totalOrder={wallet[0]?.total_orders_amount || 0 }
         />
          <div className="col-span-12 xl:col-span-7 py-6">
+           <div className="py-5">
+                 <CardRequestWithdraws
+        withdraws={wallet[0]}
+        />
+        </div>
         <RecentOrders />
+       
       </div>
       </div>
 

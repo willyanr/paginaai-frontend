@@ -15,9 +15,9 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePhoneMask } from "@/hooks/useFormatNumberTel";
-import { useCPFMask } from "@/hooks/useFormatCpf";
 import Button from "../ui/button/Button";
 import { RegisterUser, SignUpFormData } from "@/interfaces/user.interface";
+import { useFormatCpf } from "@/hooks/useFormatCpf";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -107,7 +107,7 @@ export default function SignUpForm() {
   const cpfValue = watch("cpf");
   const termsValue = watch("terms");
   const { formatPhone } = usePhoneMask();
-  const { formatCPF } = useCPFMask();
+  const { formatCPF } = useFormatCpf();
   const fonts = [
     { label: "Google", value: "google" },
     { label: "Instagram", value: "instagram" },

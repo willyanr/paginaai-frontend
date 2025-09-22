@@ -13,42 +13,43 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAlertContext } from "@/context/AlertContext";
-import Alert from "../ui/alert/Alert";
 import { DataUser, UserFormData } from "@/interfaces/user.interface";
+import { useFormatCpf } from "@/hooks/useFormatCpf";
+import { useFormatCnpj } from "@/hooks/useFormatCnpj";
 
 
 
 export default function UserInfoCard({ user }: { user: DataUser }) {
   const { isOpen, openModal, closeModal } = useModal();
-  const { onAlert, typeAlert, messageAlert, isAlert } = useAlertContext();
+  const { onAlert } = useAlertContext();
   const { formatDate } = useFormattedDate();
-  const { putUserApi, isLoading } = useUser();
+  const { putUserApi } = useUser();
+  const { formatCPF } = useFormatCpf();
+  const { formatCNPJ } = useFormatCnpj();
 
+const isValidCNPJ = (cnpj?: string): boolean => {
+  if (!cnpj) return true;
+  const cleaned = cnpj.replace(/\D/g, '');
+  if (cleaned.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(cleaned)) return false; // todos iguais
 
-  const isValidCNPJ = (value: string | undefined): boolean => {
-    if (!value) return true; 
-    const cleaned = value.replace(/\D/g, '');
-
-    if (cleaned.length !== 14) return false;
-
-    if (/^(\d)\1{13}$/.test(cleaned)) return false;
-
-    const t = cleaned.length - 2,
-      d = cleaned.substring(t),
-      d1 = parseInt(d.charAt(0)),
-      d2 = parseInt(d.charAt(1)),
-      calc = (x: number) => {
-        let n = 0, j = 0;
-        for (let i = x; i >= 1; i--) {
-          n += parseInt(cleaned.charAt(j)) * i;
-          j++;
-          if (i === 2) i = 10;
-        }
-        return ((n % 11) < 2 ? 0 : 11 - (n % 11));
-      };
-
-    return calc(t) === d1 && calc(t + 1) === d2;
+  const calcDigit = (cnpjPart: string, weights: number[]) => {
+    let sum = 0;
+    for (let i = 0; i < weights.length; i++) {
+      sum += parseInt(cnpjPart.charAt(i), 10) * weights[i];
+    }
+    const mod = sum % 11;
+    return mod < 2 ? 0 : 11 - mod;
   };
+
+  const firstWeights = [5,4,3,2,9,8,7,6,5,4,3,2];
+  const secondWeights = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+
+  const d1 = calcDigit(cleaned, firstWeights);
+  const d2 = calcDigit(cleaned, secondWeights);
+
+  return d1 === parseInt(cleaned.charAt(12), 10) && d2 === parseInt(cleaned.charAt(13), 10);
+};
 
   const validationSchema = yup.object().shape({
     name: yup.string(),
@@ -58,7 +59,7 @@ export default function UserInfoCard({ user }: { user: DataUser }) {
     state: yup.string(),
     cnpj: yup
       .string()
-      .test("valid-cnpj", "CNPJ inválido", (value) => isValidCNPJ(value)),
+      .test("valid-cnpj", "CNPJ inválido", (value) => isValidCNPJ(value ?? '')),
   });
 
   const {
@@ -112,7 +113,7 @@ export default function UserInfoCard({ user }: { user: DataUser }) {
                 CPF
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {user?.cpf}
+                {formatCPF(user?.cpf)}
               </p>
             </div>
 
@@ -140,6 +141,14 @@ export default function UserInfoCard({ user }: { user: DataUser }) {
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {formatDate(user?.created_at)}
+              </p>
+            </div>
+             <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                CNPJ:
+              </p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                {user?.cnpj ? formatCNPJ(user.cnpj) : "-"}
               </p>
             </div>
 
@@ -267,7 +276,6 @@ export default function UserInfoCard({ user }: { user: DataUser }) {
                 Fechar
               </Button>
               <Button 
-              isLoading={isLoading}
               size="sm" type='submit'>
                 Salvar alterações
               </Button>
@@ -275,17 +283,6 @@ export default function UserInfoCard({ user }: { user: DataUser }) {
           </form>
         </div>
       </Modal>
-      {isAlert &&
-        <div className="fixed top-24 right-4 z-50">
-          <Alert
-            message={messageAlert}
-            variant={typeAlert as "success" | "error"}
-            title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-          />
-        </div>
-
-      }
-
     </div>
   );
 }

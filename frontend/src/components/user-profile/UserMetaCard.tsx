@@ -47,8 +47,12 @@ export default function UserMetaCard({ user }: { user: DataUser }) {
                 {user?.email}
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
-                <Badge>
-                  Gratuito
+               <Badge
+                variant={
+                "light"
+                }
+                >
+                {user?.subscriptions?.some(sub => sub.status === 'active') ? 'Premium' : 'Gratuito'}
                 </Badge>
               </div>
             </div>

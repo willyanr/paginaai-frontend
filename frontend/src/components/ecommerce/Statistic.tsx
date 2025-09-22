@@ -1,0 +1,9 @@
+
+
+export const Statistic = () => {
+
+
+    return {
+        
+    }
+}

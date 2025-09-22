@@ -19,7 +19,6 @@ export const useUser = () => {
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<DataUser | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const getUserApi = useCallback(async () => {
     try {
@@ -35,7 +34,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const putUserApi = async (payload: UserFormData) => {
-    setIsLoading(true);
     try {
       await ServicePutUser(payload);
     } catch (error: unknown) {
@@ -45,12 +43,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         throw new Error('An unknown error occurred');
       }
     } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <UserContext.Provider value={{ user, getUserApi, putUserApi, isLoading }}>
+    <UserContext.Provider value={{ user, getUserApi, putUserApi }}>
       {children}
     </UserContext.Provider>
   );

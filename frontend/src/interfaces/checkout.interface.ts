@@ -20,6 +20,17 @@ export interface DataCheckout {
     store_name: string
 }
 
+export interface OrdersAggregatedData {
+    labels: string[];   // nomes dos dias ou meses
+    totals: number[];   // valores correspondentes
+}
+
+export interface DataRequestWithdraw {
+    amount: number,
+    pix_type: string,
+    pix_key: string,
+
+}
 export interface DataCheckoutForm {
     logo: string,
     banner_mobile: string,
@@ -61,10 +72,24 @@ export interface DataOrders {
 
 }
 
+export interface VerifyPaymentResponse {
+    status: string;
+    data: boolean;
+};
+
+
 export interface DataWalletWithTransactions {
     balance: number,
     transactions: DataTransactions,
     total_orders_amount: number,
     orders: DataOrders,
+    tax_pix_out: number,
+    withdraw_requests: {
+        id: number,
+        amount: number,
+        status: string,
+        created_at: string,
+        reason: string
+    }
 
 }
