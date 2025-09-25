@@ -30,7 +30,7 @@ export default function StatisticsChart() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:8083/api/checkout/user-orders-aggregated/?filter=${filter}&week=${week}&month=${month}&year=${year}`,
+        `https://api.paginaai.com.br/api/checkout/user-orders-aggregated/?filter=${filter}&week=${week}&month=${month}&year=${year}`,
         { withCredentials: true }
       )
       .then((res) => setData(res.data))
