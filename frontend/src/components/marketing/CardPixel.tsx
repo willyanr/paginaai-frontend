@@ -139,7 +139,7 @@ export default function CardPixel() {
 
     <div>
       
-      <div className=" lg:p-5 flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
 
         {/* Coluna esquerda */}
         <div className="w-full lg:w-1/2 lg:overflow-auto lg:h-screen">

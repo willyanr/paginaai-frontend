@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Upload, Palette, Truck, CreditCard, Clock, Package, XIcon } from 'lucide-react';
+import { Upload, Palette, Truck, CreditCard, Clock, Package, XIcon, Badge } from 'lucide-react';
 import * as yup from "yup";
 import { useForm, Controller, Control, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -65,8 +65,8 @@ const CheckoutCustomizer = () => {
 
     const validationSchema = yup.object().shape({
         logo: yup
-    .mixed()
-   .nullable(),
+            .mixed()
+            .nullable(),
         banner: yup.mixed().nullable(),
         banner_mobile: yup.mixed().nullable(),
         is_frete: yup.boolean().required(),
@@ -150,39 +150,39 @@ const CheckoutCustomizer = () => {
         "image/webp",
     ];
 
-const onSubmit = async (data: DataCheckoutForm) => {
-    setIsLoading(true);
+    const onSubmit = async (data: DataCheckoutForm) => {
+        setIsLoading(true);
 
-    const form = new FormData();
+        const form = new FormData();
 
-    try {
-        Object.entries(data).forEach(([key, value]) => {
-            // Se for campo de imagem, só envia se for File
-            if (["logo", "banner", "banner_mobile"].includes(key)) {
-                if (value instanceof File) {
-                    if (!SUPPORTED_IMAGE_TYPES.includes(value.type)) {
-                        throw new Error(
-                            `Formato inválido: ${value.type}. Use JPG, PNG, GIF, BMP, TIFF ou WEBP.`
-                        );
+        try {
+            Object.entries(data).forEach(([key, value]) => {
+                // Se for campo de imagem, só envia se for File
+                if (["logo", "banner", "banner_mobile"].includes(key)) {
+                    if (value instanceof File) {
+                        if (!SUPPORTED_IMAGE_TYPES.includes(value.type)) {
+                            throw new Error(
+                                `Formato inválido: ${value.type}. Use JPG, PNG, GIF, BMP, TIFF ou WEBP.`
+                            );
+                        }
+                        form.append(key, value); // só adiciona se for File
                     }
-                    form.append(key, value); // só adiciona se for File
+                } else if (value !== null && value !== undefined) {
+                    // Para os outros campos (boolean, string, number)
+                    form.append(key, String(value));
                 }
-            } else if (value !== null && value !== undefined) {
-                // Para os outros campos (boolean, string, number)
-                form.append(key, String(value));
-            }
-        });
+            });
 
-        await updateCustomCheckout(form, userCheckout!.id);
-        onAlert(true, "success", "Checkout atualizado com sucesso.");
-    } catch (err) {
-        const message =
-            err instanceof Error ? err.message : "Erro ao atualizar checkout";
-        onAlert(true, "error", message);
-    } finally {
-        setIsLoading(false);
-    }
-};
+            await updateCustomCheckout(form, userCheckout!.id);
+            onAlert(true, "success", "Checkout atualizado com sucesso.");
+        } catch (err) {
+            const message =
+                err instanceof Error ? err.message : "Erro ao atualizar checkout";
+            onAlert(true, "error", message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
 
 
@@ -309,6 +309,7 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                             </InfoCard>
                                         </div>
                                     </div>
+                                   
                                 </div>
                             </Card>
 
@@ -709,84 +710,82 @@ const onSubmit = async (data: DataCheckoutForm) => {
                                     </div>
                                 </Card>
                             </div>
-                           </div>                 
+                        </div>
                         {/* Seção de Entrega */}
                         <Card className="p-6 space-y-6">
-  {/* Header */}
-  <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-    <Truck size={20} />
-    Configurações de Entrega
-  </h2>
+                            {/* Header */}
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                <Truck size={20} />
+                                Configurações de Entrega
+                            </h2>
 
-  {/* Info */}
-  <InfoCard size="xs">
-    Essas configurações se aplicam somente em produtos físicos
-  </InfoCard>
+                            {/* Info */}
+                            <InfoCard size="xs">
+                                Essas configurações se aplicam somente em produtos físicos
+                            </InfoCard>
 
-  {/* Form Fields */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div className="flex flex-col gap-3">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Tipo de Entrega
-      </label>
-      <Controller
-        name="delivery_type"
-        control={control}
-        render={({ field }) => (
-          <select
-            {...field}
-            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-              errors.delivery_type
-                ? 'border-red-300 dark:border-red-600'
-                : 'border-gray-300 dark:border-gray-600'
-            }`}
-          >
-            <option value="correios">Correios</option>
-            <option value="jadlog">Jad Log</option>
-          </select>
-        )}
-      />
-      {errors.delivery_type && (
-        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-          {errors.delivery_type.message}
-        </p>
-      )}
-    </div>
+                            {/* Form Fields */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="flex flex-col gap-3">
+                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Tipo de Entrega
+                                    </label>
+                                    <Controller
+                                        name="delivery_type"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <select
+                                                {...field}
+                                                className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${errors.delivery_type
+                                                        ? 'border-red-300 dark:border-red-600'
+                                                        : 'border-gray-300 dark:border-gray-600'
+                                                    }`}
+                                            >
+                                                <option value="correios">Correios</option>
+                                                <option value="jadlog">Jad Log</option>
+                                            </select>
+                                        )}
+                                    />
+                                    {errors.delivery_type && (
+                                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                                            {errors.delivery_type.message}
+                                        </p>
+                                    )}
+                                </div>
 
-    <div className="flex flex-col gap-3">
-      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Prazo de Entrega Estimado
-      </label>
-      <Controller
-        name="estimated_delivery"
-        control={control}
-        defaultValue={userCheckout?.estimated_delivery}
-        render={({ field }) => (
-          <input
-            {...field}
-            type="text"
-            placeholder="Ex: De 2 a 3 dias úteis"
-            className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-              errors.estimated_delivery
-                ? 'border-red-300 dark:border-red-600'
-                : 'border-gray-300 dark:border-gray-600'
-            }`}
-          />
-        )}
-      />
-      {errors.estimated_delivery && (
-        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-          {errors.estimated_delivery.message}
-        </p>
-      )}
-    </div>
-  </div>
+                                <div className="flex flex-col gap-3">
+                                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Prazo de Entrega Estimado
+                                    </label>
+                                    <Controller
+                                        name="estimated_delivery"
+                                        control={control}
+                                        defaultValue={userCheckout?.estimated_delivery}
+                                        render={({ field }) => (
+                                            <input
+                                                {...field}
+                                                type="text"
+                                                placeholder="Ex: De 2 a 3 dias úteis"
+                                                className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${errors.estimated_delivery
+                                                        ? 'border-red-300 dark:border-red-600'
+                                                        : 'border-gray-300 dark:border-gray-600'
+                                                    }`}
+                                            />
+                                        )}
+                                    />
+                                    {errors.estimated_delivery && (
+                                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                                            {errors.estimated_delivery.message}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
 
-  {/* Tax Card / Additional Info */}
-  <div className="mt-4">
-    <CardTaxUser data={userCheckout} />
-  </div>
-</Card>
+                            {/* Tax Card / Additional Info */}
+                            <div className="mt-4">
+                                <CardTaxUser data={userCheckout} />
+                            </div>
+                        </Card>
 
 
                         {/* Botão de Salvar */}

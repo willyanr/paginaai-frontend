@@ -46,11 +46,11 @@ const ListProjectMarketing: React.FC = () => {
                         <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">
                             Nenhum projeto encontrado
                         </p>
-                        <p className="text-gray-500 dark:text-gray-500">
+                        <p className="text-gray-500 dark:text-gray-500 text-sm">
                             Adicione um projeto para começar a adicionar seus rastrementos.
                         </p>
                         <Link href="/editor" passHref >
-                            <Button className="mt-4 flex items-center" startIcon={<Plus />}>
+                            <Button className="mt-4 flex items-center" startIcon={<Plus />} size='sm'>
                                 Criar Projeto
                             </Button>
                         </Link>

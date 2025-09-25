@@ -244,7 +244,7 @@ const ProductForm: React.FC = () => {
             Descrição do produto
           </label>
           <textarea
-            className="w-full rounded-lg border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-hidden bg-transparent text-gray-400 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
+            className="w-full rounded-lg text-base border px-4 py-2.5 text-sm shadow-theme-xs focus:outline-hidden bg-transparent text-gray-400 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
             placeholder="Descrição do produto"
             {...register("description")}
             required
@@ -261,7 +261,7 @@ const ProductForm: React.FC = () => {
         {/* Preço */}
         <Input
           type="number"
-          placeholder="0.00"
+          placeholder="R$ 1,00"
           step={0.01}
           hint="Preço em R$"
           required

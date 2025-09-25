@@ -28,18 +28,9 @@ export default function DefaultEditor() {
   const onEditor = (editor: Editor) => {
     editorRef.current = editor;
     editor.Panels.removeButton('options', 'canvas-clear');
-    const dataToLoad = {};
-    if (dataToLoad && typeof dataToLoad === 'object' && !Array.isArray(dataToLoad) && projectSelected) {
-      if (typeof projectSelected === 'string' && projectSelected.trim() !== '') {
-        // Carrega os dados do projeto selecionado
-        editor.loadProjectData(JSON.parse(projectSelected));
-      } else {
-        // Caso vazio ou não seja string, carrega o default
-        editor.loadProjectData(projectDataDefault);
-      }
-
-
-
+    
+    if (projectSelected && typeof projectSelected === 'object') {
+        editor.loadProjectData(projectSelected);
     }
     getImagesAssets();
 

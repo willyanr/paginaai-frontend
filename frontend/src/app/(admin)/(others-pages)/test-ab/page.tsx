@@ -5,7 +5,7 @@ import React from 'react';
 const TestABPage: React.FC = () => {
     return (
         <TestsABProvider >
-            <div>
+            <div className='max-w-7xl mx-auto'>
                 <TestAB />
             </div>
         </TestsABProvider>

@@ -30,7 +30,7 @@ const DomainsManager: React.FC = () => {
 
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
             {/* Bloco Esquerda */}
            <Card className='md:w-1/2'>
              <div className="w-full py-2 lg:p-6 mb-10">

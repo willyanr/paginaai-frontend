@@ -93,15 +93,15 @@ export default function ListProjectPage() {
 
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-800'}`}>
+    <div className={`max-w-7xl mx-auto min-h-screen ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-800'}`} >
       {/* Navigation */}
 
           <div className="lg:flex items-center space-x-4 justify-between">
              <div className="w-full">
               <InfoPage 
              
-             title='Teste A/B'
-             subtitle='Realize seus teste automáticos e converta muito mais!'
+             title='Projetos'
+             subtitle='Crie seus projetos de páginas de vendas.'
       
              /> 
              </div>

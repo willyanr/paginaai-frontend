@@ -71,6 +71,15 @@ export default function Page() {
           <h1 className="text-2xl text-orange-500 text-center dark:text-white font-bold">
             Carregando seu editor...
           </h1>
+          <div className="py-4">
+            <Button
+            onClick={()=> {openModal("project")}}
+            size="md"
+            variant="primary"
+            >
+              Abrir projetos
+            </Button>
+          </div>
         </div>
 
         <ModalEditor />

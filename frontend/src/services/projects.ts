@@ -25,7 +25,7 @@ export async function updateProject(body: UpdateProjectUserPayload, id: number) 
 
 export async function createProject(payload: CreateProjectUserPayload) {
   try {
-    await api.post(`/projects/`, payload);
+    await api.post(`/new-landing/`, payload);
   } catch (error: unknown) {
     let errorMessage = 'Erro desconhecido ao criar Projeto.';
     if (typeof error === 'object' && error !== null && 'response' in error) {
