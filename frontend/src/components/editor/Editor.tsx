@@ -13,7 +13,6 @@ import { useAlertContext } from '@/context/AlertContext';
 import { UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 import { Modal } from '../ui/modal';
 import { InfoCard } from '../ui/info/InfoCard';
-import projectDataDefault from '@/components/editor/projectDataDefault.json'
 
 export default function DefaultEditor() {
 

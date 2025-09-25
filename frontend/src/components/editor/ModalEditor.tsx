@@ -1,7 +1,5 @@
 "use client";
 import Button from '../ui/button/Button';
-import Input from '../form/input/InputField';
-import Label from '../form/Label';
 import ListProjects from './ListProjects';
 import { useEffect, useState } from 'react';
 import { Modal } from '../ui/modal';
@@ -9,12 +7,10 @@ import { Modal } from '../ui/modal';
 import { useProjects } from '@/context/ProjectsContext';
 import { useModalContext } from '@/context/ModalContext';
 import { useAlertContext } from '@/context/AlertContext';
-import TextArea from '../form/input/TextArea';
 
 import iaGif from '../../../public/images/brand/ai.gif'
 import Image from 'next/image';
 import bannerOne from '../../../public/images/brand/b1.png'
-import { useUser } from '@/context/UserContext';
 import * as Yup from "yup";
 export default function ModalEditor() {
   const { fetchProjects, createNewProject } = useProjects();
@@ -53,7 +49,7 @@ export default function ModalEditor() {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [texts.length]);
 
 const startNewProject = async () => {
   try {

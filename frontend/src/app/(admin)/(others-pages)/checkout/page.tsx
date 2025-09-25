@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Upload, Palette, Truck, CreditCard, Clock, Package, XIcon, Badge } from 'lucide-react';
+import { Upload, Palette, Truck, CreditCard, Clock, Package, XIcon } from 'lucide-react';
 import * as yup from "yup";
 import { useForm, Controller, Control, Resolver } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
