@@ -28,16 +28,25 @@ export default function DefaultEditor() {
     editorRef.current = editor;
     editor.Panels.removeButton('options', 'canvas-clear');
 
-    if (projectSelected && typeof projectSelected === 'string') {
+    if (
+      projectSelected &&
+      (typeof projectSelected === 'string' ||
+        (typeof projectSelected === 'object' && !Array.isArray(projectSelected)))
+    ) {
       try {
-        const parsedData = JSON.parse(projectSelected);
+        const parsedData =
+          typeof projectSelected === 'string'
+            ? JSON.parse(projectSelected)
+            : projectSelected;
+
         editor.loadProjectData(parsedData);
       } catch (err) {
         console.error('Erro ao parsear project_data', err);
       }
     }
 
-    
+
+
     getImagesAssets();
 
 
