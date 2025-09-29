@@ -30,6 +30,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
             setUserProjects(response);
             const raw = response[0].project_data;
             setProjects(raw);
+            setProjectSelected(raw);
 
         } catch {
             throw new Error('Erro ao carregar projetos:');
