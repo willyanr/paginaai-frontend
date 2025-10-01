@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/asdas-ns/paginaai-app",
+      "type": "http"
+    }
+  }
+}
