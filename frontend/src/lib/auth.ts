@@ -72,8 +72,9 @@ export const authOptions: NextAuthOptions = {
           const meRes = await axios.get(`${baseUrl}/accounts/me/`, {
             headers: {
               Authorization: `Bearer ${access}`,
-            }, 
-            withCredentials: false,
+            },
+            withCredentials: true,
+            
           });
           console.log("ME Response:", meRes.data);
 
