@@ -18,7 +18,6 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { onAlert, isAlert, messageAlert, typeAlert } = useAlertContext();
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const router = useRouter();
   const validationSchema = yup.object().shape({
     email: yup
       .string()
