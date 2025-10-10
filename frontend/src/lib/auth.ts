@@ -72,9 +72,10 @@ export const authOptions: NextAuthOptions = {
           const meRes = await axios.get(`${baseUrl}/accounts/me/`, {
             headers: {
               Authorization: `Bearer ${access}`,
-            } // Chaves removidas
+            }, 
+            withCredentials: false,
           });
-
+          console.log("ME Response:", meRes.data);
 
           if (meRes.status !== 200) {
             return null;
