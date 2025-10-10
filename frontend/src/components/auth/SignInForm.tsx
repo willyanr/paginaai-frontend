@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Alert from "../ui/alert/Alert";
 import { signIn } from 'next-auth/react';
-import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
