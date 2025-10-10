@@ -44,12 +44,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Senha', type: 'password' },
       },
 
-      async redirect({ url, baseUrl }) {
-        if (url.startsWith(baseUrl)) {
-          return '/'; // login bem-sucedido
-        }
-        return url; // outros redirecionamentos permanecem
-      },
 
       async authorize(credentials) {
         try {
