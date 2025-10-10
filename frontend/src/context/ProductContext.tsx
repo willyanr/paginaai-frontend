@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { productService } from "@/services/products";
 import { DataProduct } from "@/interfaces/products.interface";
+import { useApi } from "@/services/api";
 
 interface ProductContextProps {
   products: DataProduct[];
@@ -39,12 +40,13 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const api = useApi();
+  
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('to sendo chamado', +1)
-      const data = await productService.getAll();
+      const data = await productService.getAll(api);
       setProducts(data);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -55,7 +57,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
 
   const createProduct = useCallback(async (product: FormData) => {
@@ -63,8 +65,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     setError(null);
     try {
-      const newProduct = await productService.create(product);
-      console.log('fuichaado')
+      const newProduct = await productService.create(api, product);
       setProducts((prev) => [...prev, newProduct]);
       return newProduct;
     } catch (error: unknown) {
@@ -76,12 +77,12 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
   const deleteProducts = async (id: number) => {
     setLoading(true);
     try {
-      await productService.delete(id);
+      await productService.delete(api, id);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Error: ${error.message}`);
@@ -96,7 +97,7 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
   const updateProducts = async (product: FormData, id: number) => {
     setLoading(true);
     try {
-      await productService.update(product, id);
+      await productService.update(api, product, id);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Error: ${error.message}`);

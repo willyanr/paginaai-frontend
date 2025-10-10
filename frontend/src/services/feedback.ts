@@ -1,9 +1,10 @@
-import api from './api';
+import { AxiosInstance } from "axios";
+
+
 
 
 export const feedbackService = {
-
-  async create(text: string ): Promise<void> {
+  async create(api: AxiosInstance, text: string ): Promise<void> {
     const payload = {
       feedback_text: text
     }

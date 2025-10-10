@@ -1,14 +1,14 @@
 import { UpdatePixelPayload } from '@/interfaces/marketing.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
 
-export async function getProjectsMarketing() {
+export async function getProjectsMarketing(api: AxiosInstance) {
   const res = await api.get('/marketing/');
   return res.data
 
 }
 
 
-export async function putProjectsMarketing(payload: UpdatePixelPayload) {
+export async function putProjectsMarketing(api: AxiosInstance, payload: UpdatePixelPayload) {
     try {
       const response = await api.post(`/pixels/`, payload, {
         headers: {
@@ -30,7 +30,7 @@ export async function putProjectsMarketing(payload: UpdatePixelPayload) {
   }
   }
 
-  export async function deleteProjectsPixel(id: number) {
+  export async function deleteProjectsPixel(api: AxiosInstance, id: number) {
     try {
       const response = await api.delete(`/pixels/${id}/`, {
         headers: {

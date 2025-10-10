@@ -1,20 +1,19 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import {
   login as loginService,
-  logout as logoutService,
   registerUser as ServiceRegisterUser,
   verifyCodeOtp as ServiceVerifyCodeOtp,
   resetPassword as ServiceResetPassword,
   resetPasswordFinal as ServiceResetPasswordFinal,
   createSubscription as ServiceCreateSSubscription,
-  AuthService
 } from '../services/auth';
 import { useRouter } from 'next/navigation';
 import { useAlertContext } from './AlertContext';
 import { DataSubscription, ResetUserPasswordPayload, VerifyCodePayload } from '@/interfaces/user.interface';
 import { RegisterUser } from '@/interfaces/user.interface';
+import { useApi } from '@/services/api';
 
 interface LoginType {
   email: string;
@@ -31,10 +30,8 @@ interface VerifyCodeType {
 }
 
 interface AuthContextType {
-  isAuthenticated: boolean;
   isLoading: boolean;
   login: (payload: LoginType) => Promise<void>;
-  logout: () => void;
   subscription: () => Promise<DataSubscription | undefined>;
   register: (payload: RegisterUser) => Promise<void>;
   verifyCode: (payload: VerifyCodeType) => Promise<void>;
@@ -47,41 +44,36 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { onAlert } = useAlertContext();
+  const api = useApi();
+  //   useEffect(() => {
+  //   const verifyAuth = async () => {
+  //     try {
+  //       await AuthService.checkAuth(); 
+  //       setIsAuthenticated(true);
+        
+  //     } catch {
+  //       setIsAuthenticated(false);
+  //     } finally{
+  //       setIsAuthChecked(true);
+  //     }
+  //   };
 
-    useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        await AuthService.checkAuth(); 
-        setIsAuthenticated(true);
-        router.push('/');
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyAuth();
-  }, [router]);
+  //   verifyAuth();
+  // }, [router]);
 
 
   const login = async (payload: LoginType) => {
-      await loginService(payload);
-      setIsAuthenticated(true);
+      await loginService(api, payload);
       router.push('/');
   };
 
-  const logout = () => {
-    logoutService();
-    setIsAuthenticated(false);
-    router.push('/signin');
-  };
-
+  
     const subscription = async () => {
       try{
-        const sub = await ServiceCreateSSubscription();
+        const sub = await ServiceCreateSSubscription(api);
         return sub
       }
       catch (error: unknown) {
@@ -95,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (payload: RegisterUser) => {
     setIsLoading(true);
     try {
-      await ServiceRegisterUser(payload);
+      await ServiceRegisterUser(api, payload);
       localStorage.setItem('cpf', payload.profile.cpf)
       localStorage.setItem('email', payload.email)
       router.push('/otp')
@@ -111,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const verifyCode = async (payload: VerifyCodeType) => {
     setIsLoading(true);
     try {
-      await ServiceVerifyCodeOtp(payload);
+      await ServiceVerifyCodeOtp(api, payload);
       setTimeout(() => {
         router.push('/signin');
       }, 2000);
@@ -126,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
 
-      await ServiceResetPassword(email);
+      await ServiceResetPassword(api, email);
     } catch (error) {
       throw error;
     } finally {
@@ -135,9 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   const verifyCodeResetPassword = async (payload: VerifyCodePayload) => {
     setIsLoading(true);
-    console.log('body', payload);
     try {
-      await ServiceResetPassword(payload);
+      await ServiceResetPassword(api, payload);
     } catch (error) {
 
       throw error;
@@ -149,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPasswordFinal = async (payload: ResetUserPasswordPayload) => {
     setIsLoading(true);
     try {
-      await ServiceResetPasswordFinal(payload);
+      await ServiceResetPasswordFinal(api, payload);
       setTimeout(() => {
         router.push('/signin');
       }, 2000);
@@ -165,11 +156,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{
-      isAuthenticated,
       isLoading,
       login,
       subscription,
-      logout,
       register,
       verifyCode,
       userResetPassword,

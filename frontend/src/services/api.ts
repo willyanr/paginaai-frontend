@@ -1,22 +1,33 @@
-import axios from 'axios';
+'use client';
 
+import { useMemo } from 'react';
+import axios, { AxiosInstance } from 'axios';
+import { useSession } from 'next-auth/react';
 
-const refreshApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/',
-  
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export function useApi(): AxiosInstance {
+  const { data: session } = useSession();
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/',
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+  return useMemo(() => {
+    const instance = axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.accessToken
+          ? { Authorization: `Bearer ${session.accessToken}` }
+          : {}),
+      },
+    });
 
+    instance.interceptors.response.use(
+      (res) => res,
+      (error) => {
+        if (error.response?.status === 401) {
+          console.warn('⚠️ 401 Unauthorized — token inválido ou expirado');
+        }
+        return Promise.reject(error);
+      }
+    );
 
-export default api;
-export { refreshApi };
+    return instance;
+  }, [session]);
+}

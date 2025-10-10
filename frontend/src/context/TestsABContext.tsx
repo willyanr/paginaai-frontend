@@ -8,6 +8,7 @@ import {
     postProjectTest as ServiceCreateNewTest,
     deleteProjectTest as ServiceDeleteProjectTest
 } from '@/services/testsAB'
+import { useApi } from '@/services/api';
 
 
 
@@ -16,11 +17,11 @@ const TestsABContext = createContext<TestsABContextType | undefined>(undefined);
 export const TestsABProvider = ({ children }: { children: ReactNode }) => {
      const [ testsAB, setTestsAB ] = useState< DataTestsAB | null >(null);   
      const [ isLoading, setIsLoading ] = useState<boolean>(false);
-
+        const api = useApi(); 
     const fetchTestsAB = React.useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await ServiceGetTestAB();
+            const response = await ServiceGetTestAB(api);
             setTestsAB(response);
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -31,12 +32,12 @@ export const TestsABProvider = ({ children }: { children: ReactNode }) => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [api]);
 
      const createNewProjectTest = async (payload: DataCreateTestAB) => {
             setIsLoading(true)
             try {
-                await ServiceCreateNewTest(payload);
+                await ServiceCreateNewTest(api, payload);
                 await fetchTestsAB();
             } catch (error: unknown) {
                 if (error instanceof Error) {
@@ -52,7 +53,7 @@ export const TestsABProvider = ({ children }: { children: ReactNode }) => {
           const deleteProjectTest = async (id: number) => {
             setIsLoading(true);
             try {
-                await ServiceDeleteProjectTest(id);
+                await ServiceDeleteProjectTest(api, id);
                 await fetchTestsAB();
             } catch (error: unknown) {
                 if (error instanceof Error) {

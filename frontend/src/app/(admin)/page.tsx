@@ -15,7 +15,6 @@ export default function Ecommerce() {
 
   const { fetchStatistics } = useStatistics();
   const { refreshWallet, wallet  }  = useCheckoutContext();
-
   useEffect(() => {
     fetchStatistics();
     refreshWallet()

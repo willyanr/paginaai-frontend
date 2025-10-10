@@ -1,12 +1,16 @@
 import { DataCreateTestAB } from '@/interfaces/testsab.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
 
-export async function getTestsAB() {
+
+
+
+
+export async function getTestsAB(api: AxiosInstance) {
   const res = await api.get('/tests/');
   return res.data
-};
+  };
 
-export async function postProjectTest(payload: DataCreateTestAB) {
+export async function postProjectTest(api: AxiosInstance, payload: DataCreateTestAB) {
   try {
     await api.post(`/tests/`, payload);
   } catch (error: unknown) {
@@ -22,7 +26,7 @@ export async function postProjectTest(payload: DataCreateTestAB) {
   }
 }
 
-export async function deleteProjectTest(id: number): Promise<boolean> {
+export async function deleteProjectTest(api: AxiosInstance, id: number): Promise<boolean> {
   try {
     await api.delete(`/tests/${id}/`);
     return true;

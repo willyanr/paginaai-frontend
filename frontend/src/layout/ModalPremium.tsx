@@ -102,7 +102,6 @@ export default function ModalPremium({ isOpen, closeModal }: ModalPremiumProps) 
       intervalRef.current = setInterval(async () => {
         try {
           const res = await verifyPayment(id);
-          console.log("verifyPayment response:", res);
 
           if (res?.data === true) {
             setStep(3);

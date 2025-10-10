@@ -96,7 +96,6 @@ export default function CardPixel() {
 
 
   const handleSelectChange = (value: string) => {
-    console.log("Projeto selecionado:", value);
     setUserProjectSelectedID(value)
   };
 
@@ -105,20 +104,24 @@ export default function CardPixel() {
       const payload = {
         project: Number(userProjectSelectedID),
         pixel_type: type,
-        pixel_value: inputPixel[type],
+        pixel_value:
+          typeof inputPixel[type] === "function"
+            ? (inputPixel[type] as () => string)()
+            : inputPixel[type],
 
       };
+
       await updateProjectMarketing(payload);
       onAlert(true, 'success', 'Pixel criado com sucesso!')
-  
+
     } catch (error: unknown) {
-      if(!userProjectSelectedID){
+      if (!userProjectSelectedID) {
         onAlert(true, 'error', 'Por favor, selecione um projeto.')
       } else {
         onAlert(true, 'error', error instanceof Error ? error.message : 'Ocorreu um erro ao cria pixel.')
       }
 
-      
+
 
     } finally {
       setIsLoadingButton(isLoadingButton => ({ ...isLoadingButton, [type]: false }));
@@ -138,96 +141,96 @@ export default function CardPixel() {
 
 
     <div>
-      
+
       <div className="flex flex-col lg:flex-row gap-6">
 
         {/* Coluna esquerda */}
         <div className="w-full lg:w-1/2 lg:overflow-auto lg:h-screen">
           <ul>
             {plataforms.map((platform) => (
-              <Card 
-              key={platform.id}
-              className="mb-5">
+              <Card
+                key={platform.id}
+                className="mb-5">
                 <li
-                
-                className=""
-              >
-                <div className="flex items-center gap-4 py-3">
-                  <Image
-                    src={theme === 'light' ? platform.logoWhite : platform.logoDark || platform.logoWhite}
-                    alt={`Logo ${platform.name}`}
-                    width={100}
-                    height={40}
-                    className="object-contain"
-                  />
-                  <h4 className="text-base lg:text-lg font-semibold text-gray-800 dark:text-white/90">
-                    Pixel {platform.name}
-                  </h4>
-                </div>
 
-                {/* Select */}
-                <div className="py-3">
-                  <Label>Selecione um projeto</Label>
-                  <Select
-                    options={selectOptions}
-                    onChange={handleSelectChange}
-                    className="cursor-pointer"
-                  />
-                </div>
-
-                {/* Input */}
-                <div className="py-3 z-0">
-                  <Label>Cole seu código do Pixel</Label>
-                  <Input
-                  
-                    className="cursor-pointer"
-                    type="text"
-                    defaultValue={inputPixel[platform.type]}
-                    placeholder={
-                      platform.type === 'google_ads'
-                        ? 'AW-XXXXXXXXXX'
-                        : platform.type === 'utmify'
-                          ? '67b685db1dbb22525effef90'
-                          : platform.type === 'meta'
-                            ? '123213213421213'
-                            : ''
-                    }
-                    onChange={(e) => {
-                      setInputPixel((value) => ({
-                        ...value,
-                        [platform.type]: e.target.value,
-                      }));
-                    }}
-                  />
-                </div>
-
-                {/* Info */}
-               
-                {platform.info && (
-                  <div className="py-2">
-                    <div className="bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 p-4 rounded-lg">
-                      <span className="text-xs">{platform?.info}</span>
-                    </div>
+                  className=""
+                >
+                  <div className="flex items-center gap-4 py-3">
+                    <Image
+                      src={theme === 'light' ? platform.logoWhite : platform.logoDark || platform.logoWhite}
+                      alt={`Logo ${platform.name}`}
+                      width={100}
+                      height={40}
+                      className="object-contain"
+                    />
+                    <h4 className="text-base lg:text-lg font-semibold text-gray-800 dark:text-white/90">
+                      Pixel {platform.name}
+                    </h4>
                   </div>
-                )}
 
-                {/* Botão */}
-                <div className="flex justify-end py-4">
-                  <Button
-                  size="sm"
-                    onClick={() => {
-                      createPixelProject(platform.type);
-                      setIsLoadingButton((isLoadingButton) => ({
-                        ...isLoadingButton,
-                        [platform.type]: true,
-                      }));
-                    }}
-                    isLoading={isLoadingButton[platform.type]}
-                  >
-                    + Adicionar Pixel
-                  </Button>
-                </div>
-              </li>
+                  {/* Select */}
+                  <div className="py-3">
+                    <Label>Selecione um projeto</Label>
+                    <Select
+                      options={selectOptions}
+                      onChange={handleSelectChange}
+                      className="cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Input */}
+                  <div className="py-3 z-0">
+                    <Label>Cole seu código do Pixel</Label>
+                    <Input
+
+                      className="cursor-pointer"
+                      type="text"
+                      defaultValue={inputPixel[platform.type]}
+                      placeholder={
+                        platform.type === 'google_ads'
+                          ? 'AW-XXXXXXXXXX'
+                          : platform.type === 'utmify'
+                            ? '67b685db1dbb22525effef90'
+                            : platform.type === 'meta'
+                              ? '123213213421213'
+                              : ''
+                      }
+                      onChange={(e) => {
+                        setInputPixel((value) => ({
+                          ...value,
+                          [platform.type]: e.target.value,
+                        }));
+                      }}
+                    />
+                  </div>
+
+                  {/* Info */}
+
+                  {platform.info && (
+                    <div className="py-2">
+                      <div className="bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 p-4 rounded-lg">
+                        <span className="text-xs">{platform?.info}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Botão */}
+                  <div className="flex justify-end py-4">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        createPixelProject(platform.type);
+                        setIsLoadingButton((isLoadingButton) => ({
+                          ...isLoadingButton,
+                          [platform.type]: true,
+                        }));
+                      }}
+                      isLoading={isLoadingButton[platform.type]}
+                    >
+                      + Adicionar Pixel
+                    </Button>
+                  </div>
+                </li>
               </Card>
             ))}
           </ul>

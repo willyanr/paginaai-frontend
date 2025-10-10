@@ -6,6 +6,8 @@ import {
     getStatistics as ServiceGetStatistics
 } from '@/services/statistics';
 import { StatisticsContextType } from '@/interfaces/statistics.interface';
+import { useApi } from '@/services/api';
+
 
 
 
@@ -13,11 +15,12 @@ import { StatisticsContextType } from '@/interfaces/statistics.interface';
 const StatisticsContext = createContext<StatisticsContextType | undefined>(undefined);
 
 export const StatisticsProvider = ({ children }: { children: ReactNode }) => {
-     const [ statistics, setStatistics] = useState<  | null >(null);   
+     const [ statistics, setStatistics] = useState<  | null >(null);  
+     const api = useApi(); 
 
     const fetchStatistics= React.useCallback(async () => {
         try {
-            const response = await ServiceGetStatistics();
+            const response = await ServiceGetStatistics(api);
             setStatistics(response);
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -27,7 +30,7 @@ export const StatisticsProvider = ({ children }: { children: ReactNode }) => {
             }
         } finally {
         }
-    }, []);
+    }, [api]);
 
   
 

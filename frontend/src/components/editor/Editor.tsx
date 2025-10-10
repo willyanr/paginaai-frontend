@@ -13,14 +13,14 @@ import { useAlertContext } from '@/context/AlertContext';
 import { UpdateProjectUserPayload } from '@/interfaces/projects.interface';
 import { Modal } from '../ui/modal';
 import { InfoCard } from '../ui/info/InfoCard';
-
+import { useSession } from "next-auth/react";
 export default function DefaultEditor() {
 
   const { projectSelected, isLoading, projectSelectedID, projectSelectedName, updateProject, fetchProjectsAssets } = useProjects();
   const editorRef = useRef<Editor | null>(null);
   const { onAlert } = useAlertContext();
   const { isOpen, openModal, closeModal } = useModalContext();
-
+  const { data: session } = useSession();
 
 
 
@@ -299,7 +299,7 @@ export default function DefaultEditor() {
             credentials: 'include',
             headers: {
               'X-CSRFToken': getCookie('csrftoken'),
-              'Authorization': 'Bearer ' + localStorage.getItem('access')
+              'Authorization': `Bearer ${session?.accessToken}`,
             },
 
           },

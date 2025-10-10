@@ -14,7 +14,6 @@ import { useEffect } from 'react';
 
 export default function Profile() {
   const { user, getUserApi } = useUser();
-
   useEffect(() => {
     getUserApi();
   }, [getUserApi]);

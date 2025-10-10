@@ -1,3 +1,5 @@
+
+
 export interface Subscription {
   id: number;
   status: 'pending' | 'active' | 'canceled';
@@ -29,7 +31,10 @@ export interface DataUser {
   zip_code: string | null;
   created_at: string;
   how_did_you_hear_about_us: string | null;
-  subscriptions: Subscription[]; // adicionando aqui
+  subscriptions: Subscription[]; 
+  accessToken?: string;
+  refreshToken?: string;
+  // adicionando aqui
 }
 
 export interface LoginUser {

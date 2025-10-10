@@ -1,14 +1,17 @@
 import { DataProduct } from "@/interfaces/products.interface";
-import api from './api';
+import { AxiosInstance } from "axios";
+
 
 
 export const productService = {
-  async getAll(): Promise<DataProduct[]> {
+  async getAll(api: AxiosInstance): Promise<DataProduct[]> {
     const res = await api.get("/checkout/products/");
     if (!res || !res.data) throw new Error("Erro ao buscar produtos");
     return res.data as DataProduct[];
   },
-  async create(product: DataProduct | FormData): Promise<DataProduct> {
+
+
+  async create(api: AxiosInstance, product: DataProduct | FormData): Promise<DataProduct> {
 
     try {
       const res = await api.post("/checkout/products/", product, {
@@ -32,7 +35,7 @@ export const productService = {
   },
 
 
-  async delete(id: number): Promise<void> {
+  async delete(api: AxiosInstance, id: number): Promise<void> {
     const res = await api.delete(`/checkout/products/${id}/`);
 
     if (!res || (res.status !== 200 && res.status !== 204)) {
@@ -41,7 +44,7 @@ export const productService = {
 
     return;
   },
-  async update(product: DataProduct | FormData, id: number): Promise<DataProduct> {
+  async update(api: AxiosInstance, product: DataProduct | FormData, id: number): Promise<DataProduct> {
     const res = await api.put(`/checkout/products/${id}/`, product, {
       headers: {
         "Content-Type": "multipart/form-data",

@@ -1,9 +1,9 @@
-import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { InfoCard } from "@/components/ui/info/InfoCard";
 import { Modal } from "@/components/ui/modal";
 import { useAlertContext } from "@/context/AlertContext";
 import { useModalContext } from "@/context/ModalContext";
+import { useApi } from "@/services/api";
 import { feedbackService } from "@/services/feedback";
 import React, { useState } from "react";
 
@@ -12,7 +12,7 @@ export default function SidebarWidget() {
   const { isOpen, openModal, closeModal } = useModalContext();
 
   const [feedback, setFeedback] = useState("");
-
+  const api = useApi();
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
       onAlert(true, "error", "Por favor, escreva seu feedback antes de enviar.");
@@ -20,7 +20,7 @@ export default function SidebarWidget() {
     }
 
     try {
-      await feedbackService.create(feedback);
+      await feedbackService.create(api, feedback);
       onAlert(true, "success", "Obrigado pelo seu feedback! 🧡");
       setFeedback(""); 
       closeModal();
@@ -56,7 +56,9 @@ export default function SidebarWidget() {
 
       <Modal isOpen={isOpen("feedback")} onClose={closeModal}>
         <div className="mt-2 py-10">
-          <Label htmlFor="feedback">Seu feedback 🧡</Label>
+          <div className="mb-4 text-center text-lg font-semibold text-gray-900 dark:text-white">
+            Seu feedback 🧡
+          </div>
           <InfoCard size="xs">Como podemos melhorar?</InfoCard>
 
           <textarea
@@ -64,7 +66,7 @@ export default function SidebarWidget() {
             placeholder="Escreva seu feedback aqui..."
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            className="w-full h-32 p-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-400 text-base"
+            className="dark:text-white w-full h-32 p-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-400 text-base"
           />
 
           <div className="flex justify-center">

@@ -6,7 +6,6 @@ import { useModalContext } from '@/context/ModalContext';
 import { useProjects } from '@/context/ProjectsContext';
 import Badge from '../ui/badge/Badge';
 import { useAlertContext } from '@/context/AlertContext';
-import Alert from '../ui/alert/Alert';
 import DeleteModal from '../ui/alert/DeleteModal';
 import Input from '../form/input/InputField';
 import { PencilIcon } from '@/icons';
@@ -18,7 +17,7 @@ export default function ListProjectPage() {
   const { openModal } = useModalContext();
   const { theme } = useTheme();
   const { userProjects, fetchProjects, deleteProject, updateProject } = useProjects();
-  const { isAlert, typeAlert, messageAlert, onAlert } = useAlertContext();
+  const { onAlert } = useAlertContext();
   const [deleteDomainID, setDomainDelete] = useState<number>();
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [inputProjectName, setInputProjectName] = useState<{ [key: string]: string }>({});
@@ -44,7 +43,6 @@ export default function ListProjectPage() {
   );
 
   useEffect(() => {
-    console.log(userProjects)
 
   }, [userProjects]);
 
@@ -274,17 +272,6 @@ export default function ListProjectPage() {
         }
       </main>
 
-
-      {isAlert &&
-        <div className="fixed top-24 right-4 z-50">
-          <Alert
-            message={messageAlert}
-            variant={typeAlert as 'success' | 'error'}
-            title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-          />
-        </div>
-
-      }
       <DeleteModal
         onDelete={() => {
           handleDeleteProject();

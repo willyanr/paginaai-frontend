@@ -1,6 +1,5 @@
 "use client";
 
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
@@ -22,7 +21,6 @@ export default function AdminLayout({
     : "lg:ml-[90px]";
 
   return (
-    <ProtectedRoute>
       <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
       <AppSidebar />
@@ -37,6 +35,5 @@ export default function AdminLayout({
         <div className="p-4 md:p-6 ">{children}</div>
       </div>
     </div>
-    </ProtectedRoute>
   );
 }

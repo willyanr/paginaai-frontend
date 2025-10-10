@@ -15,6 +15,7 @@ import { StatisticsProvider } from '@/context/StatisticsContext';
 import { ProductProvider } from '@/context/ProductContext';
 import { CheckoutProvider } from '@/context/CheckoutContext';
 import Script from "next/script";
+import { SessionProvider } from 'next-auth/react';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -45,6 +46,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Paginaai - Páginas com IA</title>
         {/* Google Tag Manager */}
         <Script id="gtm-init" strategy="afterInteractive">
           {`
@@ -68,7 +72,7 @@ export default function RootLayout({
           ></iframe>
         </noscript>
         {/* End Google Tag Manager (noscript) */}
-
+          <SessionProvider >
         <AlertProvider>
           <AuthProvider>
             <UserProvider>
@@ -90,7 +94,9 @@ export default function RootLayout({
               </ThemeProvider>
             </UserProvider>
           </AuthProvider>
+        
         </AlertProvider>
+        </SessionProvider>
       </body>
     </html>
   );

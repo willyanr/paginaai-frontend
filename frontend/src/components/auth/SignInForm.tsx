@@ -1,27 +1,24 @@
 "use client";
-import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 
 import Link from "next/link";
 import React, { useState } from "react";
-import { useAuth } from '@/context/AuthContext';
 import { useAlertContext } from "@/context/AlertContext";
 
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Alert from "../ui/alert/Alert";
-
+import { signIn } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const { login } = useAuth();
   const { onAlert, isAlert, messageAlert, typeAlert } = useAlertContext();
-  const [ isLoading, setIsLoading ] = useState<boolean>(false)
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router = useRouter();
   const validationSchema = yup.object().shape({
     email: yup
       .string()
@@ -49,24 +46,31 @@ export default function SignInForm() {
     email: string;
     password: string;
   };
-
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     try {
-      const payload = {
+      const result = await signIn("credentials", {
+        redirect: false,
         email: data.email,
-        password: data.password
-      };
-      await login(payload);
-      onAlert(true, 'success', 'Login realizado com sucesso!');
+        password: data.password,
+      });
+
+      if (result?.error) {
+        onAlert(true, 'error', result.error);
+      } else {
+        onAlert(true, 'success', 'Login realizado com sucesso!');
+        router.push('/');
+      }
+
     } catch (error: unknown) {
       const message =
-        error instanceof Error ? error.message : 'Ocorreu um erro ao fazer login.';
+        error instanceof Error ? error.message : 'Erro inesperado ao logar.';
       onAlert(true, 'error', message);
     } finally {
       setIsLoading(false);
     }
   };
+
 
 
   return (
@@ -178,12 +182,12 @@ export default function SignInForm() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
+                  {/* <div className="flex items-center gap-3">
+                    <Checkbox />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                       Lembrar meu Login
                     </span>
-                  </div>
+                  </div> */}
                   <Link
                     href="/reset-password"
                     className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
@@ -193,7 +197,7 @@ export default function SignInForm() {
                 </div>
                 <div>
                   <Button
-                  isLoading={isLoading}
+                    isLoading={isLoading}
                     className="w-full"
                     size="sm"
                     type='submit'
@@ -220,17 +224,17 @@ export default function SignInForm() {
         </div>
       </div>
       {isAlert &&
-      
-      <div className="fixed top-8 right-4 z-9999999">
-      <Alert
-        message={messageAlert}
-        variant={typeAlert as 'success' | 'error'}
-        title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
-      />
-    </div>
-    
+
+        <div className="fixed top-8 right-4 z-9999999">
+          <Alert
+            message={messageAlert}
+            variant={typeAlert as 'success' | 'error'}
+            title={typeAlert === 'success' ? 'Sucesso' : 'Erro'}
+          />
+        </div>
+
       }
-      
+
     </div>
   );
 }

@@ -9,29 +9,28 @@ interface VerifyOtpPayload {
 }
 
 
-export const AuthService = {
-  
-  async checkAuth(): Promise<void> {
-    const { default: api } = await import('./api');
-    const res = await api.get('/accounts/me/')
-
-    if (!res || !res.data) {
-      
-      throw new Error("Usuário não autenticado.");
-      
+function getCsrfToken(name = 'csrftoken') {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
     }
-
-    return res.data;
-  },
+  }
+  return cookieValue;
 }
 
-export async function login(payload: LoginUser) {
-  const { default: api } = await import('./api');
+
+
+
+
+export async function login(api: AxiosInstance, payload: LoginUser) {
   try {
-    const res = await api.post('/accounts/login/', payload, {
-      timeout: 5000,
-      withCredentials: true, 
-    });
+    const res = await api.post('/accounts/login/', payload, {});
     return res.data;
   } catch (error: unknown) {
     let errorMessage = 'Erro desconhecido ao realizar login.';
@@ -57,23 +56,15 @@ export async function login(payload: LoginUser) {
     throw new Error(errorMessage);
   }
 }
-function getCsrfToken(name = 'csrftoken') {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
-      cookie = cookie.trim();
-      if (cookie.startsWith(name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
 
-export async function createSubscription() {
-  const { default: api } = await import('./api');
+
+
+
+
+
+
+
+export async function createSubscription(api: AxiosInstance) {
    const csrfToken = getCsrfToken();
 
   try {
@@ -115,18 +106,6 @@ export async function createSubscription() {
   }
 }
 
-export async function logout() {
-  const { default: api } = await import('./api');
-  try {
-    await api.post('/accounts/logout/', {}); 
-  } catch {
-    console.error('Erro ao fazer logout');
-  } finally {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/signin';
-    }
-  }
-}
 
 
 
@@ -144,8 +123,7 @@ export async function refreshAccessToken(apiInstance: AxiosInstance) {
 }
 
 
-export async function registerUser(payload: RegisterUser) {
-  const { default: api } = await import('./api');
+export async function registerUser(api: AxiosInstance, payload: RegisterUser) {
   try {
 
    await api.post(`/accounts/register/`, payload, {
@@ -206,15 +184,10 @@ export async function registerUser(payload: RegisterUser) {
 
 }
 
-export async function verifyCodeOtp(payload: VerifyOtpPayload) {
-  const { default: api } = await import('./api');
+export async function verifyCodeOtp(api: AxiosInstance, payload: VerifyOtpPayload) {
   try {
     const res = await api.post('/accounts/validate-otp/', payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      withCredentials: false, 
-      timeout: 1000
+ 
     });
 
     return res.data;
@@ -231,8 +204,7 @@ export async function verifyCodeOtp(payload: VerifyOtpPayload) {
   }
 }
 
-export async function resetPassword(payload: string | VerifyCodePayload) {
-  const { default: api } = await import('./api');
+export async function resetPassword(api: AxiosInstance, payload: string | VerifyCodePayload) {
   try {
     const res = await api.post('/accounts/reset-password/', JSON.stringify({ email: payload }), {
       headers: {
@@ -255,8 +227,7 @@ export async function resetPassword(payload: string | VerifyCodePayload) {
   }
 }
 
-export async function resetPasswordFinal(payload: ResetUserPasswordPayload) {
-  const { default: api } = await import('./api');
+export async function resetPasswordFinal(api: AxiosInstance, payload: ResetUserPasswordPayload) {
   try {
     const res = await api.put('/accounts/reset-password/', JSON.stringify(payload), {
       headers: {

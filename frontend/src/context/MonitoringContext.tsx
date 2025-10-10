@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { DataCreateMonitoring, DataMonitoring, MonitoringContextType } from '@/interfaces/monitoring.interface';
-import { getMonitoring, postMonitoring as CreateNewIntegrationApi, deleleMonitoring as removeMonitoringApi } from '@/services/monitoring';
+import { getMonitoring, postMonitoring as CreateNewIntegrationApi, deleteMonitoring as removeMonitoringApi } from '@/services/monitoring';
+import { useApi } from '@/services/api';
 
 
 
@@ -10,10 +11,12 @@ const MonitoringContext = createContext<MonitoringContextType | undefined>(undef
 
 export const MonitoringProvider = ({ children }: { children: ReactNode }) => {
     const [monitoringData, setMonitoringData] = useState<DataMonitoring | null>(null);
+    const api = useApi();
+
 
     const fetchMonitoring = React.useCallback(async () => {
         try {
-            const response = await getMonitoring();
+            const response = await getMonitoring(api);
             setMonitoringData(response);
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -22,11 +25,11 @@ export const MonitoringProvider = ({ children }: { children: ReactNode }) => {
                 throw new Error('An unknown error occurred');
             }
         }
-    }, []);
+    }, [api]);
 
     const createNewIntegrationClarity = async (payload: DataCreateMonitoring) => {
         try {
-            await CreateNewIntegrationApi(payload);
+            await CreateNewIntegrationApi(api, payload);
             fetchMonitoring();
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -39,7 +42,7 @@ export const MonitoringProvider = ({ children }: { children: ReactNode }) => {
 
     const removeIntegrationClarity = async (id: number) => {
         try {
-            await removeMonitoringApi(id);
+            await removeMonitoringApi(api, id);
             fetchMonitoring();
         } catch (error: unknown) {
             if (error instanceof Error) {

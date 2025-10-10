@@ -50,20 +50,19 @@ return (
               placeholder="Digite o nome do produto..."
               onChange={(e) => setSearch(e.target.value)}
               value={search}
-              className="pl-10 pr-10 py-2 w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="py-2 w-full rounded-xl border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            {search && (
+         
               <Button
                 size="sm"
                 startIcon={<X />}
                 variant="outline"
                 type="button"
                 onClick={() => setSearch("")}
-                className="w-full sm:w-auto mt-2 sm:mt-0"
+                className="w-40  mt-2 sm:mt-0"
               >
                 Limpar
               </Button>
-            )}
           </div>
         </div>
       </Card>

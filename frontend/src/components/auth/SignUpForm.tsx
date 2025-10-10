@@ -10,7 +10,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useAlertContext } from "@/context/AlertContext";
 import Alert from "../ui/alert/Alert";
 import sha256 from 'crypto-js/sha256';
-
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -170,7 +169,6 @@ export default function SignUpForm() {
         event: "sign_up",
         user_email: sha256(data.email.trim().toLowerCase()).toString(),
       });
-
     } catch (error: unknown) {
       const errorMessage = typeof error === 'object' && error !== null && 'message' in error
         ? (error as { message: string }).message

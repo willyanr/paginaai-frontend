@@ -1,28 +1,30 @@
 import { DataCheckout, DataRequestWithdraw, DataWalletWithTransactions, VerifyPaymentResponse } from '@/interfaces/checkout.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
+
+
 
 
 export const checkoutService = {
-  async getAll(): Promise<DataCheckout[]> {
+  async getAll(api: AxiosInstance): Promise<DataCheckout[]> {
     const res = await api.get("/checkout/custom-checkout/");
     if (!res || !res.data) throw new Error("Erro ao buscar produtos");
     return res.data as DataCheckout[];
   },
 
 
-  async getWallet(): Promise<DataWalletWithTransactions[]> {
+  async getWallet(api: AxiosInstance): Promise<DataWalletWithTransactions[]> {
     const res = await api.get("/checkout/wallet/");
     if (!res || !res.data) throw new Error("Erro ao buscar Carteira");
     return res.data as DataWalletWithTransactions[];
   },
 
-  async getVerifyPayment(id:string): Promise<VerifyPaymentResponse> {
+  async getVerifyPayment(api: AxiosInstance, id:string): Promise<VerifyPaymentResponse> {
     const res = await api.get(`/checkout/verify-sub/${id}/`);
     if (!res || !res.data) throw new Error("Erro ao verificar pagamento.");
     return res.data as VerifyPaymentResponse;
   },
 
-  async requstWithdraw(payload: DataRequestWithdraw): Promise<void> {
+  async requestWithdraw(api: AxiosInstance, payload: DataRequestWithdraw): Promise<void> {
     try {
       const res = await api.post("/checkout/request-pix-out/", payload);
       return res.data;
@@ -71,7 +73,7 @@ export const checkoutService = {
   //   if (!res || !res.data) throw new Error("Erro ao deletar produto");
   //   return res.data;
   // },
-  async update(customCheckout: DataCheckout | FormData, id: number): Promise<void> {
+  async update(api: AxiosInstance, customCheckout: DataCheckout | FormData, id: number): Promise<void> {
     const res = await api.patch(`/checkout/custom-checkout/${id}/`, customCheckout, {
       headers: {
         "Content-Type": "multipart/form-data",

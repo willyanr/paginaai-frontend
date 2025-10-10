@@ -1,3 +1,4 @@
+'use client';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
     getProjects as projectsService,
@@ -7,6 +8,7 @@ import {
     createProject
 } from '../services/projects';
 import { CreateProjectUserPayload, DataProjectUser, ProjectsContextType, UpdateProjectUserPayload } from '@/interfaces/projects.interface';
+import { useApi } from '@/services/api';
 
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
@@ -17,16 +19,17 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [projectSelected, setProjectSelected] = useState<string | null >(null);
     const [projectSelectedID, setProjectSelectedID] = useState<number | null>(null);
     const [projectSelectedName, setProjectSelectedName] = useState<string | null>(null);
-
-
     const [projectGraper, setProjects] = useState(null);
     const [isNewProject] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [isError] = useState(false);
 
+    const api = useApi();
+        
+
     const fetchProjects = React.useCallback(async () => {
         try {
-            const response = await projectsService();
+            const response = await projectsService(api);
             setUserProjects(response);
             const raw = response[0].project_data;
             setProjects(raw);
@@ -35,7 +38,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
         } catch {
             throw new Error('Erro ao carregar projetos:');
         }
-    }, []);
+    }, [api]);
 
 
 
@@ -43,7 +46,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
     const updateProject = async (body: UpdateProjectUserPayload, id: number) => {
         setIsLoading(true);
         try {
-            const response = await projectUpdate(body, id);
+            const response = await projectUpdate(api, body, id);
             setProjectSelected(response.project_data);
             fetchProjects();
         } catch (error: unknown) {
@@ -59,7 +62,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const createNewProject = async (payload: CreateProjectUserPayload) => {
         try {
-            await createProject(payload);
+            await createProject(api, payload);
             await fetchProjects();
             setIsSuccess(true);
         } catch (error: unknown) {
@@ -74,7 +77,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const deleteProject = async (id: number) => {
         try {
-            await projectServiceDelete(id);
+            await projectServiceDelete(api, id);
             await fetchProjects();
         } catch {
             throw new Error('Error update Project:');
@@ -83,7 +86,7 @@ export const ProjectsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const fetchProjectsAssets = async () => {
         try {
-            return await ServiceGetAssets();
+            return await ServiceGetAssets(api);
         } catch {
             throw new Error('Error update Project:');
         }

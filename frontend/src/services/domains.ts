@@ -1,19 +1,19 @@
 import { CreateDomainPayload, UpdateDomainPayload } from '@/interfaces/domains.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
 
-export async function getProjectsDomains() {
+
+
+export async function getProjectsDomains(api: AxiosInstance) {
   const res = await api.get('/domains/');
   return res.data
 };
 
 
 
-export async function createProjectsDomains(payload: CreateDomainPayload) {
+export async function createProjectsDomains(api: AxiosInstance, payload: CreateDomainPayload) {
   try {
     const response = await api.post(`/domains/`, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+   
     });
     return response.data;
   } catch (error: unknown) {
@@ -31,7 +31,7 @@ export async function createProjectsDomains(payload: CreateDomainPayload) {
 
 
 
-export async function deleteProjectDomains(id: string) {
+export async function deleteProjectDomains(api: AxiosInstance, id: string) {
   try {
     await api.delete(`/domains/${id}/`); 
   } catch (error: unknown) {
@@ -47,7 +47,7 @@ export async function deleteProjectDomains(id: string) {
   }
 }
 
-export async function verifyProjectsDomains(domain: string) {
+export async function verifyProjectsDomains(api: AxiosInstance, domain: string) {
   if(!domain) return;
   try {
     const payload = {
@@ -72,7 +72,7 @@ export async function verifyProjectsDomains(domain: string) {
   }
 }
 
-export async function updateProjectsDomains(payload: UpdateDomainPayload) {
+export async function updateProjectsDomains(api: AxiosInstance, payload: UpdateDomainPayload) {
   try {
     const domainID = payload.id
     const projectID = {

@@ -1,13 +1,15 @@
 import { DataCreateMonitoring } from '@/interfaces/monitoring.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
 
-export async function getMonitoring() {
+
+
+export async function getMonitoring(api: AxiosInstance) {
   const res = await api.get('/monitoring/');
   return res.data
 };
 
 
-export async function postMonitoring(payload: DataCreateMonitoring) {
+export async function postMonitoring(api: AxiosInstance, payload: DataCreateMonitoring) {
   try {
     const response = await api.post(`/monitoring/`, payload, {
       headers: {
@@ -29,7 +31,7 @@ export async function postMonitoring(payload: DataCreateMonitoring) {
 }
 
 
-export async function deleleMonitoring(id: number) {
+export async function deleteMonitoring(api: AxiosInstance, id: number) {
   try {
     const response = await api.delete(`/monitoring/${id}/`, {
       headers: {

@@ -1,12 +1,12 @@
 import { CreateProjectUserPayload, UpdateProjectUserPayload } from '@/interfaces/projects.interface';
-import api from './api';
+import { AxiosInstance } from 'axios';
 
-export async function getProjects() {
+export async function getProjects(api: AxiosInstance) {
   const res = await api.get('/projects/');
   return res.data
 };
 
-export async function updateProject(body: UpdateProjectUserPayload, id: number) {
+export async function updateProject(api: AxiosInstance, body: UpdateProjectUserPayload, id: number) {
   try {
     const response = await api.put(`/projects/${id}/`, body);
     return response.data
@@ -23,7 +23,7 @@ export async function updateProject(body: UpdateProjectUserPayload, id: number) 
   }
 }
 
-export async function createProject(payload: CreateProjectUserPayload) {
+export async function createProject(api: AxiosInstance, payload: CreateProjectUserPayload) {
   try {
     await api.post(`/new-landing/`, payload);
   } catch (error: unknown) {
@@ -39,7 +39,7 @@ export async function createProject(payload: CreateProjectUserPayload) {
   }
 }
 
-export async function deleteProject(id: number): Promise<boolean> {
+export async function deleteProject(api: AxiosInstance, id: number): Promise<boolean> {
   try {
     await api.delete(`/projects/${id}/`);
     return true;
@@ -56,7 +56,7 @@ export async function deleteProject(id: number): Promise<boolean> {
   }
 }
 
-export async function getAssets() {
+export async function getAssets(api: AxiosInstance) {
   const res = await api.get('/images/');
   return res.data
 };

@@ -1,3 +1,4 @@
+'use client';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
     getProjectsMarketing as getProjectsMarketing,
@@ -6,6 +7,7 @@ import {
 } from '../services/maketingProject';
 import { useProjects } from './ProjectsContext';
 import { MarketingContextType, UpdatePixelPayload } from '@/interfaces/marketing.interface';
+import { useApi } from '@/services/api';
 
 
 
@@ -16,21 +18,23 @@ export const MarketingProvider: React.FC<{ children: ReactNode }> = ({ children 
     const { fetchProjects } = useProjects();
     const [isLoading, setIsloading] = useState<boolean>()
 
+    const api = useApi(); 
+
     const fetchProjectsMarketing = React.useCallback(async () => {
         try {
-            const response = await getProjectsMarketing();
+            const response = await getProjectsMarketing(api);
             setMarketingData(response[0]);
             fetchProjects();
             return response[0];
         } catch {
             throw new Error('Erro ao carregar o marketing:');
         }
-    }, [fetchProjects]);
+    }, [api, fetchProjects]);
 
     const updateProjectMarketing = async (payload: UpdatePixelPayload) => {
         setIsloading(true);
         try {
-            await UpdateServiceProjectsMarketing(payload);
+            await UpdateServiceProjectsMarketing(api, payload);
             fetchProjects();
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : String(error);
@@ -40,7 +44,7 @@ export const MarketingProvider: React.FC<{ children: ReactNode }> = ({ children 
     };
     const deleteProjectsMarketing = async (id: number) => {
         try {
-            await DeleteServiceProjectPixel(id);
+            await DeleteServiceProjectPixel(api, id);
             fetchProjects();
         } catch {
             throw new Error('Error delete Pixel:');

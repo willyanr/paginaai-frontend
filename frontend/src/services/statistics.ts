@@ -1,6 +1,9 @@
-import api from './api';
+import { AxiosInstance } from "axios";
 
-export async function getStatistics() {
+
+
+export async function getStatistics(api: AxiosInstance) {
+  
   const res = await api.get('/statistics/');
   return res.data
 };

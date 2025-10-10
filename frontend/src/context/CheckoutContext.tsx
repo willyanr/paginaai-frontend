@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
 import { checkoutService } from "@/services/checkout";
 import { DataCheckout, DataRequestWithdraw, DataWalletWithTransactions, VerifyPaymentResponse } from "@/interfaces/checkout.interface";
+import { useApi } from "@/services/api";
 
 interface CheckoutContextProps {
   checkout: DataCheckout[];
@@ -41,10 +42,12 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
   const [wallet, setWallet] = useState<DataWalletWithTransactions[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  const api = useApi();
+
   const fetchCheckout = useCallback(async () => {
     setError(null);
     try {
-      const data = await checkoutService.getAll();
+      const data = await checkoutService.getAll(api);
       setCheckout(data);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -54,11 +57,11 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
       }
     } finally {
     }
-  }, []);
+  }, [api]);
 
   const fetchWallet = useCallback(async () => {
     try {
-      const data = await checkoutService.getWallet();
+      const data = await checkoutService.getWallet(api);
       setWallet(data);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -68,7 +71,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
       }
     } finally {
     }
-  }, []);
+  }, [api]);
 
 
   // const createProduct = useCallback(async (product: DataProduct) => {
@@ -101,7 +104,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
 
   const updateCustomCheckout = async (customCheckout: FormData, id: number) => {
     try {
-      await checkoutService.update(customCheckout, id);
+      await checkoutService.update(api, customCheckout, id);
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`Error: ${error.message}`);
@@ -116,7 +119,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
 
   const verifyPayment = async (id:string) => {
     try {
-      const data = await checkoutService.getVerifyPayment(id);
+      const data = await checkoutService.getVerifyPayment(api, id);
       return data
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -131,7 +134,7 @@ export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({ children }) 
 
   const requestWithdraw = async (payload: DataRequestWithdraw) => {
     try {
-      await checkoutService.requstWithdraw(payload)
+      await checkoutService.requestWithdraw(api, payload)
     } catch (error: unknown) {
       if (error instanceof Error) {
         throw new Error(`${error.message}`);
