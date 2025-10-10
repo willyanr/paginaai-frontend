@@ -22,7 +22,7 @@ async function refreshAccessToken(token: any) {
     return {
       ...token,
       accessToken: response.data.access,
-      refreshToken: token.refreshToken, 
+      refreshToken: token.refreshToken,
     };
   } catch (error) {
     console.error("Erro ao tentar refrescar token:", error);
@@ -43,6 +43,14 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Senha', type: 'password' },
       },
+
+      async redirect({ url, baseUrl }) {
+        if (url.startsWith(baseUrl)) {
+          return '/'; // login bem-sucedido
+        }
+        return url; // outros redirecionamentos permanecem
+      },
+
       async authorize(credentials) {
         try {
           const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
@@ -74,7 +82,7 @@ export const authOptions: NextAuthOptions = {
               Authorization: `Bearer ${access}`,
             },
             withCredentials: true,
-            
+
           });
           console.log("ME Response:", meRes.data);
 

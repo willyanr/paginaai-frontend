@@ -50,16 +50,17 @@ export default function SignInForm() {
     setIsLoading(true);
     try {
       const result = await signIn("credentials", {
-        redirect: false,
+        redirect: true,
         email: data.email,
         password: data.password,
+        callbackUrl: '/', // página para redirecionar após login
       });
+
 
       if (result?.error) {
         onAlert(true, 'error', result.error);
       } else {
         onAlert(true, 'success', 'Login realizado com sucesso!');
-        router.push('/');
       }
 
     } catch (error: unknown) {
