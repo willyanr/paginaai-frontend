@@ -16,6 +16,7 @@ export function useApi(): AxiosInstance {
           ? { Authorization: `Bearer ${session.accessToken}` }
           : {}),
       },
+      withCredentials: true,
     });
 
     instance.interceptors.response.use(
