@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import axios from "axios";
 import ChartTab from "../common/ChartTab";
 import { ApexOptions } from "apexcharts";
-
+import { useSession } from "next-auth/react";
 
 function getWeekNumber(date: Date): number {
   const d = new Date(date.getTime());
@@ -21,6 +21,7 @@ function getWeekNumber(date: Date): number {
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function StatisticsChart() {
+  const { data: session } = useSession();
   const [filter, setFilter] = useState<"week" | "month" | "year">("week");
   const [data, setData] = useState({ labels: [], totals: [] });
   const [week] = useState<number>(getWeekNumber(new Date()));
@@ -28,14 +29,29 @@ export default function StatisticsChart() {
   const [year] = useState<number>(new Date().getFullYear());
 
   useEffect(() => {
-    axios
-      .get(
-        `https://api.paginaai.com.br/api/checkout/user-orders-aggregated/?filter=${filter}&week=${week}&month=${month}&year=${year}`,
-        { withCredentials: true }
-      )
-      .then((res) => setData(res.data))
-      .catch((err) => console.error(err));
-  }, [filter, week, month, year]);
+    // só faz a requisição se o usuário estiver autenticado e tiver token
+    if (!session?.accessToken) return;
+
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(
+          `https://api.paginaai.com.br/api/checkout/user-orders-aggregated/?filter=${filter}&week=${week}&month=${month}&year=${year}`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        setData(res.data);
+      } catch (err) {
+        console.error("Erro ao buscar dados:", err);
+      }
+    };
+
+    fetchData();
+  }, [session?.accessToken, filter, week, month, year]);
 
 
 const options: ApexOptions = {
